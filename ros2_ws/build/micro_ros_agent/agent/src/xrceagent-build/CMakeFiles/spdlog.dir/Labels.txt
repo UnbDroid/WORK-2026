@@ -1,0 +1,13 @@
+# Target labels
+ spdlog
+# Source files and their labels
+/home/lucca/WORK-2026/ros2_ws/build/micro_ros_agent/agent/src/xrceagent-build/CMakeFiles/spdlog
+/home/lucca/WORK-2026/ros2_ws/build/micro_ros_agent/agent/src/xrceagent-build/CMakeFiles/spdlog.rule
+/home/lucca/WORK-2026/ros2_ws/build/micro_ros_agent/agent/src/xrceagent-build/CMakeFiles/spdlog-complete.rule
+/home/lucca/WORK-2026/ros2_ws/build/micro_ros_agent/agent/src/xrceagent-build/spdlog/src/spdlog-stamp/spdlog-build.rule
+/home/lucca/WORK-2026/ros2_ws/build/micro_ros_agent/agent/src/xrceagent-build/spdlog/src/spdlog-stamp/spdlog-configure.rule
+/home/lucca/WORK-2026/ros2_ws/build/micro_ros_agent/agent/src/xrceagent-build/spdlog/src/spdlog-stamp/spdlog-download.rule
+/home/lucca/WORK-2026/ros2_ws/build/micro_ros_agent/agent/src/xrceagent-build/spdlog/src/spdlog-stamp/spdlog-install.rule
+/home/lucca/WORK-2026/ros2_ws/build/micro_ros_agent/agent/src/xrceagent-build/spdlog/src/spdlog-stamp/spdlog-mkdir.rule
+/home/lucca/WORK-2026/ros2_ws/build/micro_ros_agent/agent/src/xrceagent-build/spdlog/src/spdlog-stamp/spdlog-patch.rule
+/home/lucca/WORK-2026/ros2_ws/build/micro_ros_agent/agent/src/xrceagent-build/spdlog/src/spdlog-stamp/spdlog-update.rule

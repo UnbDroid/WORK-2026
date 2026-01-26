@@ -1,0 +1,8 @@
+{
+  "package_name": "micro_ros_msgs",
+  "non_idl_tuples": [
+    "/home/lucca/WORK-2026/ros2_ws/src/uros/micro_ros_msgs:msg/Graph.msg",
+    "/home/lucca/WORK-2026/ros2_ws/src/uros/micro_ros_msgs:msg/Node.msg",
+    "/home/lucca/WORK-2026/ros2_ws/src/uros/micro_ros_msgs:msg/Entity.msg"
+  ]
+}

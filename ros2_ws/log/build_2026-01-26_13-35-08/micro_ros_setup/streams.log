@@ -1,0 +1,181 @@
+[0.017s] Invoking command in '/home/lucca/WORK-2026/ros2_ws/build/micro_ros_setup': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake /home/lucca/WORK-2026/ros2_ws/src/micro_ros_setup -DCMAKE_INSTALL_PREFIX=/home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup
+[0.217s] -- The C compiler identification is GNU 13.3.0
+[0.686s] -- The CXX compiler identification is GNU 13.3.0
+[1.072s] -- Detecting C compiler ABI info
+[1.279s] -- Detecting C compiler ABI info - done
+[1.286s] -- Check for working C compiler: /usr/bin/cc - skipped
+[1.288s] -- Detecting C compile features
+[1.288s] -- Detecting C compile features - done
+[1.361s] -- Detecting CXX compiler ABI info
+[1.567s] -- Detecting CXX compiler ABI info - done
+[1.574s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[1.574s] -- Detecting CXX compile features
+[1.575s] -- Detecting CXX compile features - done
+[1.587s] -- Found ament_cmake: 2.5.4 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[1.707s] -- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+[1.820s] -- Found ament_lint_auto: 0.17.3 (/opt/ros/jazzy/share/ament_lint_auto/cmake)
+[1.897s] -- Configuring done (1.9s)
+[1.902s] -- Generating done (0.0s)
+[1.904s] -- Build files have been written to: /home/lucca/WORK-2026/ros2_ws/build/micro_ros_setup
+[1.909s] Invoked command in '/home/lucca/WORK-2026/ros2_ws/build/micro_ros_setup' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake /home/lucca/WORK-2026/ros2_ws/src/micro_ros_setup -DCMAKE_INSTALL_PREFIX=/home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup
+[1.910s] Invoking command in '/home/lucca/WORK-2026/ros2_ws/build/micro_ros_setup': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/lucca/WORK-2026/ros2_ws/build/micro_ros_setup -- -j8 -l8
+[1.942s] Invoked command in '/home/lucca/WORK-2026/ros2_ws/build/micro_ros_setup' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /home/lucca/WORK-2026/ros2_ws/build/micro_ros_setup -- -j8 -l8
+[1.952s] Invoking command in '/home/lucca/WORK-2026/ros2_ws/build/micro_ros_setup': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/lucca/WORK-2026/ros2_ws/build/micro_ros_setup
+[1.959s] -- Install configuration: ""
+[1.960s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/share/ament_index/resource_index/package_run_dependencies/micro_ros_setup
+[1.961s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/share/ament_index/resource_index/parent_prefix_path/micro_ros_setup
+[1.962s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/share/micro_ros_setup/environment/ament_prefix_path.sh
+[1.962s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/share/micro_ros_setup/environment/ament_prefix_path.dsv
+[1.967s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/share/micro_ros_setup/environment/path.sh
+[1.967s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/share/micro_ros_setup/environment/path.dsv
+[1.967s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/share/micro_ros_setup/local_setup.bash
+[1.967s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/share/micro_ros_setup/local_setup.sh
+[1.967s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/share/micro_ros_setup/local_setup.zsh
+[1.967s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/share/micro_ros_setup/local_setup.dsv
+[1.967s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/share/micro_ros_setup/package.dsv
+[1.967s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/share/ament_index/resource_index/packages/micro_ros_setup
+[1.967s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/share/micro_ros_setup/cmake/micro_ros_setupConfig.cmake
+[1.967s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/share/micro_ros_setup/cmake/micro_ros_setupConfig-version.cmake
+[1.967s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/share/micro_ros_setup/package.xml
+[1.968s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config
+[1.968s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos
+[1.968s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f746zg
+[1.968s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f746zg/configure.sh
+[1.968s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f746zg/client-colcon.meta
+[1.968s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f746zg/flash.sh
+[1.968s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f746zg/build.sh
+[1.968s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f746zg/board.repos
+[1.968s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f746zg/create.sh
+[1.969s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f746zg/client_uros_packages.repos
+[1.969s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f746zg/package.xml
+[1.969s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f446ze
+[1.969s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f446ze/configure.sh
+[1.969s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f446ze/client-colcon.meta
+[1.969s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f446ze/flash.sh
+[1.969s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f446ze/build.sh
+[1.969s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f446ze/board.repos
+[1.969s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f446ze/create.sh
+[1.969s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f446ze/client_uros_packages.repos
+[1.969s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f446ze/package.xml
+[1.970s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/dev_uros_packages.repos
+[1.970s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f767zi
+[1.970s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f767zi/configure.sh
+[1.970s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f767zi/client-colcon.meta
+[1.970s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f767zi/flash.sh
+[1.970s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f767zi/build.sh
+[1.970s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f767zi/board.repos
+[1.970s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f767zi/create.sh
+[1.971s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f767zi/client_uros_packages.repos
+[1.971s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f767zi/package.xml
+[1.971s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/olimex-stm32-e407
+[1.971s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/olimex-stm32-e407/configure.sh
+[1.971s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/olimex-stm32-e407/client-colcon.meta
+[1.971s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/olimex-stm32-e407/flash.sh
+[1.971s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/olimex-stm32-e407/build.sh
+[1.971s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/olimex-stm32-e407/board.repos
+[1.971s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/olimex-stm32-e407/create.sh
+[1.972s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/olimex-stm32-e407/client_uros_packages.repos
+[1.972s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/olimex-stm32-e407/package.xml
+[1.972s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f446re
+[1.972s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f446re/configure.sh
+[1.972s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f446re/client-colcon.meta
+[1.972s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f446re/flash.sh
+[1.972s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f446re/build.sh
+[1.972s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f446re/board.repos
+[1.972s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f446re/create.sh
+[1.973s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f446re/client_uros_packages.repos
+[1.973s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/nucleo_f446re/package.xml
+[1.973s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/dev_ros2_packages.txt
+[1.973s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/crazyflie21
+[1.973s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/crazyflie21/configure.sh
+[1.973s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/crazyflie21/client-colcon.meta
+[1.974s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/crazyflie21/flash.sh
+[1.974s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/crazyflie21/build.sh
+[1.974s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/crazyflie21/board.repos
+[1.974s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/crazyflie21/create.sh
+[1.974s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/crazyflie21/client_uros_packages.repos
+[1.974s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/crazyflie21/package.xml
+[1.974s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/esp32
+[1.974s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/esp32/configure.sh
+[1.974s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/esp32/client-colcon.meta
+[1.975s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/esp32/README.md
+[1.975s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/esp32/flash.sh
+[1.975s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/esp32/build.sh
+[1.975s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/esp32/board.repos
+[1.975s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/esp32/create.sh
+[1.976s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/esp32/client_uros_packages.repos
+[1.976s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/esp32/package.xml
+[1.976s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/freertos/list_apps.sh
+[1.976s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/utils.sh
+[1.976s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/host
+[1.976s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/host/dev_uros_packages.repos
+[1.976s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/host/generic
+[1.977s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/host/generic/flash.sh
+[1.977s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/host/generic/build.sh
+[1.977s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/host/generic/client_host_packages.repos
+[1.977s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/host/generic/client-host-colcon.meta
+[1.977s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/host/generic/create.sh
+[1.977s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/host/generic/package.xml
+[1.978s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/host/dev_ros2_packages.txt
+[1.978s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/host/client_ros2_packages.txt
+[1.978s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/agent_uros_packages.repos
+[1.978s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/android
+[1.978s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/android/dev_uros_packages.repos
+[1.978s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/android/generic
+[1.978s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/android/generic/client-colcon.meta
+[1.979s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/android/generic/flash.sh
+[1.979s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/android/generic/build.sh
+[1.979s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/android/generic/create.sh
+[1.979s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/android/generic/client_uros_packages.repos
+[1.979s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/android/generic/package.xml
+[1.980s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/android/dev_ros2_packages.txt
+[1.980s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/raspbian
+[1.980s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/raspbian/dev_uros_packages.repos
+[1.980s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/raspbian/generic
+[1.980s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/raspbian/generic/configure.sh
+[1.980s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/raspbian/generic/client-colcon.meta
+[1.980s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/raspbian/generic/flash.sh
+[1.981s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/raspbian/generic/build.sh
+[1.981s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/raspbian/generic/create.sh
+[1.981s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/raspbian/generic/supported_platforms
+[1.981s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/raspbian/generic/client_uros_packages.repos
+[1.981s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/raspbian/dev_ros2_packages.txt
+[1.981s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/agent_ros2_packages.txt
+[1.982s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/generate_lib
+[1.982s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/generate_lib/dev_uros_packages.repos
+[1.982s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/generate_lib/generic
+[1.982s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/generate_lib/generic/client-colcon.meta
+[1.982s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/generate_lib/generic/flash.sh
+[1.982s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/generate_lib/generic/demo_toolchain.cmake
+[1.983s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/generate_lib/generic/build.sh
+[1.983s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/generate_lib/generic/create.sh
+[1.983s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/generate_lib/generic/client_uros_packages.repos
+[1.983s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/generate_lib/generic/package.xml
+[1.983s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/generate_lib/dev_ros2_packages.txt
+[1.983s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/zephyr
+[1.984s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/zephyr/dev_uros_packages.repos
+[1.984s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/zephyr/generic
+[1.984s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/zephyr/generic/configure.sh
+[1.984s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/zephyr/generic/client-colcon.meta
+[1.984s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/zephyr/generic/flash.sh
+[1.984s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/zephyr/generic/build.sh
+[1.985s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/zephyr/generic/board.repos
+[1.985s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/zephyr/generic/create.sh
+[1.985s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/zephyr/generic/supported_platforms
+[1.985s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/zephyr/generic/client_uros_packages.repos
+[1.985s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/zephyr/generic/package.xml
+[1.985s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/zephyr/dev_ros2_packages.txt
+[1.986s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/zephyr/list_apps.sh
+[1.986s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/client_uros_packages.repos
+[1.986s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/./config/client_ros2_packages.txt
+[1.986s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/lib/micro_ros_setup/create_ws.sh
+[1.986s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/lib/micro_ros_setup/create_agent_ws.sh
+[1.986s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/lib/micro_ros_setup/create_firmware_ws.sh
+[1.986s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/lib/micro_ros_setup/configure_firmware.sh
+[1.986s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/lib/micro_ros_setup/flash_firmware.sh
+[1.987s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/lib/micro_ros_setup/build_firmware.sh
+[1.987s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/lib/micro_ros_setup/build_agent.sh
+[1.987s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/lib/micro_ros_setup/yaml_filter.py
+[1.987s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/lib/micro_ros_setup/clean_env.sh
+[1.987s] -- Installing: /home/lucca/WORK-2026/ros2_ws/install/micro_ros_setup/lib/micro_ros_setup/component
+[1.989s] Invoked command in '/home/lucca/WORK-2026/ros2_ws/build/micro_ros_setup' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /home/lucca/WORK-2026/ros2_ws/build/micro_ros_setup

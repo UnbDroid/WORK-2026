@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "micro_ros_msgs__py",
+		"source" : "/home/lucca/WORK-2026/ros2_ws/build/micro_ros_msgs/micro_ros_msgs__py"
+	}
+}
