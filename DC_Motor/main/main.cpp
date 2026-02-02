@@ -1,30 +1,40 @@
 #include <stdio.h>
 #include <iostream>
+#include "PinConfig.h"
 #include "sdkconfig.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "driver/ledc.h"  // For PWM Control.
-#include "driver/gpio.h"  // For GPIO Control.
-
-#define MOTOR_IN1_PIN   GPIO_NUM_27  // IN1 Pin Connected to Motor Driver.
-#define MOTOR_IN2_PIN   GPIO_NUM_26  // IN2 Pin Connected to Motor Driver.
-#define MOTOR_ENABLE_PIN GPIO_NUM_32 // Enable Pin for PWM Control.
-
-#define MOTOR_PWM_FREQ  5000                  // Frequency in Hz for PWM.
-#define MOTOR_PWM_CHANNEL LEDC_CHANNEL_0
-#define MOTOR_PWM_MODE   LEDC_LOW_SPEED_MODE
-#define MOTOR_PWM_TIMER  LEDC_TIMER_0
-#define MOTOR_PWM_RES    LEDC_TIMER_10_BIT    // PWM Resolution (10-bit).
-#define MAX_DUTY_CYCLE   1023                 // Maximum Duty Cycle for 10-bit Resolution.
+#include "driver/ledc.h" // For PWM Control.
+#include "driver/gpio.h" // For GPIO Control.
 
 extern "C" void app_main(void) {
     // Configure GPIO for Motor Direction Control.
-    gpio_reset_pin(MOTOR_IN1_PIN);
-    gpio_set_direction(MOTOR_IN1_PIN, GPIO_MODE_OUTPUT);
-    gpio_reset_pin(MOTOR_IN2_PIN);
-    gpio_set_direction(MOTOR_IN2_PIN, GPIO_MODE_OUTPUT);
-    gpio_reset_pin(MOTOR_ENABLE_PIN);
-    gpio_set_direction(MOTOR_ENABLE_PIN, GPIO_MODE_OUTPUT);
+    gpio_reset_pin(MOTOR_1_IN1_PIN);
+    gpio_set_direction(MOTOR_1_IN1_PIN, GPIO_MODE_OUTPUT);
+    gpio_reset_pin(MOTOR_1_IN2_PIN);
+    gpio_set_direction(MOTOR_1_IN2_PIN, GPIO_MODE_OUTPUT);
+    gpio_reset_pin(MOTOR_1_ENABLE_PIN);
+    gpio_set_direction(MOTOR_1_ENABLE_PIN, GPIO_MODE_OUTPUT);
+
+    // Configure Encoder A Pin.
+    gpio_config_t enca_config = {
+        .pin_bit_mask   = (1ULL << MOTOR_1_ENCA_PIN),
+        .mode           = GPIO_MODE_INPUT,
+        .pull_up_en     = GPIO_PULLUP_ENABLE,
+        .pull_down_en   = GPIO_PULLDOWN_DISABLE,
+        .intr_type      = GPIO_INTR_POSEDGE
+    };
+    gpio_config(&enca_config);
+
+    // Configure Encoder B Pin.
+    gpio_config_t encb_config = {
+        .pin_bit_mask   = (1ULL << MOTOR_1_ENCB_PIN),
+        .mode           = GPIO_MODE_INPUT,
+        .pull_up_en     = GPIO_PULLUP_ENABLE,
+        .pull_down_en   = GPIO_PULLDOWN_DISABLE,
+        .intr_type      = GPIO_INTR_DISABLE
+    };
+    gpio_config(&encb_config);
 
     // Configure PWM Timer.
     ledc_timer_config_t pwm_timer = {
@@ -38,7 +48,7 @@ extern "C" void app_main(void) {
 
     // Configure PWM Channel.
     ledc_channel_config_t pwm_channel = {
-        .gpio_num       = MOTOR_ENABLE_PIN,
+        .gpio_num       = MOTOR_1_ENABLE_PIN,
         .speed_mode     = MOTOR_PWM_MODE,
         .channel        = MOTOR_PWM_CHANNEL,
         .intr_type      = LEDC_INTR_DISABLE,
@@ -54,12 +64,12 @@ extern "C" void app_main(void) {
     while (true) {
         // Set Motor Direction.
         if (direction == 1) {
-            gpio_set_level(MOTOR_IN1_PIN, 1);
-            gpio_set_level(MOTOR_IN2_PIN, 0);
+            gpio_set_level(MOTOR_1_IN1_PIN, 1);
+            gpio_set_level(MOTOR_1_IN2_PIN, 0);
             printf("Direction: Clockwise\n");
         } else {
-            gpio_set_level(MOTOR_IN1_PIN, 0);
-            gpio_set_level(MOTOR_IN2_PIN, 1);
+            gpio_set_level(MOTOR_1_IN1_PIN, 0);
+            gpio_set_level(MOTOR_1_IN2_PIN, 1);
             printf("Direction: Anticlockwise\n");
         }
 
@@ -76,8 +86,8 @@ extern "C" void app_main(void) {
             ledc_set_duty(MOTOR_PWM_MODE, MOTOR_PWM_CHANNEL, 0);
             ledc_update_duty(MOTOR_PWM_MODE, MOTOR_PWM_CHANNEL);
 
-            gpio_set_level(MOTOR_IN1_PIN, 0);
-            gpio_set_level(MOTOR_IN2_PIN, 0);
+            gpio_set_level(MOTOR_1_IN1_PIN, 0);
+            gpio_set_level(MOTOR_1_IN2_PIN, 0);
             vTaskDelay(pdMS_TO_TICKS(200)); // Short Delay to Stop.
 
             // Reset Duty Cycle and Toggle Direction.
