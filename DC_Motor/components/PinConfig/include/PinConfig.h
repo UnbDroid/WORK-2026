@@ -1,6 +1,7 @@
-#ifndef __PIN_CONFIG_H__
-#define __PIN_CONFIG_H__
+#ifndef PIN_CONFIG_H
+#define PIN_CONFIG_H
 
+#include <stdint.h>
 #include "driver/ledc.h" // For PWM Control.
 #include "driver/gpio.h" // For GPIO Control.
 
@@ -40,8 +41,17 @@
 #define READING_INTERVAL 100 // Measured in Milliseconds.
 
 // Bit Mask (64-bit) para Configuração dos Pinos GPIO dos Encoders.
-#define GENERAL_ENCA (1ULL << MOTOR_1_ENCA_PIN) | (1ULL << MOTOR_3_ENCA_PIN) | (1ULL << MOTOR_2_ENCA_PIN) | (1ULL << MOTOR_4_ENCA_PIN)
-#define GENERAL_ENCB (1ULL << MOTOR_1_ENCB_PIN) | (1ULL << MOTOR_3_ENCB_PIN) | (1ULL << MOTOR_2_ENCB_PIN) | (1ULL << MOTOR_4_ENCB_PIN)
+#define GENERAL_ENCA ( \
+    (1ULL << MOTOR_1_ENCA_PIN) | \
+    (1ULL << MOTOR_3_ENCA_PIN) | \
+    (1ULL << MOTOR_2_ENCA_PIN) | \
+    (1ULL << MOTOR_4_ENCA_PIN) )
+
+#define GENERAL_ENCB ( \
+    (1ULL << MOTOR_1_ENCB_PIN) | \
+    (1ULL << MOTOR_3_ENCB_PIN) | \
+    (1ULL << MOTOR_2_ENCB_PIN) | \
+    (1ULL << MOTOR_4_ENCB_PIN) )
 
 // Configuração do PWM (LEDC):
 #define MOTOR_PWM_FREQ  5000 // Frequency in Hertz for PWM.
@@ -55,16 +65,28 @@
 #define MAX_DUTY_CYCLE   1023 // Maximum Duty Cycle for 10-bit Resolution.
 
 // Bit Mask (64-bit) para Configuração dos Pinos GPIO dos Drivers.
-#define GENERAL_MOTOR_1 (1ULL << MOTOR_1_IN1_PIN) | (1ULL << MOTOR_1_IN2_PIN) | (1ULL << MOTOR_1_ENABLE_PIN)
-#define GENERAL_MOTOR_3 (1ULL << MOTOR_3_IN1_PIN) | (1ULL << MOTOR_3_IN2_PIN) | (1ULL << MOTOR_3_ENABLE_PIN)
-#define GENERAL_MOTOR_2 (1ULL << MOTOR_2_IN1_PIN) | (1ULL << MOTOR_2_IN2_PIN) | (1ULL << MOTOR_2_ENABLE_PIN)
-#define GENERAL_MOTOR_4 (1ULL << MOTOR_4_IN1_PIN) | (1ULL << MOTOR_4_IN2_PIN) | (1ULL << MOTOR_4_ENABLE_PIN)
+#define GENERAL_MOTOR_1 ( \
+    (1ULL << MOTOR_1_IN1_PIN) | \
+    (1ULL << MOTOR_1_IN2_PIN) )
+
+#define GENERAL_MOTOR_3 ( \
+    (1ULL << MOTOR_3_IN1_PIN) | \
+    (1ULL << MOTOR_3_IN2_PIN) )
+
+#define GENERAL_MOTOR_2 ( \
+    (1ULL << MOTOR_2_IN1_PIN) | \
+    (1ULL << MOTOR_2_IN2_PIN) )
+
+#define GENERAL_MOTOR_4 ( \
+    (1ULL << MOTOR_4_IN1_PIN) | \
+    (1ULL << MOTOR_4_IN2_PIN) )
 
 // Declaração das Funções de Configuração dos Pinos GPIO:
-void configure_pwm(gpio_num_t gpio_num, ledc_channel_t channel);
-void configure_pins_input_enca(unsigned long long bit_mask);
-void configure_pins_input_encb(unsigned long long bit_mask);
-void configure_pins_output_driver(unsigned long long bit_mask);
+void configure_pwm_timer(void);
+void configure_pwm_channel(gpio_num_t gpio_num, ledc_channel_t channel);
+void configure_pins_input_enca(uint64_t bit_mask);
+void configure_pins_input_encb(uint64_t bit_mask);
+void configure_pins_output_driver(uint64_t bit_mask);
 void configure_pins();
 
 #endif

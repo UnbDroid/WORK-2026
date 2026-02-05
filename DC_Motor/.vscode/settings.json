@@ -16,5 +16,6 @@
     "--query-driver=**",
     "--compile-commands-dir=/home/daniel/WORK-2026/DC_Motor/build"
   ],
-  "idf.flashType": "UART"
+  "idf.flashType": "UART",
+  "idf.currentSetup": "/home/daniel/.espressif/v5.5.2/esp-idf"
 }
