@@ -9,7 +9,8 @@ void configure_pwm_timer(void){
         .duty_resolution  = MOTOR_PWM_RES,
         .timer_num        = MOTOR_PWM_TIMER,
         .freq_hz          = MOTOR_PWM_FREQ,
-        .clk_cfg          = LEDC_AUTO_CLK
+        .clk_cfg          = LEDC_AUTO_CLK,
+        .deconfigure      = false
     };
     ESP_ERROR_CHECK(ledc_timer_config(&pwm_timer));
 };
@@ -23,7 +24,9 @@ void configure_pwm_channel(gpio_num_t gpio_num, ledc_channel_t channel) {
         .intr_type      = LEDC_INTR_DISABLE,
         .timer_sel      = MOTOR_PWM_TIMER,
         .duty           = 0,
-        .hpoint         = 0
+        .hpoint         = 0,
+        .sleep_mode     = LEDC_SLEEP_MODE_NO_ALIVE_ALLOW_PD,
+        .flags          = {.output_invert = false}
     };
     ESP_ERROR_CHECK(ledc_channel_config(&pwm_channel));
 }

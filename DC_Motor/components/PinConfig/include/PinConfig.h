@@ -6,16 +6,16 @@
 #include "driver/gpio.h" // For GPIO Control.
 
 // Microcontrolador: ESP32_DevKitC_V4.
-// Pinos GPIO que Devem Ser Evitados em Geral: 6 a 11 (FLASH) / 1 e 3 (TX|RX).
-// Utilizar com Atenção: 0, 2, 12 e 15.
+// Pinos GPIO que Devem Ser Evitados em Geral: 6, 7, 8, 9, 10 e 11 (FLASH).
+// Utilizar com Atenção: 0, 2, 5, 12 e 15 (BOOT, PULL-UP/DOWN e SPI) | 1 e 3 (TX/RX).
 // Funcionam Somente com Leitura de Dados (INPUT): 34, 35, 36 e 39.
 
 // LADO DIREITO - (Motores 1 e 3).
 #define MOTOR_1_IN1_PIN GPIO_NUM_26     // IN1 Pin Connected to Motor Driver.
 #define MOTOR_1_IN2_PIN GPIO_NUM_27     // IN2 Pin Connected to Motor Driver.
 #define MOTOR_1_ENABLE_PIN GPIO_NUM_14  // Enable Pin for PWM Control.
-#define MOTOR_1_ENCA_PIN GPIO_NUM_17    // Encoder A (Yellow Wire).
-#define MOTOR_1_ENCB_PIN GPIO_NUM_16    // Encoder B Pin (White Wire).
+#define MOTOR_1_ENCA_PIN GPIO_NUM_16    // Encoder A (Yellow Wire).
+#define MOTOR_1_ENCB_PIN GPIO_NUM_17    // Encoder B Pin (White Wire).
 
 #define MOTOR_3_IN1_PIN GPIO_NUM_32     // IN1 Pin Connected to Motor Driver.
 #define MOTOR_3_IN2_PIN GPIO_NUM_33     // IN2 Pin Connected to Motor Driver.
