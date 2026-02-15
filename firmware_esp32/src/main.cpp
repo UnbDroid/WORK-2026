@@ -1,74 +1,67 @@
-#include <Arduino.h>
-#include <micro_ros_platformio.h>
+#include "includes.h"
 
-#include <rcl/rcl.h>
-#include <rclc/rclc.h>
-#include <rclc/executor.h>
+MotorDC motor1(M1_IN1, M1_IN2, M1_PWM, M1_CANAL_PWM, M1_ENC_A, M1_ENC_B, M1_KP, M1_KI);
+MotorDC motor2(M2_IN1, M2_IN2, M2_PWM, M2_CANAL_PWM, M2_ENC_A, M2_ENC_B, M2_KP, M2_KI);
+MotorDC motor3(M3_IN1, M3_IN2, M3_PWM, M3_CANAL_PWM, M3_ENC_A, M3_ENC_B, M3_KP, M3_KI);
+MotorDC motor4(M4_IN1, M4_IN2, M4_PWM, M4_CANAL_PWM, M4_ENC_A, M4_ENC_B, M4_KP, M4_KI);
 
-#include <std_msgs/msg/int32.h>
+void IRAM_ATTR isr_m1() { motor1.lerEncoder(); }
+void IRAM_ATTR isr_m2() { motor2.lerEncoder(); }
+void IRAM_ATTR isr_m3() { motor3.lerEncoder(); }
+void IRAM_ATTR isr_m4() { motor4.lerEncoder(); }
 
-#define LED_PIN 2           
-#define RCCHECK(fn) { rcl_ret_t temp_rc = fn; if((temp_rc != RCL_RET_OK)){error_loop();}}
-#define RCSOFTCHECK(fn) { rcl_ret_t temp_rc = fn; if((temp_rc != RCL_RET_OK)){}}
-
-rcl_publisher_t publisher;
-std_msgs__msg__Int32 msg;
-rclc_executor_t executor;
-rclc_support_t support;
-rcl_allocator_t allocator;
-rcl_node_t node;
-rcl_timer_t timer;
-
-void error_loop(){
-  while(1){
-    digitalWrite(LED_PIN, !digitalRead(LED_PIN));
-    delay(100);
-  }
-}
-
-void timer_callback(rcl_timer_t * timer, int64_t last_call_time)
-{
-  RCLC_UNUSED(last_call_time);
-  if (timer != NULL) {
-    RCSOFTCHECK(rcl_publish(&publisher, &msg, NULL));
-    msg.data++;
-  }
-}
+int pwm_teste = 0;          
+unsigned long tempo_anterior_passo = 0;
+const int PASSO_TEMPO = 1500; 
+const int PASSO_PWM = 5;      
+const int PWM_MAXIMO_TESTE = 120; 
 
 void setup() {
   Serial.begin(115200);
-  set_microros_serial_transports(Serial);
 
-  pinMode(LED_PIN, OUTPUT);
-  digitalWrite(LED_PIN, HIGH);
+  motor1.init();
+  motor2.init();
+  motor3.init();
+  motor4.init();
+
+  attachInterrupt(digitalPinToInterrupt(M1_ENC_A), isr_m1, RISING);
+  attachInterrupt(digitalPinToInterrupt(M2_ENC_A), isr_m2, RISING);
+  attachInterrupt(digitalPinToInterrupt(M3_ENC_A), isr_m3, RISING);
+  attachInterrupt(digitalPinToInterrupt(M4_ENC_A), isr_m4, RISING);
+
+  Serial.println("=== INICIANDO TESTE DE ZONA MORTA ===");
+  Serial.println("O PWM vai aumentar gradualmente. Observe quando o RPM sair do zero.");
   delay(2000);
-
-  allocator = rcl_get_default_allocator();
-
-  RCCHECK(rclc_support_init(&support, 0, NULL, &allocator));
-
-  RCCHECK(rclc_node_init_default(&node, "esp32_node", "", &support));
-
-  RCCHECK(rclc_publisher_init_default(
-    &publisher,
-    &node,
-    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Int32),
-    "micro_ros_counter"));
-
-  const unsigned int timer_timeout = 1000;
-  RCCHECK(rclc_timer_init_default(
-    &timer,
-    &support,
-    RCL_MS_TO_NS(timer_timeout),
-    timer_callback));
-
-  RCCHECK(rclc_executor_init(&executor, &support.context, 1, &allocator));
-  RCCHECK(rclc_executor_add_timer(&executor, &timer));
-
-  msg.data = 0;
 }
 
 void loop() {
-  delay(100);
-  RCCHECK(rclc_executor_spin_some(&executor, RCL_MS_TO_NS(100)));
+  unsigned long tempo_atual = millis();
+
+  if (tempo_atual - tempo_anterior_passo >= PASSO_TEMPO) {
+    tempo_anterior_passo = tempo_atual;
+
+    motor1.mover_pwm(pwm_teste);
+    motor2.mover_pwm(pwm_teste);
+    motor3.mover_pwm(pwm_teste);
+    motor4.mover_pwm(pwm_teste);
+
+    printf("\n--- TESTANDO PWM: %d ---\n", pwm_teste);
+
+    printf("M1: %.2f RPM %s\n", motor1.getRPMAtual(), (motor1.getRPMAtual() > 1.0) ? "[MOVENDO!]" : ".");
+    printf("M2: %.2f RPM %s\n", motor2.getRPMAtual(), (motor2.getRPMAtual() > 1.0) ? "[MOVENDO!]" : ".");
+    printf("M3: %.2f RPM %s\n", motor3.getRPMAtual(), (motor3.getRPMAtual() > 1.0) ? "[MOVENDO!]" : ".");
+    printf("M4: %.2f RPM %s\n", motor4.getRPMAtual(), (motor4.getRPMAtual() > 1.0) ? "[MOVENDO!]" : ".");
+
+    pwm_teste += PASSO_PWM;
+
+    if (pwm_teste > PWM_MAXIMO_TESTE) {
+      motor1.mover_pwm(0);
+      motor2.mover_pwm(0);
+      motor3.mover_pwm(0);
+      motor4.mover_pwm(0);
+      Serial.println("\n--- FIM DO CICLO. REINICIANDO EM 5 SEGUNDOS ---");
+      pwm_teste = 0;
+      delay(5000); 
+    }
+  }
 }
