@@ -22,7 +22,7 @@ void MotorDC::init() {
     pinMode(this->in1, OUTPUT);
     pinMode(this->in2, OUTPUT);
     
-    ledcSetup(this->canal_pwm, FREQUENCIA_PWM, RESOLUCAO_PWM); 
+    ledcSetup(this->canal_pwm, PWM_FREQUENCY, PWM_RESOLUTION); 
     ledcAttachPin(this->pwm, this->canal_pwm);
 
     pinMode(this->enc_a, INPUT_PULLUP);
@@ -95,7 +95,7 @@ float MotorDC::calcularRPM() {
 
     long delta_ticks = ticks_atual - this->ticks_anterior;
 
-    float rpm = ((float)delta_ticks / 1440) * (60000.0 / delta_tempo);
+    float rpm = ((float)delta_ticks / TICKS_PER_REVOLUTION) * (60000.0f / delta_tempo);
     this->rpm_atual = rpm;
 
     this->ticks_anterior = ticks_atual;

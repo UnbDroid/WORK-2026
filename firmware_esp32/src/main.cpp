@@ -13,6 +13,49 @@ void IRAM_ATTR isr_m2() { motor2.lerEncoder(); }
 void IRAM_ATTR isr_m3() { motor3.lerEncoder(); }
 void IRAM_ATTR isr_m4() { motor4.lerEncoder(); }
 
+void moveRobot (float Vx, float Vy, float Omega) {
+  unsigned long tempo_anterior = 0;
+  unsigned long tempo_atual = millis();
+
+  // Conversão de rad/s para m/s:
+  float Vx_meters = Vx * WHEEL_RADIUS;
+  float Vy_meters = Vy * WHEEL_RADIUS;
+
+  // Cálculo da Cinemática Inversa:
+  float V_M1 = Vx_meters - Vy_meters - (DISTANCE_BETWEEN_WHEELS_Y * Omega) + (DISTANCE_BETWEEN_WHEELS_X * Omega);
+  float V_M2 = Vx_meters + Vy_meters + (DISTANCE_BETWEEN_WHEELS_Y * Omega) - (DISTANCE_BETWEEN_WHEELS_X * Omega);
+  float V_M3 = Vx_meters - Vy_meters + (DISTANCE_BETWEEN_WHEELS_Y * Omega) - (DISTANCE_BETWEEN_WHEELS_X * Omega);
+  float V_M4 = Vx_meters + Vy_meters - (DISTANCE_BETWEEN_WHEELS_Y * Omega) + (DISTANCE_BETWEEN_WHEELS_X * Omega);
+
+  // if (tempo_atual - tempo_anterior >= 500) {
+  // Serial.printf("\nV_M1: %.2f", V_M1);
+  // Serial.printf("\nV_M2: %.2f", V_M2);
+  // Serial.printf("\nV_M3: %.2f", V_M3);
+  // Serial.printf("\nV_M4: %.2f", V_M4);
+  // tempo_anterior = tempo_atual;
+  // }
+
+  // Conversão de m/s para RPM:
+  float V_M1_RPM = (V_M1 * 60) / (3.1415 * 2 * WHEEL_RADIUS);
+  float V_M2_RPM = (V_M2 * 60) / (3.1415 * 2 * WHEEL_RADIUS);
+  float V_M3_RPM = (V_M3 * 60) / (3.1415 * 2 * WHEEL_RADIUS);
+  float V_M4_RPM = (V_M4 * 60) / (3.1415 * 2 * WHEEL_RADIUS);
+
+  // if (tempo_atual - tempo_anterior >= 500) {
+  // Serial.printf("\nV_M1: %.2f", V_M1_RPM);
+  // Serial.printf("\nV_M2: %.2f", V_M2_RPM);
+  // Serial.printf("\nV_M3: %.2f", V_M3_RPM);
+  // Serial.printf("\nV_M4: %.2f", V_M4_RPM);
+  // tempo_anterior = tempo_atual;
+  // }
+
+  // Chamada de Função Mover:
+  motor1.mover_rpm(V_M1_RPM);
+  motor2.mover_rpm(V_M2_RPM);
+  motor3.mover_rpm(V_M3_RPM);
+  motor4.mover_rpm(V_M4_RPM);
+}
+
 unsigned long tempo_anterior_print = 0;
 unsigned long tempo_decorrido = 0;
 unsigned long tempo_inicio = 0;
@@ -38,30 +81,29 @@ void loop() {
   tempo_decorrido = tempo_atual - tempo_inicio;
 
 if (tempo_decorrido < 10000) { 
-    motor1.mover_rpm(50);
-    motor2.mover_rpm(50);
-    motor3.mover_rpm(50);
-    motor4.mover_rpm(50);
+    moveRobot(0.0f, -7.5f, 0.0f);
+    // motor1.mover_rpm(50);
+    // motor2.mover_rpm(50);
+    // motor3.mover_rpm(50);
+    // motor4.mover_rpm(50);
     
   } else if (tempo_decorrido < 20000) { 
-    motor1.mover_rpm(-50);
-    motor2.mover_rpm(-50);
-    motor3.mover_rpm(-50);
-    motor4.mover_rpm(-50);
+    moveRobot(0.0f, -7.5f, 0.0f);
+    // motor1.mover_rpm(-50);
+    // motor2.mover_rpm(-50);
+    // motor3.mover_rpm(-50);
+    // motor4.mover_rpm(-50);
 
   } else {
-    motor1.mover_rpm(0);
-    motor2.mover_rpm(0);
-    motor3.mover_rpm(0);
-    motor4.mover_rpm(0);
+    moveRobot(0, 0, 0);
 
   }
   
   if(tempo_atual - tempo_anterior_print >= 500) {
-    Serial.printf("Motor 1 | RPM: %d | Erro: %.2f | PWM: %.2f\n", motor1.getTicks(), motor1.getErroAtual(), motor1.getPWMAtual());
-    Serial.printf("Motor 2 | RPM: %d | Erro: %.2f | PWM: %.2f\n", motor2.getTicks(), motor2.getErroAtual(), motor2.getPWMAtual());
-    Serial.printf("Motor 3 | RPM: %d | Erro: %.2f | PWM: %.2f\n", motor3.getTicks(), motor3.getErroAtual(), motor3.getPWMAtual());
-    Serial.printf("Motor 4 | RPM: %d | Erro: %.2f | PWM: %.2f\n", motor4.getTicks(), motor4.getErroAtual(), motor4.getPWMAtual());
+    Serial.printf("Motor 1 | RPM: %.2f | Erro: %.2f | PWM: %.2f\n", motor1.getRPMAtual(), motor1.getErroAtual(), motor1.getPWMAtual());
+    Serial.printf("Motor 2 | RPM: %.2f | Erro: %.2f | PWM: %.2f\n", motor2.getRPMAtual(), motor2.getErroAtual(), motor2.getPWMAtual());
+    Serial.printf("Motor 3 | RPM: %.2f | Erro: %.2f | PWM: %.2f\n", motor3.getRPMAtual(), motor3.getErroAtual(), motor3.getPWMAtual());
+    Serial.printf("Motor 4 | RPM: %.2f | Erro: %.2f | PWM: %.2f\n", motor4.getRPMAtual(), motor4.getErroAtual(), motor4.getPWMAtual());
     tempo_anterior_print = tempo_atual;
   }
 }
