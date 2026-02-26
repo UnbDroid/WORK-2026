@@ -1,4 +1,7 @@
-#include "includes.h"
+#include <Arduino.h>
+#include "Config.h"
+#include "MotorDC.h"
+#include "driver/ledc.h"
 
 MotorDC motor1(M1_IN1, M1_IN2, M1_PWM, M1_CANAL_PWM, M1_ENC_A, M1_ENC_B, M1_KP, M1_KI);
 MotorDC motor2(M2_IN1, M2_IN2, M2_PWM, M2_CANAL_PWM, M2_ENC_A, M2_ENC_B, M2_KP, M2_KI);
@@ -10,11 +13,9 @@ void IRAM_ATTR isr_m2() { motor2.lerEncoder(); }
 void IRAM_ATTR isr_m3() { motor3.lerEncoder(); }
 void IRAM_ATTR isr_m4() { motor4.lerEncoder(); }
 
-int pwm_teste = 0;          
-unsigned long tempo_anterior_passo = 0;
-const int PASSO_TEMPO = 1500; 
-const int PASSO_PWM = 5;      
-const int PWM_MAXIMO_TESTE = 120; 
+unsigned long tempo_anterior_print = 0;
+unsigned long tempo_decorrido = 0;
+unsigned long tempo_inicio = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -29,39 +30,38 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(M3_ENC_A), isr_m3, RISING);
   attachInterrupt(digitalPinToInterrupt(M4_ENC_A), isr_m4, RISING);
 
-  Serial.println("=== INICIANDO TESTE DE ZONA MORTA ===");
-  Serial.println("O PWM vai aumentar gradualmente. Observe quando o RPM sair do zero.");
-  delay(2000);
+  tempo_inicio = millis();
 }
 
 void loop() {
   unsigned long tempo_atual = millis();
+  tempo_decorrido = tempo_atual - tempo_inicio;
 
-  if (tempo_atual - tempo_anterior_passo >= PASSO_TEMPO) {
-    tempo_anterior_passo = tempo_atual;
+if (tempo_decorrido < 10000) { 
+    motor1.mover_rpm(50);
+    motor2.mover_rpm(50);
+    motor3.mover_rpm(50);
+    motor4.mover_rpm(50);
+    
+  } else if (tempo_decorrido < 20000) { 
+    motor1.mover_rpm(-50);
+    motor2.mover_rpm(-50);
+    motor3.mover_rpm(-50);
+    motor4.mover_rpm(-50);
 
-    motor1.mover_pwm(pwm_teste);
-    motor2.mover_pwm(pwm_teste);
-    motor3.mover_pwm(pwm_teste);
-    motor4.mover_pwm(pwm_teste);
+  } else {
+    motor1.mover_rpm(0);
+    motor2.mover_rpm(0);
+    motor3.mover_rpm(0);
+    motor4.mover_rpm(0);
 
-    printf("\n--- TESTANDO PWM: %d ---\n", pwm_teste);
-
-    printf("M1: %.2f RPM %s\n", motor1.getRPMAtual(), (motor1.getRPMAtual() > 1.0) ? "[MOVENDO!]" : ".");
-    printf("M2: %.2f RPM %s\n", motor2.getRPMAtual(), (motor2.getRPMAtual() > 1.0) ? "[MOVENDO!]" : ".");
-    printf("M3: %.2f RPM %s\n", motor3.getRPMAtual(), (motor3.getRPMAtual() > 1.0) ? "[MOVENDO!]" : ".");
-    printf("M4: %.2f RPM %s\n", motor4.getRPMAtual(), (motor4.getRPMAtual() > 1.0) ? "[MOVENDO!]" : ".");
-
-    pwm_teste += PASSO_PWM;
-
-    if (pwm_teste > PWM_MAXIMO_TESTE) {
-      motor1.mover_pwm(0);
-      motor2.mover_pwm(0);
-      motor3.mover_pwm(0);
-      motor4.mover_pwm(0);
-      Serial.println("\n--- FIM DO CICLO. REINICIANDO EM 5 SEGUNDOS ---");
-      pwm_teste = 0;
-      delay(5000); 
-    }
+  }
+  
+  if(tempo_atual - tempo_anterior_print >= 500) {
+    Serial.printf("Motor 1 | RPM: %d | Erro: %.2f | PWM: %.2f\n", motor1.getTicks(), motor1.getErroAtual(), motor1.getPWMAtual());
+    Serial.printf("Motor 2 | RPM: %d | Erro: %.2f | PWM: %.2f\n", motor2.getTicks(), motor2.getErroAtual(), motor2.getPWMAtual());
+    Serial.printf("Motor 3 | RPM: %d | Erro: %.2f | PWM: %.2f\n", motor3.getTicks(), motor3.getErroAtual(), motor3.getPWMAtual());
+    Serial.printf("Motor 4 | RPM: %d | Erro: %.2f | PWM: %.2f\n", motor4.getTicks(), motor4.getErroAtual(), motor4.getPWMAtual());
+    tempo_anterior_print = tempo_atual;
   }
 }
