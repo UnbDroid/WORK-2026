@@ -14,16 +14,16 @@ void IRAM_ATTR isr_m3() { motor3.lerEncoder(); }
 void IRAM_ATTR isr_m4() { motor4.lerEncoder(); }
 
 void moveRobot (float Vx, float Vy, float Omega) {
-  unsigned long tempo_anterior = 0;
-  unsigned long tempo_atual = millis();
+  // unsigned long tempo_anterior = 0;
+  // unsigned long tempo_atual = millis();
 
   // Conversão de rad/s para m/s:
   float Vx_meters = Vx * WHEEL_RADIUS;
   float Vy_meters = Vy * WHEEL_RADIUS;
 
   // Cálculo da Cinemática Inversa:
-  float V_M1 = Vx_meters - Vy_meters - (DISTANCE_BETWEEN_WHEELS_Y * Omega) + (DISTANCE_BETWEEN_WHEELS_X * Omega);
-  float V_M2 = Vx_meters + Vy_meters + (DISTANCE_BETWEEN_WHEELS_Y * Omega) - (DISTANCE_BETWEEN_WHEELS_X * Omega);
+  float V_M1 = Vx_meters + Vy_meters - (DISTANCE_BETWEEN_WHEELS_Y * Omega) + (DISTANCE_BETWEEN_WHEELS_X * Omega);
+  float V_M2 = Vx_meters - Vy_meters + (DISTANCE_BETWEEN_WHEELS_Y * Omega) - (DISTANCE_BETWEEN_WHEELS_X * Omega);
   float V_M3 = Vx_meters - Vy_meters + (DISTANCE_BETWEEN_WHEELS_Y * Omega) - (DISTANCE_BETWEEN_WHEELS_X * Omega);
   float V_M4 = Vx_meters + Vy_meters - (DISTANCE_BETWEEN_WHEELS_Y * Omega) + (DISTANCE_BETWEEN_WHEELS_X * Omega);
 
@@ -81,14 +81,14 @@ void loop() {
   tempo_decorrido = tempo_atual - tempo_inicio;
 
 if (tempo_decorrido < 10000) { 
-    moveRobot(0.0f, -7.5f, 0.0f);
-    // motor1.mover_rpm(50);
-    // motor2.mover_rpm(50);
-    // motor3.mover_rpm(50);
-    // motor4.mover_rpm(50);
+    moveRobot(0.0f, 5.0f, 0.0f);
+    //  motor1.mover_rpm(50);
+    //  motor2.mover_rpm(50);
+    //  motor3.mover_rpm(50);
+    //  motor4.mover_rpm(50);
     
   } else if (tempo_decorrido < 20000) { 
-    moveRobot(0.0f, -7.5f, 0.0f);
+    moveRobot(0.0f, -5.0f, 0.0f);
     // motor1.mover_rpm(-50);
     // motor2.mover_rpm(-50);
     // motor3.mover_rpm(-50);

@@ -18,11 +18,12 @@ class MotorDC {
         unsigned long tempo_anterior_rpm;
         unsigned long tempo_anterior_pi;
         bool direction; // (false = Straight) | (true = Backwards). 
-        float rpm_atual;
-        float rpm_alvo;
         float pwm_atual;
-        float erro_atual;
-        float erro_acumulado;
+        float rpm_alvo;
+        float rpm_anterior;
+        volatile double rpm_atual;
+        volatile double erro_acumulado;
+        double erro_atual;
         const float Kp;
         const float Ki;
     public:
@@ -32,7 +33,7 @@ class MotorDC {
         void mover_rpm(float rpm);
         void mover_pwm(uint32_t pwm, bool direction);
         float calcularRPM();
-        float updatePID(float rpm_alvo);
+        double updatePID(float rpm_alvo);
 
         long getTicks() { return this->ticks_contador; }
         long getTicksAnterior() { return this->ticks_anterior; }

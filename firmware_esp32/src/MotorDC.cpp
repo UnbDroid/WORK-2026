@@ -11,11 +11,12 @@ MotorDC::MotorDC(uint8_t in1, uint8_t in2, uint8_t pwm, uint8_t canal_pwm, uint8
     this->tempo_anterior_rpm = 0;
     this->tempo_anterior_pi = 0;
     this->direction = false;
-    this->rpm_atual = 0.0f;
+    this->rpm_atual = 0.0;
+    this->rpm_anterior = 0.0f;
     this->rpm_alvo = 0.0f;
     this->pwm_atual = 0.0f;
-    this->erro_atual = 0.0f;
-    this->erro_acumulado = 0;
+    this->erro_atual = 0.0;
+    this->erro_acumulado = 0.0;
 }
 
 void MotorDC::init() {
@@ -41,7 +42,7 @@ void MotorDC::lerEncoder() {
 
 void MotorDC::mover_rpm(float rpm) {
     this->rpm_alvo = rpm;
-    int pwm_controlado = (int) roundf(this->updatePID(this->rpm_alvo));
+    int pwm_controlado = (int) round(this->updatePID(this->rpm_alvo));
 
     // Tratamento de Direção.
     this->direction = (rpm_alvo < 0);
@@ -104,17 +105,16 @@ float MotorDC::calcularRPM() {
     return this->rpm_atual;
 }
 
-float MotorDC::updatePID(float rpm_alvo) {
+double MotorDC::updatePID(float rpm_alvo) {
     const float MAX_PWM_FLOAT = 255.0f;
     const float MIN_PWM_FLOAT = -255.0f;
-    const float DEADZONE = 80.0f;
+    const double MAX_RPM = 100.0;
+    const float DEADZONE = 115.0f;
     const float ZERO_BAND = 1.0f;
 
     // Verificação de Mudança de Direção (Reseta o Erro Acumulado Linearmente).
-    static float rpm_anterior = 0.0f; // Inicialização Somente na Primeira Iteraçação.
-    if (rpm_alvo * rpm_anterior < 0) { this->erro_acumulado *= 0.2f; }
-
-    rpm_anterior = rpm_alvo;
+    if (rpm_alvo * this->rpm_anterior < 0) { this->erro_acumulado *= 0.2; }
+    this->rpm_anterior = rpm_alvo;
     
     this->rpm_alvo = rpm_alvo;
     this->erro_atual = this->rpm_alvo - this->calcularRPM();
@@ -122,47 +122,46 @@ float MotorDC::updatePID(float rpm_alvo) {
     // Reseta o Acúmulo de Erro e Envia (PWM = 0) Caso Robô Esteja em Zona de Parada.
     if (fabs(rpm_alvo) < ZERO_BAND)
     {
-        this->erro_acumulado *= 0.2f;
+        this->erro_acumulado *= 0.2;
         this->pwm_atual = 0.0f;
-        return 0.0f;
+        return 0.0;
     }
 
-    float pwm_proporcional = this->Kp * this->erro_atual;
+    // Feedforward - Determinação do PWM Aproximado para Atingir o Alvo.
+    double initial_pwm = ((MAX_PWM_FLOAT - DEADZONE) / MAX_RPM) * rpm_alvo;
+
+    // Tratamento de Zona Morta de PWM dos Motores.
+    if (fabs(rpm_alvo) > ZERO_BAND) {
+        initial_pwm += (rpm_alvo > 0 ? DEADZONE : -DEADZONE);
+    } else {
+        initial_pwm = 0;
+    }
+
+    double pwm_proporcional = this->Kp * this->erro_atual;
 
     unsigned long tempo_atual = millis();
-    float dt = (tempo_atual - this->tempo_anterior_pi) * 0.001f;
+    double dt = (tempo_atual - this->tempo_anterior_pi) * 0.001;
     this->tempo_anterior_pi = tempo_atual;
 
-    if (dt < 0.001f) dt = 0.001f;
+    if (dt < 0.001) dt = 0.001;
 
-    float integral = this->erro_acumulado + erro_atual * dt;
-    float pwm_integral = this->Ki * integral;
+    double integral = this->erro_acumulado + erro_atual * dt;
+    double pwm_integral = this->Ki * integral;
 
-    float pwm_controlado = pwm_proporcional + pwm_integral;
+    double pwm_controlado = pwm_proporcional + pwm_integral;
+
+    double final_pwm = initial_pwm + pwm_controlado;
 
     // Tratamento de Anti-Windup e Saturação (Acúmulo de Erro Somente em Banda de Operação).
-    if (pwm_controlado > MAX_PWM_FLOAT) {
-        pwm_controlado = MAX_PWM_FLOAT;
-    } else if (pwm_controlado < MIN_PWM_FLOAT) {
-        pwm_controlado = MIN_PWM_FLOAT;
+    if (final_pwm > MAX_PWM_FLOAT) {
+        final_pwm = MAX_PWM_FLOAT;
+    } else if (final_pwm < MIN_PWM_FLOAT) {
+        final_pwm = MIN_PWM_FLOAT;
     } else {
         erro_acumulado = integral;
     }
-
-    // Tratamento Linear de Zona Morta de PWM dos Motores.
-    if (fabs(pwm_controlado) > 0.0f) {
-        if (pwm_controlado > 0.0f) {
-            pwm_controlado += DEADZONE;
-        } else {
-            pwm_controlado -= DEADZONE;
-        }
-    }
-
-    // Reavaliação da Saturação dos Motores.
-    if (pwm_controlado > MAX_PWM_FLOAT) pwm_controlado = MAX_PWM_FLOAT;
-    if (pwm_controlado < MIN_PWM_FLOAT) pwm_controlado = MIN_PWM_FLOAT;
     
     // Envio de Módulo do PWM Controlado.
-    this->pwm_atual = fabs(pwm_controlado);
-    return pwm_controlado; 
+    this->pwm_atual = fabs(final_pwm);
+    return final_pwm; 
 }
