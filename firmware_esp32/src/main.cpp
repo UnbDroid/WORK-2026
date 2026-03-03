@@ -40,10 +40,18 @@ void loop() {
   unsigned long tempo_atual = millis();
   tempo_decorrido = tempo_atual - tempo_inicio;
 
-if (tempo_decorrido < 10000) { 
+if (tempo_decorrido < 5000) { 
     RobotWS.moveRobot(0.0, 5.0, 0.0);
-  } else if (tempo_decorrido < 20000) { 
+  } else if (tempo_decorrido < 10000) { 
     RobotWS.moveRobot(0.0, -5.0, 0.0);
+  } else if (tempo_decorrido < 20000) {
+    RobotWS.moveRobot(0.0, 0.0, 5.0);
+  } else if (tempo_decorrido < 30000) {
+    RobotWS.moveRobot(0.0, 0.0, -5.0);
+  } else if (tempo_decorrido < 35000) {
+    RobotWS.moveRobot(5.0, 0.0, 0.0);
+  } else if (tempo_decorrido < 40000) {
+    RobotWS.moveRobot(-5.0, 0.0, 0.0);
   } else {
     RobotWS.moveRobot(0.0, 0.0, 0.0);
   }

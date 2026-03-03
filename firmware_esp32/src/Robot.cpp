@@ -15,8 +15,8 @@ void Robot::moveRobot(double Vx, double Vy, double Omega) {
     float Vy_meters = Vy * WHEEL_RADIUS;
 
     // Cálculo da Cinemática Inversa:
-    float V_M1 = Vx_meters + Vy_meters - (DISTANCE_BETWEEN_WHEELS_Y * Omega) + (DISTANCE_BETWEEN_WHEELS_X * Omega);
-    float V_M2 = Vx_meters - Vy_meters + (DISTANCE_BETWEEN_WHEELS_Y * Omega) - (DISTANCE_BETWEEN_WHEELS_X * Omega);
+    float V_M1 = Vx_meters + Vy_meters + (DISTANCE_BETWEEN_WHEELS_Y * Omega) - (DISTANCE_BETWEEN_WHEELS_X * Omega);
+    float V_M2 = Vx_meters - Vy_meters - (DISTANCE_BETWEEN_WHEELS_Y * Omega) + (DISTANCE_BETWEEN_WHEELS_X * Omega);
     float V_M3 = Vx_meters - Vy_meters + (DISTANCE_BETWEEN_WHEELS_Y * Omega) - (DISTANCE_BETWEEN_WHEELS_X * Omega);
     float V_M4 = Vx_meters + Vy_meters - (DISTANCE_BETWEEN_WHEELS_Y * Omega) + (DISTANCE_BETWEEN_WHEELS_X * Omega);
 

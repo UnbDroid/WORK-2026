@@ -39,7 +39,7 @@
 #define M2_ENC_A        GPIO_NUM_12
 #define M2_ENC_B        GPIO_NUM_14
 #define M2_CANAL_PWM    LEDC_CHANNEL_2
-#define M2_KP           3
+#define M2_KP           2.5
 #define M2_KI           0.75
 
 #define M4_IN1          GPIO_NUM_19
