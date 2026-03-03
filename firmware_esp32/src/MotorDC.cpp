@@ -42,7 +42,7 @@ void MotorDC::lerEncoder() {
 
 void MotorDC::mover_rpm(float rpm) {
     this->rpm_alvo = rpm;
-    int pwm_controlado = (int) round(this->updatePID(this->rpm_alvo));
+    int pwm_controlado = (int) round(this->updatePI(this->rpm_alvo));
 
     // Tratamento de Direção.
     this->direction = (rpm_alvo < 0);
@@ -105,7 +105,7 @@ float MotorDC::calcularRPM() {
     return this->rpm_atual;
 }
 
-double MotorDC::updatePID(float rpm_alvo) {
+double MotorDC::updatePI(float rpm_alvo) {
     const float MAX_PWM_FLOAT = 255.0f;
     const float MIN_PWM_FLOAT = -255.0f;
     const double MAX_RPM = 100.0;
@@ -150,18 +150,23 @@ double MotorDC::updatePID(float rpm_alvo) {
 
     double pwm_controlado = pwm_proporcional + pwm_integral;
 
-    double final_pwm = initial_pwm + pwm_controlado;
-
-    // Tratamento de Anti-Windup e Saturação (Acúmulo de Erro Somente em Banda de Operação).
-    if (final_pwm > MAX_PWM_FLOAT) {
-        final_pwm = MAX_PWM_FLOAT;
-    } else if (final_pwm < MIN_PWM_FLOAT) {
-        final_pwm = MIN_PWM_FLOAT;
+    // Tratamento de Anti-Windup e Saturação do PWM Controlado (Acúmulo de Erro Somente em Banda de Operação).
+    if (pwm_controlado > MAX_PWM_FLOAT) {
+        pwm_controlado = MAX_PWM_FLOAT;
+    } else if (pwm_controlado < MIN_PWM_FLOAT) {
+        pwm_controlado = MIN_PWM_FLOAT;
     } else {
         erro_acumulado = integral;
     }
     
+    // Feedforward + PI
+    double output_pwm = initial_pwm + pwm_controlado;
+
+    // Tratamento de Saturação do PWM Completo. 
+    if (output_pwm > MAX_PWM_FLOAT) output_pwm = MAX_PWM_FLOAT;
+    if (output_pwm < MIN_PWM_FLOAT) output_pwm = MIN_PWM_FLOAT;
+
     // Envio de Módulo do PWM Controlado.
-    this->pwm_atual = fabs(final_pwm);
-    return final_pwm; 
+    this->pwm_atual = fabs(output_pwm);
+    return output_pwm; 
 }

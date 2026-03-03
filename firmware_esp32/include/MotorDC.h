@@ -1,10 +1,6 @@
 #ifndef MOTORDC_H
 #define MOTORDC_H
 
-#include <Arduino.h>
-#include "Config.h"
-#include "driver/ledc.h"
-
 class MotorDC {
     private:
         uint8_t in1;
@@ -33,7 +29,7 @@ class MotorDC {
         void mover_rpm(float rpm);
         void mover_pwm(uint32_t pwm, bool direction);
         float calcularRPM();
-        double updatePID(float rpm_alvo);
+        double updatePI(float rpm_alvo);
 
         long getTicks() { return this->ticks_contador; }
         long getTicksAnterior() { return this->ticks_anterior; }
