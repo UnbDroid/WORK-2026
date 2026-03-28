@@ -6,20 +6,21 @@
 // Utilizar com Atenção: 0, 2, 5, 12 e 15 (BOOT, PULL-UP/DOWN e SPI) | 1 e 3 (TX/RX).
 // Funcionam Somente com Leitura de Dados (INPUT): 34, 35, 36 e 39.
 
-#define TICKS_PER_REVOLUTION    1440
-#define PWM_FREQUENCY           5000
-#define PWM_RESOLUTION          8
-#define MAX_PWM                 255
-#define WHEEL_RADIUS            0.04      // Wheel Radius in Meters
-#define DISTANCE_BETWEEN_WHEELS_Y 0.11315 // Distance Between Wheels and Center of Robot (Y Axes) in Meters.
-#define DISTANCE_BETWEEN_WHEELS_X 0.15200 // Distance Between Wheels and Center of Robot (X Axes) in Meters.
+#define TICKS_PER_REVOLUTION        1440
+#define PWM_FREQUENCY               5000
+#define PWM_RESOLUTION              8
+#define MAX_PWM                     255
+#define PI                          3.1416
+#define WHEEL_RADIUS                0.04      // Wheel Radius in Meters.
+#define DISTANCE_BETWEEN_WHEELS_Y   0.11315   // Distance Between Wheels and Center of Robot (Y Axes) in Meters.
+#define DISTANCE_BETWEEN_WHEELS_X   0.15200   // Distance Between Wheels and Center of Robot (X Axes) in Meters.
 
 
-#define M1_IN1          GPIO_NUM_26      // IN1 Pin Connected to Motor Driver.
-#define M1_IN2          GPIO_NUM_27      // IN2 Pin Connected to Motor Driver.
-#define M1_PWM          GPIO_NUM_13      // Enable Pin for PWM Control.
-#define M1_ENC_A        GPIO_NUM_16      // Encoder A (Yellow Wire).
-#define M1_ENC_B        GPIO_NUM_17      // Encoder B Pin (White Wire).
+#define M1_IN1          GPIO_NUM_26           // IN1 Pin Connected to Motor Driver.
+#define M1_IN2          GPIO_NUM_27           // IN2 Pin Connected to Motor Driver.
+#define M1_PWM          GPIO_NUM_13           // Enable Pin for PWM Control.
+#define M1_ENC_A        GPIO_NUM_16           // Encoder A (Yellow Wire).
+#define M1_ENC_B        GPIO_NUM_17           // Encoder B Pin (White Wire).
 #define M1_CANAL_PWM    LEDC_CHANNEL_0
 #define M1_KP           2
 #define M1_KI           0.75
