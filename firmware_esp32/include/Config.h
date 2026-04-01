@@ -10,7 +10,6 @@
 #define PWM_FREQUENCY               5000
 #define PWM_RESOLUTION              8
 #define MAX_PWM                     255
-#define PI                          3.1416
 #define WHEEL_RADIUS                0.04      // Wheel Radius in Meters.
 #define DISTANCE_BETWEEN_WHEELS_Y   0.11315   // Distance Between Wheels and Center of Robot (Y Axes) in Meters.
 #define DISTANCE_BETWEEN_WHEELS_X   0.15200   // Distance Between Wheels and Center of Robot (X Axes) in Meters.

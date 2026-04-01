@@ -11,6 +11,7 @@
 
 #include <std_msgs/msg/int32.h>
 #include <geometry_msgs/msg/twist.h>
+#include <std_msgs/msg/float32_multi_array.h>
 
 #define RCCHECK(fn) { rcl_ret_t temp_rc = fn; if((temp_rc != RCL_RET_OK)){while(1){}}}
 
@@ -21,8 +22,9 @@ rclc_executor_t executor;
 rclc_support_t support;
 rcl_allocator_t allocator;
 rcl_node_t node;
-rcl_publisher_t debug_publisher;
-std_msgs__msg__Int32 debug_msg;
+
+rcl_publisher_t wheel_pub;
+std_msgs__msg__Float32MultiArray wheel_msg;
 
 MotorDC motor1(M1_IN1, M1_IN2, M1_PWM, M1_CANAL_PWM, M1_ENC_A, M1_ENC_B, M1_KP, M1_KI);
 MotorDC motor2(M2_IN1, M2_IN2, M2_PWM, M2_CANAL_PWM, M2_ENC_A, M2_ENC_B, M2_KP, M2_KI);
@@ -41,7 +43,6 @@ volatile double cmd_vy = 0.0;
 volatile double cmd_wz = 0.0;
 
 volatile unsigned long last_cmd_time = 0;
-volatile bool new_cmd_received = false;
 
 void cmd_vel_callback(const void * msgin) {
     const geometry_msgs__msg__Twist * twist = (const geometry_msgs__msg__Twist *) msgin;
@@ -51,8 +52,6 @@ void cmd_vel_callback(const void * msgin) {
     cmd_wz = twist->angular.z;
 
     last_cmd_time = millis();
-
-    new_cmd_received = true;
 }
 
 void setup() {
@@ -75,10 +74,6 @@ void setup() {
 
     RCCHECK(rclc_support_init(&support, 0, NULL, &allocator));
     RCCHECK(rclc_node_init_default(&node, "esp32_mecanum_node", "", &support));
-    RCCHECK(rclc_publisher_init_default(&debug_publisher, &node, ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Int32), "/debug"));
-    
-    std_msgs__msg__Int32__init(&debug_msg);
-    debug_msg.data = 0;
 
     RCCHECK(rclc_subscription_init_default(
         &subscriber,
@@ -96,17 +91,24 @@ void setup() {
         &cmd_vel_callback,
         ON_NEW_DATA
     ));
+
+    RCCHECK(rclc_publisher_init_default(
+        &wheel_pub,
+        &node,
+        ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Float32MultiArray),
+        "/wheel_speeds"
+    ));
+
+    std_msgs__msg__Float32MultiArray__init(&wheel_msg);
+
+    wheel_msg.data.data = (float*) malloc(4 * sizeof(float));
+    wheel_msg.data.size = 4;
+    wheel_msg.data.capacity = 4;
 }
 
 void loop() {
     // Running Micro-ROS Executor (Non-Blocking).
     rclc_executor_spin_some(&executor, RCL_MS_TO_NS(5));
-
-    if (new_cmd_received) {
-        debug_msg.data++;
-        RCCHECK(rcl_publish(&debug_publisher, &debug_msg, NULL));
-        new_cmd_received = false;
-    }
 
     // Safety Timeout.
     if (millis() - last_cmd_time > 500) {
@@ -116,6 +118,13 @@ void loop() {
     }
 
     RobotWS.moveRobot(cmd_vx, cmd_vy, cmd_wz);
+
+    wheel_msg.data.data[0] = motor1.getRPMAtual();
+    wheel_msg.data.data[1] = motor2.getRPMAtual();
+    wheel_msg.data.data[2] = motor3.getRPMAtual();
+    wheel_msg.data.data[3] = motor4.getRPMAtual();
+
+    RCCHECK(rcl_publish(&wheel_pub, &wheel_msg, NULL));
 
     // Delay to Stabilize Loop Timing.
     delay(10);  // ~100 Hz
