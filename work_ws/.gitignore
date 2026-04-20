@@ -1,0 +1,9 @@
+dev_ws/build/
+dev_ws/install/
+dev_ws/log/
+
+robot_ws/build/
+robot_ws/install/
+robot_ws/log/
+
+robot_ws/src/micro_ros_setup/
