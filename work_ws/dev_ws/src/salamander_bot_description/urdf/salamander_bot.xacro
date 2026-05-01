@@ -1,0 +1,168 @@
+<?xml version="1.0" ?>
+<robot name="salamander_bot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<xacro:include filename="$(find salamander_bot_description)/urdf/materials.xacro" />
+<xacro:include filename="$(find salamander_bot_description)/urdf/salamander_bot.ros2control" />
+<xacro:include filename="$(find salamander_bot_description)/urdf/salamander_bot.gazebo" />
+
+<link name="base_link">
+  <inertial>
+    <origin xyz="-0.031027251343893784 0.006588573186617724 0.08110908537527221" rpy="0 0 0"/>
+    <mass value="4.3632165889636445"/>
+    <inertia ixx="0.042227" iyy="0.075384" izz="0.090994" ixy="0.004338" iyz="-0.000531" ixz="0.008602"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find salamander_bot_description)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find salamander_bot_description)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="wheel_lf_1">
+  <inertial>
+    <origin xyz="6.732011406662686e-09 0.013415334217220576 -2.2496351934075953e-09" rpy="0 0 0"/>
+    <mass value="0.2163222450067834"/>
+    <inertia ixx="8.8e-05" iyy="0.00011" izz="8.8e-05" ixy="0.0" iyz="-0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.11315 -0.142 -0.03865" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find salamander_bot_description)/meshes/wheel_lf_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.11315 -0.142 -0.03865" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find salamander_bot_description)/meshes/wheel_lf_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="wheel_lb_1">
+  <inertial>
+    <origin xyz="3.7014641768307044e-09 0.01344735270580652 -3.504848446189701e-09" rpy="0 0 0"/>
+    <mass value="0.21632224500656735"/>
+    <inertia ixx="8.8e-05" iyy="0.00011" izz="8.8e-05" ixy="-0.0" iyz="-0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.11315 -0.142 -0.03865" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find salamander_bot_description)/meshes/wheel_lb_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.11315 -0.142 -0.03865" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find salamander_bot_description)/meshes/wheel_lb_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="wheel_rf_1">
+  <inertial>
+    <origin xyz="6.7541714166008404e-09 -0.013367918230393266 -2.072007607156756e-09" rpy="0 0 0"/>
+    <mass value="0.21632224116980406"/>
+    <inertia ixx="8.8e-05" iyy="0.00011" izz="8.8e-05" ixy="-0.0" iyz="0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.11315 0.142 -0.03865" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find salamander_bot_description)/meshes/wheel_rf_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.11315 0.142 -0.03865" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find salamander_bot_description)/meshes/wheel_rf_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="wheel_rb_1">
+  <inertial>
+    <origin xyz="3.723448854797695e-09 -0.013447353552784869 -3.327369837990979e-09" rpy="0 0 0"/>
+    <mass value="0.21632224116958718"/>
+    <inertia ixx="8.8e-05" iyy="0.00011" izz="8.8e-05" ixy="0.0" iyz="0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.11315 0.142 -0.03865" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find salamander_bot_description)/meshes/wheel_rb_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.11315 0.142 -0.03865" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find salamander_bot_description)/meshes/wheel_rb_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="rplidar_a1m8_1">
+  <inertial>
+    <origin xyz="0.0008205477062011579 0.0006535114455110541 0.017493457828168968" rpy="0 0 0"/>
+    <mass value="0.036021408390687064"/>
+    <inertia ixx="1.5e-05" iyy="1.2e-05" izz="2.3e-05" ixy="0.0" iyz="-0.0" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.077204 0.064205 -0.2095" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find salamander_bot_description)/meshes/rplidar_a1m8_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.077204 0.064205 -0.2095" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find salamander_bot_description)/meshes/rplidar_a1m8_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<joint name="wheel_lf_joint" type="continuous">
+  <origin xyz="0.11315 0.142 0.03865" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="wheel_lf_1"/>
+  <axis xyz="0.0 1.0 -0.0"/>
+</joint>
+
+<joint name="wheel_lb_joint" type="continuous">
+  <origin xyz="-0.11315 0.142 0.03865" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="wheel_lb_1"/>
+  <axis xyz="-0.0 1.0 -0.0"/>
+</joint>
+
+<joint name="wheel_rf_joint" type="continuous">
+  <origin xyz="0.11315 -0.142 0.03865" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="wheel_rf_1"/>
+  <axis xyz="-0.0 1.0 0.0"/>
+</joint>
+
+<joint name="wheel_rb_joint" type="continuous">
+  <origin xyz="-0.11315 -0.142 0.03865" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="wheel_rb_1"/>
+  <axis xyz="-0.0 1.0 0.0"/>
+</joint>
+
+<joint name="rplidar_a1m8_joint" type="fixed">
+  <origin xyz="-0.077204 -0.064205 0.2095" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="rplidar_a1m8_1"/>
+</joint>
+
+</robot>
