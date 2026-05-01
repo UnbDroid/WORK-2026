@@ -1,17 +1,21 @@
-from launch_ros.actions import Node
+import os
+
+from ament_index_python.packages import get_package_share_directory
+
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 from launch.conditions import IfCondition, UnlessCondition
+from launch.actions import DeclareLaunchArgument
+from launch_ros.actions import Node
+
 import xacro
-import os
-from ament_index_python.packages import get_package_share_directory
 
 
 def generate_launch_description():
-    share_dir = get_package_share_directory('salamander_bot_description')
 
-    xacro_file = os.path.join(share_dir, 'urdf', 'salamander_bot.xacro')
+    share_dir = get_package_share_directory('salamander_bot')
+
+    xacro_file = os.path.join(share_dir, 'description', 'robot.urdf.xacro')
     robot_description_config = xacro.process_file(xacro_file)
     robot_urdf = robot_description_config.toxml()
 

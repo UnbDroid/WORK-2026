@@ -10,16 +10,15 @@ from os.path import join
 def generate_launch_description():
 
     pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
-    pkg_ros_gz_rbot = get_package_share_directory('salamander_bot_description')
+    pkg_ros_gz_rbot = get_package_share_directory('salamander_bot')
 
 
-    robot_description_file = os.path.join(pkg_ros_gz_rbot, 'urdf', 'salamander_bot.xacro')
+    robot_description_file = os.path.join(pkg_ros_gz_rbot, 'description', 'robot.urdf.xacro')
     ros_gz_bridge_config = os.path.join(pkg_ros_gz_rbot, 'config', 'ros_gz_bridge_gazebo.yaml')
     
     robot_description_config = xacro.process_file(robot_description_file)
     robot_description = {'robot_description': robot_description_config.toxml()}
 
-   
     robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -28,7 +27,6 @@ def generate_launch_description():
         parameters=[robot_description],
     )
 
-   
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(join(pkg_ros_gz_sim, "launch", "gz_sim.launch.py")),
         launch_arguments={"gz_args": "-r -v 4 empty.sdf"}.items()
