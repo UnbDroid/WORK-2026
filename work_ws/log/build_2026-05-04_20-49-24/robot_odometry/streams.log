@@ -1,0 +1,19 @@
+[2.213s] Invoking command in '/home/enzo/droid/WORK-2026/work_ws/build/robot_odometry': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/enzo/droid/WORK-2026/work_ws/build/robot_odometry/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/enzo/droid/WORK-2026/work_ws/build/robot_odometry/build --no-deps symlink_data --force
+[3.048s] running develop
+[3.551s] running egg_info
+[3.587s] writing robot_odometry.egg-info/PKG-INFO
+[3.590s] writing dependency_links to robot_odometry.egg-info/dependency_links.txt
+[3.590s] writing entry points to robot_odometry.egg-info/entry_points.txt
+[3.590s] writing requirements to robot_odometry.egg-info/requires.txt
+[3.590s] writing top-level names to robot_odometry.egg-info/top_level.txt
+[3.689s] reading manifest file 'robot_odometry.egg-info/SOURCES.txt'
+[3.690s] writing manifest file 'robot_odometry.egg-info/SOURCES.txt'
+[3.723s] running build_ext
+[3.723s] Creating /home/enzo/droid/WORK-2026/work_ws/install/robot_odometry/lib/python3.12/site-packages/robot-odometry.egg-link (link to .)
+[3.725s] Installing odom_node script to /home/enzo/droid/WORK-2026/work_ws/install/robot_odometry/lib/robot_odometry
+[3.726s] 
+[3.726s] Installed /home/enzo/droid/WORK-2026/work_ws/build/robot_odometry
+[3.726s] running symlink_data
+[3.727s] symbolically linking /home/enzo/droid/WORK-2026/work_ws/build/robot_odometry/resource/robot_odometry -> /home/enzo/droid/WORK-2026/work_ws/install/robot_odometry/share/ament_index/resource_index/packages
+[3.727s] symbolically linking /home/enzo/droid/WORK-2026/work_ws/build/robot_odometry/package.xml -> /home/enzo/droid/WORK-2026/work_ws/install/robot_odometry/share/robot_odometry
+[3.832s] Invoked command in '/home/enzo/droid/WORK-2026/work_ws/build/robot_odometry' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/enzo/droid/WORK-2026/work_ws/build/robot_odometry/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/enzo/droid/WORK-2026/work_ws/build/robot_odometry/build --no-deps symlink_data --force

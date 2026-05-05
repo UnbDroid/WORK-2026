@@ -1,0 +1,1 @@
+ament_cmake_symlink_install_files("/home/enzo/droid/WORK-2026/work_ws/dev_ws/src/salamander_bot" FILES "/home/enzo/droid/WORK-2026/work_ws/build/salamander_bot/ament_cmake_index/share/ament_index/resource_index/package_run_dependencies/salamander_bot" "DESTINATION" "share/ament_index/resource_index/package_run_dependencies")
