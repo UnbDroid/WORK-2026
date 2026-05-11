@@ -12,8 +12,6 @@ Standard Workspace for ROS 2 Development (Robot Operating System 2).
 ``` bash
 source /opt/ros/jazzy/setup.bash
 
-cd work_ws
-
 rosdep install --from-paths src --ignore-src -y
 
 colcon build --symlink-install
@@ -24,8 +22,6 @@ source install/local_setup.bash
 
 ``` bash
 source /opt/ros/jazzy/setup.bash
-
-cd work_ws
 
 # Fetch Dependencies:
 vcs import src < micro_ros.repos
