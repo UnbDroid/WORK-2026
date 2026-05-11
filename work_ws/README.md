@@ -23,8 +23,8 @@ source install/local_setup.bash
 ``` bash
 source /opt/ros/jazzy/setup.bash
 
-# Fetch Dependencies:
-vcs import src < micro_ros.repos
+# Fetch Dependencies (Micro-ROS Repo)
+vcs import src < dependencies.repos
 
 # Install Dependencies:
 rosdep install --from-paths src --ignore-src -y
