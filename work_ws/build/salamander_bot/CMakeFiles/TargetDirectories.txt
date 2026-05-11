@@ -1,9 +1,0 @@
-/home/enzo/droid/WORK-2026/work_ws/build/salamander_bot/CMakeFiles/uninstall.dir
-/home/enzo/droid/WORK-2026/work_ws/build/salamander_bot/CMakeFiles/salamander_bot_uninstall.dir
-/home/enzo/droid/WORK-2026/work_ws/build/salamander_bot/CMakeFiles/test.dir
-/home/enzo/droid/WORK-2026/work_ws/build/salamander_bot/CMakeFiles/edit_cache.dir
-/home/enzo/droid/WORK-2026/work_ws/build/salamander_bot/CMakeFiles/rebuild_cache.dir
-/home/enzo/droid/WORK-2026/work_ws/build/salamander_bot/CMakeFiles/list_install_components.dir
-/home/enzo/droid/WORK-2026/work_ws/build/salamander_bot/CMakeFiles/install.dir
-/home/enzo/droid/WORK-2026/work_ws/build/salamander_bot/CMakeFiles/install/local.dir
-/home/enzo/droid/WORK-2026/work_ws/build/salamander_bot/CMakeFiles/install/strip.dir
