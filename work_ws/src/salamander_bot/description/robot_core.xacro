@@ -5,7 +5,21 @@
 <xacro:include filename="$(find salamander_bot)/description/salamander_bot.ros2control" />
 <xacro:include filename="$(find salamander_bot)/description/salamander_bot.gazebo" />
 
-<link name="base_link"></link>
+<!-- Adicionado SLAM -->
+
+<link name="base_link">
+</link>
+
+<joint name="base_footprint_joint" type="fixed">
+  <parent link="base_link"/>
+  <child link="base_footprint"/>
+  <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+</joint>
+
+<link name="base_footprint">
+</link>
+
+<!-- fim SLAM -->
 
 <link name="chassis">
   <inertial>

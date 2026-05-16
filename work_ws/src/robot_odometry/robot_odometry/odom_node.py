@@ -24,10 +24,14 @@ class OdomNode(Node):
         self.y = 0.0
         self.theta = 0.0
         self.last_time = self.get_clock().now()  #variável para armazenar o tempo do último cálculo de odometria
+        self.vx = 0.0
+        self.vy = 0.0
+        self.wz = 0.0
 
 
         self.subscription = self.create_subscription(Float32MultiArray, 'wheel_speeds', self.calculate_odometry, 10)  #inscreve-se no tópico 'wheel_speeds'
         self.odom_publisher = self.create_publisher(Odometry, '/odom', 10)
+        self.timer = self.create_timer(1.0 / 30.0, self.publish_current_odom)
 
     def calculate_odometry(self, msg: Float32MultiArray):
 
@@ -54,9 +58,14 @@ class OdomNode(Node):
         self.y += delta_y
         self.theta += delta_theta
 
+        self.vx = vx
+        self.vy = vy
+        self.wz = wz
         self.publish_odom(current_time, vx, vy, wz)
         self.last_time = current_time
 
+    def publish_current_odom(self):
+        self.publish_odom(self.get_clock().now(), self.vx, self.vy, self.wz)
 
     def publish_odom(self, current_time, vx, vy, wz):
         odom_msg = Odometry()
@@ -74,11 +83,17 @@ class OdomNode(Node):
         quat.z = math.sin(self.theta / 2) #o robo so gira em torno do eixo z, entao os componentes x e y do quaternion sao zero
         quat.w = math.cos(self.theta / 2)
         odom_msg.pose.pose.orientation = quat
+        odom_msg.pose.covariance[0] = 0.05
+        odom_msg.pose.covariance[7] = 0.05
+        odom_msg.pose.covariance[35] = 0.05
 
         #velocidades lineares e angulares do robô
         odom_msg.twist.twist.linear.x = vx
         odom_msg.twist.twist.linear.y = vy
         odom_msg.twist.twist.angular.z = wz
+        odom_msg.twist.covariance[0] = 0.05
+        odom_msg.twist.covariance[7] = 0.05
+        odom_msg.twist.covariance[35] = 0.05
 
         self.odom_publisher.publish(odom_msg)  #publica a mensagem de odometria no tópico '/odom'
 

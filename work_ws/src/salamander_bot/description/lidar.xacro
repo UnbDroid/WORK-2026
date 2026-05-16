@@ -1,41 +1,44 @@
 <?xml version="1.0"?>
 <robot name="salamander_bot" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <link name="rplidar_a1m8_1">
-    <inertial>
-      <origin xyz="0.0008205477062011579 0.0006535114455110541 0.017493457828168968" rpy="0 0 0"/>
-      <mass value="0.036021408390687064"/>
-      <inertia ixx="1.5e-05" iyy="1.2e-05" izz="2.3e-05" ixy="0.0" iyz="-0.0" ixz="-0.0"/>
-    </inertial>
-    <visual>
-      <origin xyz="0.077204 0.064205 -0.2095" rpy="0 0 0"/>
-      <geometry>
-        <mesh filename="file://$(find salamander_bot)/meshes/rplidar_a1m8_1.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="blue"/>
-    </visual>
-    <collision>
-      <origin xyz="0.077204 0.064205 -0.2095" rpy="0 0 0"/>
-      <geometry>
-        <mesh filename="file://$(find salamander_bot)/meshes/rplidar_a1m8_1.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-  </link>
-
+<!-- Lidar joint -->
 <joint name="rplidar_a1m8_joint" type="fixed">
   <origin xyz="-0.077204 -0.064205 0.2095" rpy="0 0 0"/>
-  <parent link="base_link"/>
+  <parent link="base_link"/> 
   <child link="rplidar_a1m8_1"/>
 </joint>
 
+<!-- Lidar frame -->
+<link name="rplidar_a1m8_1">
+  <inertial>
+    <origin xyz="0.0008205477062011579 0.0006535114455110541 0.017493457828168968" rpy="0 0 0"/>
+    <mass value="0.036021408390687064"/>
+    <inertia ixx="1.5e-05" iyy="1.2e-05" izz="2.3e-05" ixy="0.0" iyz="-0.0" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.077204 0.064205 -0.2095" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find salamander_bot)/meshes/rplidar_a1m8_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="blue"/>
+  </visual>
+  <collision>
+    <origin xyz="0.077204 0.064205 -0.2095" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find salamander_bot)/meshes/rplidar_a1m8_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+
 <gazebo reference="rplidar_a1m8_1">
-  <sensor name="lidar_sensor" type="gpu_lidar">
+  <sensor name="lidar" type="gpu_lidar">
     <pose>0 0 0 0 0 0</pose>
 
     <update_rate>10</update_rate>
     <visualize>true</visualize>
 
-    <topic>scan</topic>
+    <topic>/scan</topic>
 
     <lidar>
       <scan>
@@ -48,13 +51,14 @@
       </scan>
 
       <range>
-        <min>0.3</min>
+        <min>0.15</min>
         <max>12.0</max>
-        <resolution>0.01</resolution>
       </range>
     </lidar>
 
+    <gz_frame_id>rplidar_a1m8_1</gz_frame_id>
     <always_on>true</always_on>
+
   </sensor>
 </gazebo>
 
