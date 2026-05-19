@@ -1,3 +1,11 @@
+# ROS / build artifacts
+build/
+install/
+log/
+**/build/
+**/install/
+**/log/
+
 # VS Code workspace/settings
 .vscode/
 **/.vscode/
@@ -7,3 +15,15 @@
 __pycache__/
 **/__pycache__/
 *.py[cod]
+
+# Test / lint caches
+.pytest_cache/
+**/.pytest_cache/
+.mypy_cache/
+**/.mypy_cache/
+
+# PlatformIO
+.pio
+
+# OS
+.DS_Store
