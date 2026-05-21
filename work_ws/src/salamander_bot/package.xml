@@ -17,6 +17,12 @@
   <exec_depend>slam_toolbox</exec_depend>
   <exec_depend>tf2_ros</exec_depend>
 
+  <depend>nav2_bringup</depend>
+  <depend>nav2_mppi_controller</depend>
+  <depend>nav2_navfn_planner</depend>
+  <depend>nav2_smoother</depend>
+  <depend>twist_mux</depend>
+
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
   <test_depend>python3-pytest</test_depend>
