@@ -12,7 +12,7 @@ slam_toolbox:
     # ROS Parameters
     odom_frame: odom
     map_frame: map
-    base_frame: rplidar_a1m8_1 # mudar pro robo dps
+    base_frame: base_link
     scan_topic: /scan
     use_map_saver: true
     mode: mapping #localization -> muda dps de salvar o mapa

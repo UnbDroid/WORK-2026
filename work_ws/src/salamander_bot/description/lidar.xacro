@@ -32,13 +32,13 @@
 
 
 <gazebo reference="rplidar_a1m8_1">
-  <sensor name="lidar" type="gpu_lidar">
+  <sensor name="lidar" type="lidar">
     <pose>0 0 0 0 0 0</pose>
 
     <update_rate>10</update_rate>
-    <visualize>true</visualize>
+    <visualize>false</visualize>
 
-    <topic>/scan</topic>
+    <topic>/sim/scan</topic>
 
     <lidar>
       <scan>

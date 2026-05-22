@@ -34,8 +34,8 @@
   direction: GZ_TO_ROS
 
 # Laser Scan Topics
-- ros_topic_name: "scan"
-  gz_topic_name: "scan"
+- ros_topic_name: "/sim/scan"
+  gz_topic_name: "/sim/scan"
   ros_type_name: "sensor_msgs/msg/LaserScan"
   gz_type_name: "gz.msgs.LaserScan"
   direction: GZ_TO_ROS
