@@ -58,7 +58,7 @@ sudo apt-get install distrobox podman
 distrobox create --name ubuntu --image ubuntu:24.04
 
 # Access Ubuntu Container:
-distrobox enter ubuntu
+distrobox enter ubuntu 
 ```
 
 ### 1. Start Micro-ROS Agent
