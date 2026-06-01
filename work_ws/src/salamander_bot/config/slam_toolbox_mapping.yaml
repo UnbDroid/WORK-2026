@@ -5,7 +5,7 @@ slam_toolbox:
     mode: mapping
     map_frame: map
     odom_frame: odom
-    base_frame: base_link
+    base_frame: base_footprint
     scan_topic: /scan
 
     transform_publish_period: 0.02

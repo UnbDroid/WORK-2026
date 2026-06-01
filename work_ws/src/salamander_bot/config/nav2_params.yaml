@@ -1,43 +1,54 @@
+# AMCL (Adaptive Monte Carlo Localization)
+# Responsável por estimar a posição global (TF map -> odom)
+
+
 amcl:
   ros__parameters:
+  # Coeficientes de ruído esperados no movimento do robô (padrão 0.2 para cada um). 
+  # Esses valores podem ser ajustados com base no comportamento do robô e na qualidade dos sensores.
     alpha1: 0.2
     alpha2: 0.2
     alpha3: 0.2
     alpha4: 0.2
     alpha5: 0.2
+
     base_frame_id: "base_footprint"
-    beam_skip_distance: 0.5
-    beam_skip_error_threshold: 0.9
-    beam_skip_threshold: 0.3
-    do_beamskip: false
     global_frame_id: "map"
-    lambda_short: 0.1
-    laser_likelihood_max_dist: 2.0
     laser_max_range: 100.0
     laser_min_range: -1.0
     laser_model_type: "likelihood_field"
     max_beams: 60
-    max_particles: 2000
-    min_particles: 500
+
+    max_particles: 2000 # Máximo de amostras geradas no mapa. Aumentar esse valor pode melhorar a precisão da localização, mas também aumenta o tempo de processamento. O valor ideal depende do ambiente e do desempenho desejado.
+    min_particles: 500 # Mínimo de amostras geradas no mapa
     odom_frame_id: "odom"
-    pf_err: 0.05
-    pf_z: 0.99
-    recovery_alpha_fast: 0.0
-    recovery_alpha_slow: 0.0
-    resample_interval: 1
+    pf_err: 0.05 # Erro permitido para considerar uma amostra como válida. Valores menores podem aumentar a precisão, mas também podem levar a uma convergência mais lenta.
+    pf_z: 0.99 # Percentual de amostras que devem estar dentro do erro permitido para considerar a localização como confiável.
     robot_model_type: "nav2_amcl::OmniMotionModel" #alterado
-    save_pose_rate: 0.5
-    sigma_hit: 0.2
-    tf_broadcast: true
-    transform_tolerance: 1.0
-    update_min_a: 0.2
-    update_min_d: 0.25
+    update_min_a: 0.2 ## Atualiza a localização a cada 0.2 radianos de giro
+    update_min_d: 0.25 ## Atualiza a localização a cada 0.25 metros andados
+
+    # Fatores probabilísticos de acerto do laser
     z_hit: 0.5
     z_max: 0.05
     z_rand: 0.5
     z_short: 0.05
+    sigma_hit: 0.2
+    lambda_short: 0.1
+    laser_likelihood_max_dist: 2.0
+    do_beamskip: false
+    beam_skip_distance: 0.5
+    beam_skip_error_threshold: 0.9
+    beam_skip_threshold: 0.3
+    save_pose_rate: 0.5
+    tf_broadcast: true
+    transform_tolerance: 1.0
+    recovery_alpha_fast: 0.0
+    recovery_alpha_slow: 0.0
+    resample_interval: 1
     scan_topic: scan
 
+#Executa a árvore de comportamento para navegação e recuperação
 bt_navigator:
   ros__parameters:
     global_frame: map
@@ -47,7 +58,7 @@ bt_navigator:
     default_server_timeout: 20
     wait_for_service_timeout: 1000
     action_server_result_timeout: 900.0
-    navigators: ["navigate_to_pose", "navigate_through_poses"]
+    navigators: ["navigate_to_pose", "navigate_through_poses"] #Lista de navegadores a serem carregados, cada um com um plugin específico:
     navigate_to_pose:
       plugin: "nav2_bt_navigator::NavigateToPoseNavigator"
     navigate_through_poses:
@@ -65,20 +76,26 @@ bt_navigator:
       - compute_path_error_code
       - follow_path_error_code
 
+# CONTROLLER SERVER (Servidor de Controle Local)
+# Executa o algoritmo que gera os comandos de velocidade direta para os motores
 controller_server:
   ros__parameters:
     controller_frequency: 20.0
-    costmap_update_timeout: 0.30
+    costmap_update_timeout: 0.30 #The timeout value (seconds) for the costmap to be fully updated before a control effort can be computed.
+
+    # Limites mínimos para o robô considerar que parou ou deve se mover
     min_x_velocity_threshold: 0.001
     min_y_velocity_threshold: 0.01 #reduzido de 0.5
     min_theta_velocity_threshold: 0.001
+
+
     failure_tolerance: 0.3
     progress_checker_plugins: ["progress_checker"]
     goal_checker_plugins: ["general_goal_checker"] # "precise_goal_checker"
     controller_plugins: ["FollowPath"]
     use_realtime_priority: false
 
-    # Progress checker parameters
+    # Verifica se o robô não ficou travado no mesmo lugar tentando andar 
     progress_checker:
       plugin: "nav2_controller::SimpleProgressChecker"
       required_movement_radius: 0.5
@@ -89,13 +106,17 @@ controller_server:
     #  xy_goal_tolerance: 0.25
     #  yaw_goal_tolerance: 0.25
     #  stateful: True
+
+    # Verifica o quão perto do ponto final o robô chegou para dar a tarefa como cumprida
     general_goal_checker:
       stateful: True
       plugin: "nav2_controller::SimpleGoalChecker"
       xy_goal_tolerance: 0.25
       yaw_goal_tolerance: 0.25
+
+    # MPPI CONTROLLER CONFIGURADO PARA MECANUM
     FollowPath:
-      plugin: "nav2_mppi_controller::MPPIController"
+      plugin: "nav2_mppi_controller::MPPIController" #The plugin to use for the motion model constraints of the MPPI planner
       time_steps: 56
       model_dt: 0.05
       batch_size: 2000
@@ -116,7 +137,7 @@ controller_server:
       transform_tolerance: 0.1
       temperature: 0.3
       gamma: 0.015
-      motion_model: "Omni" #alterado: de "DiffDrive" para "Omni"
+      motion_model: "Omni" #The desired motion model plugin to use for trajectory planning. Alterado: de "DiffDrive" para "Omni"
       visualize: true
       regenerate_noises: true
       TrajectoryVisualizer:
@@ -124,6 +145,8 @@ controller_server:
         time_step: 3
       AckermannConstraints:
         min_turning_r: 0.2
+
+      # CRÍTICOS (Fatores de avaliação que punem trajetórias ruins)
       critics: [
         "ConstraintCritic", "CostCritic", "GoalCritic",
         "GoalAngleCritic", "PathAlignCritic", "PathFollowCritic",
@@ -192,24 +215,24 @@ local_costmap:
       publish_frequency: 2.0
       global_frame: odom
       robot_base_frame: base_footprint #ALTERADO: De base_link para base_footprint
-      rolling_window: true
-      width: 3
-      height: 3
+      rolling_window: true # Mantém o costmap centrado no robo.
+      width: 3 # Largura do costmap em metros. 
+      height: 3 # Altura do costmap em metros.
       resolution: 0.05
       robot_radius: 0.22
       plugins: ["voxel_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 3.0
-        inflation_radius: 0.70
+        cost_scaling_factor: 3.0 #incentiva o robo a manter uma distância segura dos obstáculos.
+        inflation_radius: 0.70 #distancia em metros que o robo deve manter dos obstáculos.
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
-        enabled: True
+        enabled: True 
         publish_voxel_map: True
-        origin_z: 0.0
-        z_resolution: 0.05
-        z_voxels: 16
-        max_obstacle_height: 2.0
+        origin_z: 0.0 #altura mínima para considerar um obstáculo
+        z_resolution: 0.05 
+        z_voxels: 16 #detecção de obstáculos em alturas de até 0.8 metros (16 * 0.05 = 0.8).
+        max_obstacle_height: 2.0 #altura máxima para considerar um obstáculo.
         mark_threshold: 0
         observation_sources: scan
         scan:
@@ -218,14 +241,14 @@ local_costmap:
           clearing: True
           marking: True
           data_type: "LaserScan"
-          raytrace_max_range: 3.0
+          raytrace_max_range: 3.0 #distância máxima que o sensor de laser pode detectar obstáculos.
           raytrace_min_range: 0.0
-          obstacle_max_range: 2.5
+          obstacle_max_range: 2.5 #diferente do raytrace_max_range, é a distância máxima que o costmap considera para marcar um obstáculo.
           obstacle_min_range: 0.0
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
-      always_send_full_costmap: True
+      always_send_full_costmap: True # to send the full costmap on every update.
 
 global_costmap:
   global_costmap:
@@ -271,8 +294,8 @@ global_costmap:
 map_saver:
   ros__parameters:
     save_map_timeout: 5.0
-    free_thresh_default: 0.25
-    occupied_thresh_default: 0.65
+    free_thresh_default: 0.25 # 
+    occupied_thresh_default: 0.65 # qualidade do mapa salvo
     map_subscribe_transient_local: True
 
 planner_server:
@@ -295,32 +318,46 @@ smoother_server:
       max_its: 1000
       do_refinement: True
 
+
+# Servidor de recuperações e comportamentos de navegação
 behavior_server:
   ros__parameters:
-    local_costmap_topic: local_costmap/costmap_raw
-    global_costmap_topic: global_costmap/costmap_raw
+  #topicos de costmap, globalmap e footprint são usados para avaliar as trajetórias geradas pelo MPPI e evitar colisões. 
+  #Os tópicos devem corresponder aos nomes dos tópicos publicados pelos servidores de costmap.
+    local_costmap_topic: local_costmap/costmap_raw       
+    global_costmap_topic: global_costmap/costmap_raw        
     local_footprint_topic: local_costmap/published_footprint
     global_footprint_topic: global_costmap/published_footprint
-    cycle_frequency: 10.0
-    behavior_plugins: ["spin", "backup", "drive_on_heading", "assisted_teleop", "wait"]
-    spin:
-      plugin: "nav2_behaviors::Spin"
-    backup:
-      plugin: "nav2_behaviors::BackUp"
-    drive_on_heading:
-      plugin: "nav2_behaviors::DriveOnHeading"
-    wait:
-      plugin: "nav2_behaviors::Wait"
-    assisted_teleop:
-      plugin: "nav2_behaviors::AssistedTeleop"
     local_frame: odom
     global_frame: map
     robot_base_frame: base_footprint #ALTERADO: De base_link para base_footprint
     transform_tolerance: 0.1
-    simulate_ahead_time: 2.0
+    cycle_frequency: 10.0  #Frequency to run behavior plugins, higher frequencies can lead to more responsive behaviors but also higher CPU usage.
+
+    behavior_plugins: ["spin", "backup", "drive_on_heading", "assisted_teleop", "wait"] #List of behavior plugins to load, the order of the list determines the order in which they are evaluated.
+    #Each plugin namespace defined in this list needs to have a plugin parameter defining the type of plugin to be loaded in the namespace.
+                                                                                        
+    spin:               #Plugin de rotação no próprio eixo, útil para manobras de recuperação.
+      plugin: "nav2_behaviors::Spin"
+    backup:             #Plugin de ré. Permite que o robô se mova para trás
+      plugin: "nav2_behaviors::BackUp"
+    drive_on_heading:   #Plugin de direção.
+      plugin: "nav2_behaviors::DriveOnHeading"
+    wait:               #Plugin de espera.
+      plugin: "nav2_behaviors::Wait"
+    assisted_teleop:    #Permite que um operador controle o robô manualmente, mas com assistência para evitar colisões e manter a estabilidade.
+      plugin: "nav2_behaviors::AssistedTeleop"
+
+    #parametros dos plugins:
+    simulate_ahead_time: 2.0 # Tempo que o comportamento simula a trajetória para avaliar se é segura.
     max_rotational_vel: 1.0
     min_rotational_vel: 0.4
     rotational_acc_lim: 3.2
+    backup.acceleration_limit: 2.5
+    backup.min_velocity: -0.35 
+    #Existem outros parâmetros específicos para cada comportamento que podem ser ajustados para melhorar a eficácia das manobras de recuperação. 
+    #Esses parâmetros podem ser encontrados na documentação de cada plugin de comportamento e ajustados conforme necessário para o ambiente e o robô em questão.
+
 
 waypoint_follower:
   ros__parameters:
@@ -329,7 +366,7 @@ waypoint_follower:
     action_server_result_timeout: 900.0
     waypoint_task_executor_plugin: "wait_at_waypoint"
     wait_at_waypoint:
-      plugin: "nav2_waypoint_follower::WaitAtWaypoint"
+      plugin: "nav2_waypoint_follower::WaitAtWaypoint"11
       enabled: True
       waypoint_pause_duration: 200
 
