@@ -2,28 +2,28 @@
 <robot name="salamander_bot" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
 <!-- Lidar joint -->
-<joint name="rplidar_a1m8_joint" type="fixed">
-  <origin xyz="-0.077204 -0.064205 0.2095" rpy="0 0 0"/>
-  <parent link="base_link"/> 
+<joint name="Rigid 11" type="fixed">
+  <origin xyz="0.236098 -0.004646 0.000956" rpy="0 0 0"/>
+  <parent link="base_link"/>
   <child link="rplidar_a1m8_1"/>
 </joint>
 
 <!-- Lidar frame -->
 <link name="rplidar_a1m8_1">
   <inertial>
-    <origin xyz="0.0008205477062011579 0.0006535114455110541 0.017493457828168968" rpy="0 0 0"/>
+    <origin xyz="-0.016984302698711456 0.004773780112382523 0.02905054217183256" rpy="0 0 0"/>
     <mass value="0.036021408390687064"/>
-    <inertia ixx="1.5e-05" iyy="1.2e-05" izz="2.3e-05" ixy="0.0" iyz="-0.0" ixz="-0.0"/>
+    <inertia ixx="1.5e-05" iyy="1.2e-05" izz="2.3e-05" ixy="-0.0" iyz="0.0" ixz="-0.0"/>
   </inertial>
   <visual>
-    <origin xyz="0.077204 0.064205 -0.2095" rpy="0 0 0"/>
+    <origin xyz="-0.236098 0.004646 -0.000956" rpy="0 0 0"/>
     <geometry>
       <mesh filename="file://$(find salamander_bot)/meshes/rplidar_a1m8_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
-    <material name="blue"/>
+    <material name="silver"/>
   </visual>
   <collision>
-    <origin xyz="0.077204 0.064205 -0.2095" rpy="0 0 0"/>
+    <origin xyz="-0.236098 0.004646 -0.000956" rpy="0 0 0"/>
     <geometry>
       <mesh filename="file://$(find salamander_bot)/meshes/rplidar_a1m8_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
@@ -63,3 +63,4 @@
 </gazebo>
 
 </robot>
+

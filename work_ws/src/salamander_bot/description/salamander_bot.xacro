@@ -1,9 +1,10 @@
 <?xml version="1.0" ?>
 <robot name="salamander_bot" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-<xacro:include filename="$(find salamander_bot_description)/urdf/materials.xacro" />
-<xacro:include filename="$(find salamander_bot_description)/urdf/salamander_bot.ros2control" />
-<xacro:include filename="$(find salamander_bot_description)/urdf/salamander_bot.gazebo" />
+<xacro:include filename="$(find salamander_bot)/description/materials.xacro" />
+<xacro:include filename="$(find salamander_bot)/description/salamander_bot.ros2control" />
+<xacro:include filename="$(find salamander_bot)/description/salamander_bot.gazebo" />
+
 <link name="base_link">
   <inertial>
     <origin xyz="-0.020630794834057973 0.00998649462328631 0.07392745780763998" rpy="0 0 0"/>
@@ -13,16 +14,25 @@
   <visual>
     <origin xyz="0 0 0" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="file://$(find salamander_bot_description)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="file://$(find salamander_bot)/description/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
     </geometry>
     <material name="silver"/>
   </visual>
   <collision>
     <origin xyz="0 0 0" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="file://$(find salamander_bot_description)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="file://$(find salamander_bot)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
     </geometry>
   </collision>
+</link>
+
+<joint name="base_footprint_joint" type="fixed">
+  <parent link="base_link"/>
+  <child link="base_footprint"/>
+  <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+</joint>
+
+<link name="base_footprint">
 </link>
 
 <link name="wheel_lf_1">
@@ -34,14 +44,14 @@
   <visual>
     <origin xyz="-0.11315 -0.142 -0.03865" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="file://$(find salamander_bot_description)/meshes/wheel_lf_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="file://$(find salamander_bot)/meshes/wheel_lf_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
     <material name="silver"/>
   </visual>
   <collision>
     <origin xyz="-0.11315 -0.142 -0.03865" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="file://$(find salamander_bot_description)/meshes/wheel_lf_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="file://$(find salamander_bot)/meshes/wheel_lf_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
   </collision>
 </link>
@@ -55,14 +65,14 @@
   <visual>
     <origin xyz="0.11315 -0.142 -0.03865" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="file://$(find salamander_bot_description)/meshes/wheel_lb_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="file://$(find salamander_bot)/meshes/wheel_lb_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
     <material name="silver"/>
   </visual>
   <collision>
     <origin xyz="0.11315 -0.142 -0.03865" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="file://$(find salamander_bot_description)/meshes/wheel_lb_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="file://$(find salamander_bot)/meshes/wheel_lb_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
   </collision>
 </link>
@@ -76,14 +86,14 @@
   <visual>
     <origin xyz="-0.11315 0.142 -0.03865" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="file://$(find salamander_bot_description)/meshes/wheel_rf_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="file://$(find salamander_bot)/meshes/wheel_rf_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
     <material name="silver"/>
   </visual>
   <collision>
     <origin xyz="-0.11315 0.142 -0.03865" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="file://$(find salamander_bot_description)/meshes/wheel_rf_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="file://$(find salamander_bot)/meshes/wheel_rf_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
   </collision>
 </link>
@@ -97,35 +107,14 @@
   <visual>
     <origin xyz="0.11315 0.142 -0.03865" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="file://$(find salamander_bot_description)/meshes/wheel_rb_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="file://$(find salamander_bot)/meshes/wheel_rb_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
     <material name="silver"/>
   </visual>
   <collision>
     <origin xyz="0.11315 0.142 -0.03865" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="file://$(find salamander_bot_description)/meshes/wheel_rb_1.stl" scale="0.001 0.001 0.001"/>
-    </geometry>
-  </collision>
-</link>
-
-<link name="rplidar_a1m8_1">
-  <inertial>
-    <origin xyz="-0.016984302698711456 0.004773780112382523 0.02905054217183256" rpy="0 0 0"/>
-    <mass value="0.036021408390687064"/>
-    <inertia ixx="1.5e-05" iyy="1.2e-05" izz="2.3e-05" ixy="-0.0" iyz="0.0" ixz="-0.0"/>
-  </inertial>
-  <visual>
-    <origin xyz="-0.236098 0.004646 -0.000956" rpy="0 0 0"/>
-    <geometry>
-      <mesh filename="file://$(find salamander_bot_description)/meshes/rplidar_a1m8_1.stl" scale="0.001 0.001 0.001"/>
-    </geometry>
-    <material name="silver"/>
-  </visual>
-  <collision>
-    <origin xyz="-0.236098 0.004646 -0.000956" rpy="0 0 0"/>
-    <geometry>
-      <mesh filename="file://$(find salamander_bot_description)/meshes/rplidar_a1m8_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="file://$(find salamander_bot)/meshes/wheel_rb_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
   </collision>
 </link>
@@ -156,12 +145,6 @@
   <parent link="base_link"/>
   <child link="wheel_rb_1"/>
   <axis xyz="-0.0 -1.0 0.0"/>
-</joint>
-
-<joint name="Rigid 11" type="fixed">
-  <origin xyz="0.236098 -0.004646 0.000956" rpy="0 0 0"/>
-  <parent link="base_link"/>
-  <child link="rplidar_a1m8_1"/>
 </joint>
 
 </robot>
