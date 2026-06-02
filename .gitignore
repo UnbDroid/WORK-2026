@@ -1,29 +1,36 @@
-# ROS / build artifacts
-build/
-install/
-log/
-**/build/
-**/install/
-**/log/
+work_ws/build/
+work_ws/install/
+work_ws/log/
 
-# VS Code workspace/settings
-.vscode/
-**/.vscode/
-*.code-workspace
-
-# Python cache
 __pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
 **/__pycache__/
 *.py[cod]
+
+*.o
+*.so
+*.a
+*.dylib
+
+.vscode/
+**/.vscode/
+.history/
+*.code-workspace
+
+.DS_Store
+Thumbs.db
+*.bak
+
+*.json
+
+# PlatformIO
+.pio
 
 # Test / lint caches
 .pytest_cache/
 **/.pytest_cache/
 .mypy_cache/
 **/.mypy_cache/
-
-# PlatformIO
-.pio
-
-# OS
-.DS_Store
