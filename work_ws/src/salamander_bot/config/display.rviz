@@ -44,6 +44,26 @@ Visualization Manager:
       Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
       Value: true
+    - Alpha: 0.7
+      Class: rviz_default_plugins/Map
+      Color Scheme: map
+      Draw Behind: false
+      Enabled: true
+      Name: Map
+      Topic:
+        Depth: 1
+        Durability Policy: Transient Local
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /map
+      Update Topic:
+        Depth: 1
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /map_updates
+      Use Timestamp: false
+      Value: true
     - Alpha: 1
       Class: rviz_default_plugins/RobotModel
       Collision Enabled: false
@@ -62,47 +82,42 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        back_motor_left_2:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        back_motor_right_2:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        back_wheel_left_2:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        back_wheel_right_2:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         base_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        front_motor_left_2:
+        base_footprint:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        front_motor_right_2:
+        chassis:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        front_wheel_left_2:
+        rplidar_a1m8_1:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        front_wheel_right_2:
+        wheel_lb_1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        wheel_lf_1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        wheel_rb_1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        wheel_rf_1:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -112,28 +127,64 @@ Visualization Manager:
       Update Interval: 0
       Value: true
       Visual Enabled: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz_default_plugins/LaserScan
+      Color: 255; 255; 255
+      Color Transformer: Intensity
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 0
+      Min Color: 0; 0; 0
+      Min Intensity: 0
+      Name: LaserScan
+      Position Transformer: XYZ
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.05000000074505806
+      Style: Flat Squares
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /scan
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: true
     - Class: rviz_default_plugins/TF
       Enabled: true
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        back_motor_left_2:
-          Value: true
-        back_motor_right_2:
-          Value: true
-        back_wheel_left_2:
-          Value: true
-        back_wheel_right_2:
-          Value: true
         base_link:
           Value: true
-        front_motor_left_2:
+        base_footprint:
           Value: true
-        front_motor_right_2:
+        chassis:
           Value: true
-        front_wheel_left_2:
+        map:
           Value: true
-        front_wheel_right_2:
+        odom:
+          Value: true
+        rplidar_a1m8_1:
+          Value: true
+        wheel_lb_1:
+          Value: true
+        wheel_lf_1:
+          Value: true
+        wheel_rb_1:
+          Value: true
+        wheel_rf_1:
           Value: true
       Marker Scale: 0.5
       Name: TF
@@ -141,25 +192,29 @@ Visualization Manager:
       Show Axes: true
       Show Names: false
       Tree:
-        base_link:
-          back_motor_right_2:
-            back_wheel_right_2:
-              {}
-          back_wheel_left_2:
-            back_motor_left_2:
-              {}
-          front_motor_left_2:
-            front_wheel_left_2:
-              {}
-          front_motor_right_2:
-            front_wheel_right_2:
-              {}
+        map:
+          odom:
+            base_link:
+              base_footprint:
+                {}
+              chassis:
+                {}
+              rplidar_a1m8_1:
+                {}
+              wheel_lb_1:
+                {}
+              wheel_lf_1:
+                {}
+              wheel_rb_1:
+                {}
+              wheel_rf_1:
+                {}
       Update Interval: 0
       Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: base_link
+    Fixed Frame: map
     Frame Rate: 30
   Name: root
   Tools:

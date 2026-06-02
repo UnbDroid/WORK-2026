@@ -21,6 +21,11 @@ find_package(ament_cmake REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
+install(DIRECTORY launch description config worlds meshes
+  DESTINATION share/${PROJECT_NAME}
+  FILES_MATCHING PATTERN "*.py" PATTERN "*.xacro" PATTERN "*.ros2control" PATTERN "*.gazebo" PATTERN "*.sdf" PATTERN "*.yaml" PATTERN "*.rviz" PATTERN "*.stl" PATTERN "*.dae" PATTERN "*.urdf"
+)
+
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
@@ -31,10 +36,5 @@ if(BUILD_TESTING)
   #set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
-
-install(
-  DIRECTORY config description launch meshes worlds
-  DESTINATION share/${PROJECT_NAME}
-)
 
 ament_package()

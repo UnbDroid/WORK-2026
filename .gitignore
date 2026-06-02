@@ -7,6 +7,8 @@ __pycache__/
 *.pyo
 *.pyd
 .pytest_cache/
+**/__pycache__/
+*.py[cod]
 
 *.o
 *.so
@@ -14,6 +16,7 @@ __pycache__/
 *.dylib
 
 .vscode/
+**/.vscode/
 .history/
 *.code-workspace
 
@@ -22,3 +25,12 @@ Thumbs.db
 *.bak
 
 *.json
+
+# PlatformIO
+.pio
+
+# Test / lint caches
+.pytest_cache/
+**/.pytest_cache/
+.mypy_cache/
+**/.mypy_cache/

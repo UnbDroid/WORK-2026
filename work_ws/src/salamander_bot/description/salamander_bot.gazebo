@@ -46,4 +46,8 @@
   <self_collide>true</self_collide>
 </gazebo>
 
+<gazebo>
+  
+</gazebo>
+
 </robot>

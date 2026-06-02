@@ -49,6 +49,26 @@ Visualization Manager:
       Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
       Value: true
+    - Alpha: 0.7
+      Class: rviz_default_plugins/Map
+      Color Scheme: map
+      Draw Behind: false
+      Enabled: true
+      Name: Map
+      Topic:
+        Depth: 1
+        Durability Policy: Transient Local
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /map
+      Update Topic:
+        Depth: 1
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /map_updates
+      Use Timestamp: false
+      Value: true
     - Alpha: 1
       Class: rviz_default_plugins/RobotModel
       Collision Enabled: false
@@ -72,17 +92,37 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        left_wheel_1:
+        base_footprint:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        lidar_1:
+        chassis:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        right_wheel_1:
+        rplidar_a1m8_1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        wheel_lb_1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        wheel_lf_1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        wheel_rb_1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        wheel_rf_1:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -138,13 +178,23 @@ Visualization Manager:
         All Enabled: true
         base_link:
           Value: true
-        left_wheel_1:
+        base_footprint:
           Value: true
-        lidar_1:
+        chassis:
+          Value: true
+        map:
+          Value: true
+        rplidar_a1m8_1:
           Value: true
         odom:
           Value: true
-        right_wheel_1:
+        wheel_lb_1:
+          Value: true
+        wheel_lf_1:
+          Value: true
+        wheel_rb_1:
+          Value: true
+        wheel_rf_1:
           Value: true
       Marker Scale: 1
       Name: TF
@@ -152,20 +202,29 @@ Visualization Manager:
       Show Axes: true
       Show Names: false
       Tree:
-        odom:
-          base_link:
-            left_wheel_1:
-              {}
-            lidar_1:
-              {}
-            right_wheel_1:
-              {}
+        map:
+          odom:
+            base_link:
+              base_footprint:
+                {}
+              chassis:
+                {}
+              rplidar_a1m8_1:
+                {}
+              wheel_lb_1:
+                {}
+              wheel_lf_1:
+                {}
+              wheel_rb_1:
+                {}
+              wheel_rf_1:
+                {}
       Update Interval: 0
       Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: odom
+    Fixed Frame: map
     Frame Rate: 30
   Name: root
   Tools:
