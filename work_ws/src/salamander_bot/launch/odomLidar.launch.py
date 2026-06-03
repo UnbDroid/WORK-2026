@@ -2,7 +2,7 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
+from launch.actions import IncludeLaunchDescription, TimerAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 
@@ -38,10 +38,15 @@ def generate_launch_description():
         }.items()
     )
 
-    rf2o = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(rf2o_share, 'launch', 'rf2o_laser_odometry.launch.py')
-        )
+    rf2o = TimerAction(
+        period=3.0,
+        actions=[
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(
+                    os.path.join(rf2o_share, 'launch', 'rf2o_laser_odometry.launch.py')
+                )
+            )
+        ]
     )
 
     return LaunchDescription([

@@ -34,3 +34,7 @@ Thumbs.db
 **/.pytest_cache/
 .mypy_cache/
 **/.mypy_cache/
+
+# Dependencias
+sllidar_ros2/
+rf2o_laser_odometry/
