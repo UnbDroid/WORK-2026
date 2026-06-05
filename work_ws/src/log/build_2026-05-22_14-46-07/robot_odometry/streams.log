@@ -1,0 +1,41 @@
+[1.354s] Invoking command in '/home/enzo/droid/WORK-2026/work_ws/src/robot_odometry': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/enzo/droid/WORK-2026/work_ws/src/build/robot_odometry/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/enzo/droid/WORK-2026/work_ws/src/install/robot_odometry/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/robot_odometry build --build-base /home/enzo/droid/WORK-2026/work_ws/src/build/robot_odometry/build install --record /home/enzo/droid/WORK-2026/work_ws/src/build/robot_odometry/install.log --single-version-externally-managed install_data
+[1.836s] running egg_info
+[1.836s] creating ../build/robot_odometry/robot_odometry.egg-info
+[1.857s] writing ../build/robot_odometry/robot_odometry.egg-info/PKG-INFO
+[1.858s] writing dependency_links to ../build/robot_odometry/robot_odometry.egg-info/dependency_links.txt
+[1.858s] writing entry points to ../build/robot_odometry/robot_odometry.egg-info/entry_points.txt
+[1.858s] writing requirements to ../build/robot_odometry/robot_odometry.egg-info/requires.txt
+[1.858s] writing top-level names to ../build/robot_odometry/robot_odometry.egg-info/top_level.txt
+[1.858s] writing manifest file '../build/robot_odometry/robot_odometry.egg-info/SOURCES.txt'
+[1.901s] reading manifest file '../build/robot_odometry/robot_odometry.egg-info/SOURCES.txt'
+[1.902s] writing manifest file '../build/robot_odometry/robot_odometry.egg-info/SOURCES.txt'
+[1.903s] running build
+[1.903s] running build_py
+[1.903s] creating /home/enzo/droid/WORK-2026/work_ws/src/build/robot_odometry/build
+[1.903s] creating /home/enzo/droid/WORK-2026/work_ws/src/build/robot_odometry/build/lib
+[1.903s] creating /home/enzo/droid/WORK-2026/work_ws/src/build/robot_odometry/build/lib/robot_odometry
+[1.903s] copying robot_odometry/__init__.py -> /home/enzo/droid/WORK-2026/work_ws/src/build/robot_odometry/build/lib/robot_odometry
+[1.904s] copying robot_odometry/odom_node.py -> /home/enzo/droid/WORK-2026/work_ws/src/build/robot_odometry/build/lib/robot_odometry
+[1.904s] copying robot_odometry/py.typed -> /home/enzo/droid/WORK-2026/work_ws/src/build/robot_odometry/build/lib/robot_odometry
+[1.904s] running install
+[1.911s] running install_lib
+[1.933s] creating /home/enzo/droid/WORK-2026/work_ws/src/install/robot_odometry/lib/python3.12/site-packages/robot_odometry
+[1.933s] copying /home/enzo/droid/WORK-2026/work_ws/src/build/robot_odometry/build/lib/robot_odometry/__init__.py -> /home/enzo/droid/WORK-2026/work_ws/src/install/robot_odometry/lib/python3.12/site-packages/robot_odometry
+[1.933s] copying /home/enzo/droid/WORK-2026/work_ws/src/build/robot_odometry/build/lib/robot_odometry/py.typed -> /home/enzo/droid/WORK-2026/work_ws/src/install/robot_odometry/lib/python3.12/site-packages/robot_odometry
+[1.933s] copying /home/enzo/droid/WORK-2026/work_ws/src/build/robot_odometry/build/lib/robot_odometry/odom_node.py -> /home/enzo/droid/WORK-2026/work_ws/src/install/robot_odometry/lib/python3.12/site-packages/robot_odometry
+[1.934s] byte-compiling /home/enzo/droid/WORK-2026/work_ws/src/install/robot_odometry/lib/python3.12/site-packages/robot_odometry/__init__.py to __init__.cpython-312.pyc
+[1.934s] byte-compiling /home/enzo/droid/WORK-2026/work_ws/src/install/robot_odometry/lib/python3.12/site-packages/robot_odometry/odom_node.py to odom_node.cpython-312.pyc
+[1.935s] running install_data
+[1.935s] creating /home/enzo/droid/WORK-2026/work_ws/src/install/robot_odometry/share/ament_index
+[1.935s] creating /home/enzo/droid/WORK-2026/work_ws/src/install/robot_odometry/share/ament_index/resource_index
+[1.936s] creating /home/enzo/droid/WORK-2026/work_ws/src/install/robot_odometry/share/ament_index/resource_index/packages
+[1.936s] copying resource/robot_odometry -> /home/enzo/droid/WORK-2026/work_ws/src/install/robot_odometry/share/ament_index/resource_index/packages
+[1.936s] copying package.xml -> /home/enzo/droid/WORK-2026/work_ws/src/install/robot_odometry/share/robot_odometry
+[1.936s] creating /home/enzo/droid/WORK-2026/work_ws/src/install/robot_odometry/share/robot_odometry/launch
+[1.936s] copying launch/odom.launch.py -> /home/enzo/droid/WORK-2026/work_ws/src/install/robot_odometry/share/robot_odometry/launch
+[1.936s] running install_egg_info
+[1.960s] Copying ../build/robot_odometry/robot_odometry.egg-info to /home/enzo/droid/WORK-2026/work_ws/src/install/robot_odometry/lib/python3.12/site-packages/robot_odometry-0.0.0-py3.12.egg-info
+[1.961s] running install_scripts
+[2.112s] Installing odom_node script to /home/enzo/droid/WORK-2026/work_ws/src/install/robot_odometry/lib/robot_odometry
+[2.112s] writing list of installed files to '/home/enzo/droid/WORK-2026/work_ws/src/build/robot_odometry/install.log'
+[2.167s] Invoked command in '/home/enzo/droid/WORK-2026/work_ws/src/robot_odometry' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/enzo/droid/WORK-2026/work_ws/src/build/robot_odometry/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/enzo/droid/WORK-2026/work_ws/src/install/robot_odometry/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/robot_odometry build --build-base /home/enzo/droid/WORK-2026/work_ws/src/build/robot_odometry/build install --record /home/enzo/droid/WORK-2026/work_ws/src/build/robot_odometry/install.log --single-version-externally-managed install_data

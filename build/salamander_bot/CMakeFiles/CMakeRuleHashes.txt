@@ -1,0 +1,2 @@
+# Hashes of file build rules.
+15037e710e23b2f7142088ad934db08a CMakeFiles/salamander_bot_uninstall

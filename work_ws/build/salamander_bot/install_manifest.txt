@@ -1,0 +1,6 @@
+/home/enzo/droid/WORK-2026/work_ws/install/salamander_bot/share/salamander_bot/launch/odomLidar.launch.py
+/home/enzo/droid/WORK-2026/work_ws/install/salamander_bot/share/salamander_bot/launch/mapping.launch.py
+/home/enzo/droid/WORK-2026/work_ws/install/salamander_bot/share/salamander_bot/launch/navigation_launch.py
+/home/enzo/droid/WORK-2026/work_ws/install/salamander_bot/share/salamander_bot/config/mapper_params_online_async.yaml
+/home/enzo/droid/WORK-2026/work_ws/install/salamander_bot/share/salamander_bot/config/slam_toolbox_mapping.yaml
+/home/enzo/droid/WORK-2026/work_ws/install/salamander_bot/share/salamander_bot/config/ekf.yaml

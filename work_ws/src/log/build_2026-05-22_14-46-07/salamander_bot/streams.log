@@ -1,0 +1,75 @@
+[0.306s] Invoking command in '/home/enzo/droid/WORK-2026/work_ws/src/build/salamander_bot': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/enzo/droid/WORK-2026/work_ws/src/salamander_bot -DCMAKE_INSTALL_PREFIX=/home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot
+[0.531s] -- The C compiler identification is GNU 13.3.0
+[0.666s] -- The CXX compiler identification is GNU 13.3.0
+[0.695s] -- Detecting C compiler ABI info
+[0.838s] -- Detecting C compiler ABI info - done
+[0.850s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.850s] -- Detecting C compile features
+[0.851s] -- Detecting C compile features - done
+[0.866s] -- Detecting CXX compiler ABI info
+[1.019s] -- Detecting CXX compiler ABI info - done
+[1.039s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[1.039s] -- Detecting CXX compile features
+[1.041s] -- Detecting CXX compile features - done
+[1.054s] -- Found ament_cmake: 2.5.6 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[1.460s] -- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+[1.736s] -- Found ament_lint_auto: 0.17.5 (/opt/ros/jazzy/share/ament_lint_auto/cmake)
+[1.915s] -- Added test 'copyright' to check source files copyright and LICENSE
+[1.919s] -- Added test 'flake8' to check Python code syntax and style conventions
+[1.919s] -- Configured 'flake8' exclude dirs and/or files: 
+[1.920s] -- Added test 'lint_cmake' to check CMake code style
+[1.921s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[1.923s] -- Added test 'xmllint' to check XML markup files
+[1.925s] -- Configuring done (1.6s)
+[1.928s] -- Generating done (0.0s)
+[1.930s] -- Build files have been written to: /home/enzo/droid/WORK-2026/work_ws/src/build/salamander_bot
+[1.935s] Invoked command in '/home/enzo/droid/WORK-2026/work_ws/src/build/salamander_bot' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/enzo/droid/WORK-2026/work_ws/src/salamander_bot -DCMAKE_INSTALL_PREFIX=/home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot
+[1.937s] Invoking command in '/home/enzo/droid/WORK-2026/work_ws/src/build/salamander_bot': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/enzo/droid/WORK-2026/work_ws/src/build/salamander_bot -- -j8 -l8
+[1.992s] Invoked command in '/home/enzo/droid/WORK-2026/work_ws/src/build/salamander_bot' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/enzo/droid/WORK-2026/work_ws/src/build/salamander_bot -- -j8 -l8
+[2.006s] Invoking command in '/home/enzo/droid/WORK-2026/work_ws/src/build/salamander_bot': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/enzo/droid/WORK-2026/work_ws/src/build/salamander_bot
+[2.019s] -- Install configuration: ""
+[2.019s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/launch
+[2.020s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/launch/odomLidar.launch.py
+[2.020s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/launch/mapping.launch.py
+[2.020s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/launch/gazebo.launch.py
+[2.020s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/launch/display.launch.py
+[2.020s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/launch/navigation_launch.py
+[2.020s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/description
+[2.021s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/description/salamander_bot.gazebo
+[2.021s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/description/robot.urdf.xacro
+[2.021s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/description/colors.xacro
+[2.021s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/description/robot_core.xacro
+[2.021s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/description/salamander_bot.ros2control
+[2.021s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/description/lidar.xacro
+[2.022s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/config
+[2.022s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/config/mapper_params_online_async.yaml
+[2.022s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/config/display.rviz
+[2.022s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/config/nav2_params.yaml
+[2.022s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/config/gazebo.rviz
+[2.022s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/config/slam_toolbox_mapping.yaml
+[2.023s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/config/ros_gz_bridge_gazebo.yaml
+[2.023s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/config/ekf.yaml
+[2.023s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/worlds
+[2.023s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/meshes
+[2.023s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/meshes/base_link.stl
+[2.028s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/meshes/wheel_lb_1.stl
+[2.035s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/meshes/wheel_rb_1.stl
+[2.038s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/meshes/wheel_lf_1.stl
+[2.041s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/meshes/wheel_rf_1.stl
+[2.044s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/meshes/rplidar_a1m8_1.stl
+[2.048s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/ament_index/resource_index/package_run_dependencies/salamander_bot
+[2.049s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/ament_index/resource_index/parent_prefix_path/salamander_bot
+[2.049s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/environment/ament_prefix_path.sh
+[2.049s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/environment/ament_prefix_path.dsv
+[2.049s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/environment/path.sh
+[2.050s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/environment/path.dsv
+[2.050s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/local_setup.bash
+[2.050s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/local_setup.sh
+[2.050s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/local_setup.zsh
+[2.050s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/local_setup.dsv
+[2.050s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/package.dsv
+[2.050s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/ament_index/resource_index/packages/salamander_bot
+[2.051s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/cmake/salamander_botConfig.cmake
+[2.051s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/cmake/salamander_botConfig-version.cmake
+[2.051s] -- Installing: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/package.xml
+[2.052s] Invoked command in '/home/enzo/droid/WORK-2026/work_ws/src/build/salamander_bot' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/enzo/droid/WORK-2026/work_ws/src/build/salamander_bot

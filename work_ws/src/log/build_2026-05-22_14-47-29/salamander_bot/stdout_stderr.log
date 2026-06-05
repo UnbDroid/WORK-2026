@@ -1,0 +1,58 @@
+-- Found ament_cmake: 2.5.6 (/opt/ros/jazzy/share/ament_cmake/cmake)
+-- Override CMake install command with custom implementation using symlinks instead of copying resources
+-- Found ament_lint_auto: 0.17.5 (/opt/ros/jazzy/share/ament_lint_auto/cmake)
+-- Added test 'copyright' to check source files copyright and LICENSE
+-- Added test 'flake8' to check Python code syntax and style conventions
+-- Configured 'flake8' exclude dirs and/or files: 
+-- Added test 'lint_cmake' to check CMake code style
+-- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+-- Added test 'xmllint' to check XML markup files
+-- Configuring done (0.6s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/enzo/droid/WORK-2026/work_ws/src/build/salamander_bot
+-- Install configuration: ""
+-- Execute custom install script
+-- Symlinking: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/ament_index/resource_index/package_run_dependencies/salamander_bot
+-- Symlinking: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/ament_index/resource_index/parent_prefix_path/salamander_bot
+-- Symlinking: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/environment/ament_prefix_path.sh
+-- Symlinking: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/environment/ament_prefix_path.dsv
+-- Symlinking: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/environment/path.sh
+-- Symlinking: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/environment/path.dsv
+-- Symlinking: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/local_setup.bash
+-- Symlinking: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/local_setup.sh
+-- Symlinking: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/local_setup.zsh
+-- Symlinking: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/local_setup.dsv
+-- Symlinking: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/package.dsv
+-- Symlinking: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/ament_index/resource_index/packages/salamander_bot
+-- Symlinking: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/cmake/salamander_botConfig.cmake
+-- Symlinking: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/cmake/salamander_botConfig-version.cmake
+-- Symlinking: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/package.xml
+-- Up-to-date: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/launch
+-- Up-to-date: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/launch/odomLidar.launch.py
+-- Up-to-date: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/launch/mapping.launch.py
+-- Up-to-date: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/launch/gazebo.launch.py
+-- Up-to-date: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/launch/display.launch.py
+-- Up-to-date: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/launch/navigation_launch.py
+-- Up-to-date: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/description
+-- Up-to-date: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/description/salamander_bot.gazebo
+-- Up-to-date: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/description/robot.urdf.xacro
+-- Up-to-date: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/description/colors.xacro
+-- Up-to-date: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/description/robot_core.xacro
+-- Up-to-date: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/description/salamander_bot.ros2control
+-- Up-to-date: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/description/lidar.xacro
+-- Up-to-date: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/config
+-- Up-to-date: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/config/mapper_params_online_async.yaml
+-- Up-to-date: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/config/display.rviz
+-- Up-to-date: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/config/nav2_params.yaml
+-- Up-to-date: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/config/gazebo.rviz
+-- Up-to-date: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/config/slam_toolbox_mapping.yaml
+-- Up-to-date: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/config/ros_gz_bridge_gazebo.yaml
+-- Up-to-date: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/config/ekf.yaml
+-- Up-to-date: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/worlds
+-- Up-to-date: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/meshes
+-- Up-to-date: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/meshes/base_link.stl
+-- Up-to-date: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/meshes/wheel_lb_1.stl
+-- Up-to-date: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/meshes/wheel_rb_1.stl
+-- Up-to-date: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/meshes/wheel_lf_1.stl
+-- Up-to-date: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/meshes/wheel_rf_1.stl
+-- Up-to-date: /home/enzo/droid/WORK-2026/work_ws/src/install/salamander_bot/share/salamander_bot/meshes/rplidar_a1m8_1.stl

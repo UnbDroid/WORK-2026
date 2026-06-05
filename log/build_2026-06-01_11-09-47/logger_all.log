@@ -1,0 +1,426 @@
+[0.280s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'build']
+[0.280s] DEBUG:colcon:Parsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='build', build_base='build', install_base='install', merge_install=False, symlink_install=False, test_result_base=None, continue_on_error=False, executor='parallel', parallel_workers=8, event_handlers=None, ignore_user_meta=False, metas=['./colcon.meta'], base_paths=['.'], packages_ignore=None, packages_ignore_regex=None, paths=None, packages_up_to=None, packages_up_to_regex=None, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_select_by_dep=None, packages_skip_by_dep=None, packages_skip_up_to=None, packages_select_build_failed=False, packages_skip_build_finished=False, packages_select_test_failures=False, packages_skip_test_passed=False, packages_select=None, packages_skip=None, packages_select_regex=None, packages_skip_regex=None, packages_start=None, packages_end=None, allow_overriding=[], cmake_args=None, cmake_target=None, cmake_target_skip_unavailable=False, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, ament_cmake_args=None, catkin_cmake_args=None, catkin_skip_building_tests=False, mixin_files=None, mixin=None, verb_parser=<colcon_mixin.mixin.mixin_argument.MixinArgumentDecorator object at 0x71fb3ada12b0>, verb_extension=<colcon_core.verb.build.BuildVerb object at 0x71fb3aebd8b0>, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0x71fb3aebd8b0>>, mixin_verb=('build',))
+[0.338s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[0.338s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[0.338s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[0.338s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[0.339s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[0.339s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[0.339s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/enzo/droid/WORK-2026'
+[0.339s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[0.339s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[0.339s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[0.339s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[0.339s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[0.339s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[0.339s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[0.339s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[0.339s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[0.379s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['cmake', 'python']
+[0.379s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'cmake'
+[0.379s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python'
+[0.379s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['python_setup_py']
+[0.379s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python_setup_py'
+[0.379s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extensions ['ignore', 'ignore_ament_install']
+[0.380s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extension 'ignore'
+[0.380s] Level 1:colcon.colcon_core.package_identification:_identify(build) ignored
+[0.380s] Level 1:colcon.colcon_core.package_identification:_identify(docs) by extensions ['ignore', 'ignore_ament_install']
+[0.380s] Level 1:colcon.colcon_core.package_identification:_identify(docs) by extension 'ignore'
+[0.380s] Level 1:colcon.colcon_core.package_identification:_identify(docs) by extension 'ignore_ament_install'
+[0.380s] Level 1:colcon.colcon_core.package_identification:_identify(docs) by extensions ['colcon_pkg']
+[0.380s] Level 1:colcon.colcon_core.package_identification:_identify(docs) by extension 'colcon_pkg'
+[0.380s] Level 1:colcon.colcon_core.package_identification:_identify(docs) by extensions ['colcon_meta']
+[0.380s] Level 1:colcon.colcon_core.package_identification:_identify(docs) by extension 'colcon_meta'
+[0.380s] Level 1:colcon.colcon_core.package_identification:_identify(docs) by extensions ['ros']
+[0.380s] Level 1:colcon.colcon_core.package_identification:_identify(docs) by extension 'ros'
+[0.380s] Level 1:colcon.colcon_core.package_identification:_identify(docs) by extensions ['cmake', 'python']
+[0.380s] Level 1:colcon.colcon_core.package_identification:_identify(docs) by extension 'cmake'
+[0.380s] Level 1:colcon.colcon_core.package_identification:_identify(docs) by extension 'python'
+[0.380s] Level 1:colcon.colcon_core.package_identification:_identify(docs) by extensions ['python_setup_py']
+[0.380s] Level 1:colcon.colcon_core.package_identification:_identify(docs) by extension 'python_setup_py'
+[0.380s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32) by extensions ['ignore', 'ignore_ament_install']
+[0.380s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32) by extension 'ignore'
+[0.381s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32) by extension 'ignore_ament_install'
+[0.381s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32) by extensions ['colcon_pkg']
+[0.381s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32) by extension 'colcon_pkg'
+[0.381s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32) by extensions ['colcon_meta']
+[0.381s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32) by extension 'colcon_meta'
+[0.381s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32) by extensions ['ros']
+[0.381s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32) by extension 'ros'
+[0.381s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32) by extensions ['cmake', 'python']
+[0.381s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32) by extension 'cmake'
+[0.381s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32) by extension 'python'
+[0.381s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32) by extensions ['python_setup_py']
+[0.381s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32) by extension 'python_setup_py'
+[0.381s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/include) by extensions ['ignore', 'ignore_ament_install']
+[0.381s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/include) by extension 'ignore'
+[0.381s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/include) by extension 'ignore_ament_install'
+[0.381s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/include) by extensions ['colcon_pkg']
+[0.381s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/include) by extension 'colcon_pkg'
+[0.381s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/include) by extensions ['colcon_meta']
+[0.381s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/include) by extension 'colcon_meta'
+[0.381s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/include) by extensions ['ros']
+[0.381s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/include) by extension 'ros'
+[0.381s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/include) by extensions ['cmake', 'python']
+[0.381s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/include) by extension 'cmake'
+[0.381s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/include) by extension 'python'
+[0.382s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/include) by extensions ['python_setup_py']
+[0.382s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/include) by extension 'python_setup_py'
+[0.382s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/lib) by extensions ['ignore', 'ignore_ament_install']
+[0.382s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/lib) by extension 'ignore'
+[0.382s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/lib) by extension 'ignore_ament_install'
+[0.382s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/lib) by extensions ['colcon_pkg']
+[0.382s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/lib) by extension 'colcon_pkg'
+[0.382s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/lib) by extensions ['colcon_meta']
+[0.382s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/lib) by extension 'colcon_meta'
+[0.382s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/lib) by extensions ['ros']
+[0.382s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/lib) by extension 'ros'
+[0.382s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/lib) by extensions ['cmake', 'python']
+[0.382s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/lib) by extension 'cmake'
+[0.382s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/lib) by extension 'python'
+[0.382s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/lib) by extensions ['python_setup_py']
+[0.382s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/lib) by extension 'python_setup_py'
+[0.382s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/src) by extensions ['ignore', 'ignore_ament_install']
+[0.382s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/src) by extension 'ignore'
+[0.382s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/src) by extension 'ignore_ament_install'
+[0.382s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/src) by extensions ['colcon_pkg']
+[0.382s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/src) by extension 'colcon_pkg'
+[0.383s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/src) by extensions ['colcon_meta']
+[0.383s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/src) by extension 'colcon_meta'
+[0.383s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/src) by extensions ['ros']
+[0.383s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/src) by extension 'ros'
+[0.383s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/src) by extensions ['cmake', 'python']
+[0.383s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/src) by extension 'cmake'
+[0.383s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/src) by extension 'python'
+[0.383s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/src) by extensions ['python_setup_py']
+[0.383s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/src) by extension 'python_setup_py'
+[0.383s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/test) by extensions ['ignore', 'ignore_ament_install']
+[0.383s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/test) by extension 'ignore'
+[0.383s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/test) by extension 'ignore_ament_install'
+[0.383s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/test) by extensions ['colcon_pkg']
+[0.383s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/test) by extension 'colcon_pkg'
+[0.383s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/test) by extensions ['colcon_meta']
+[0.383s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/test) by extension 'colcon_meta'
+[0.383s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/test) by extensions ['ros']
+[0.383s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/test) by extension 'ros'
+[0.383s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/test) by extensions ['cmake', 'python']
+[0.383s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/test) by extension 'cmake'
+[0.383s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/test) by extension 'python'
+[0.383s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/test) by extensions ['python_setup_py']
+[0.383s] Level 1:colcon.colcon_core.package_identification:_identify(firmware_esp32/test) by extension 'python_setup_py'
+[0.383s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extensions ['ignore', 'ignore_ament_install']
+[0.384s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extension 'ignore'
+[0.384s] Level 1:colcon.colcon_core.package_identification:_identify(install) ignored
+[0.384s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extensions ['ignore', 'ignore_ament_install']
+[0.384s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extension 'ignore'
+[0.384s] Level 1:colcon.colcon_core.package_identification:_identify(log) ignored
+[0.384s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws) by extensions ['ignore', 'ignore_ament_install']
+[0.384s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws) by extension 'ignore'
+[0.384s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws) by extension 'ignore_ament_install'
+[0.384s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws) by extensions ['colcon_pkg']
+[0.384s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws) by extension 'colcon_pkg'
+[0.384s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws) by extensions ['colcon_meta']
+[0.384s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws) by extension 'colcon_meta'
+[0.384s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws) by extensions ['ros']
+[0.384s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws) by extension 'ros'
+[0.384s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws) by extensions ['cmake', 'python']
+[0.384s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws) by extension 'cmake'
+[0.384s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws) by extension 'python'
+[0.384s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws) by extensions ['python_setup_py']
+[0.384s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws) by extension 'python_setup_py'
+[0.384s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/build) by extensions ['ignore', 'ignore_ament_install']
+[0.385s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/build) by extension 'ignore'
+[0.385s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/build) ignored
+[0.385s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/dev_ws) by extensions ['ignore', 'ignore_ament_install']
+[0.385s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/dev_ws) by extension 'ignore'
+[0.385s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/dev_ws) by extension 'ignore_ament_install'
+[0.385s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/dev_ws) by extensions ['colcon_pkg']
+[0.385s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/dev_ws) by extension 'colcon_pkg'
+[0.385s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/dev_ws) by extensions ['colcon_meta']
+[0.385s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/dev_ws) by extension 'colcon_meta'
+[0.385s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/dev_ws) by extensions ['ros']
+[0.385s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/dev_ws) by extension 'ros'
+[0.385s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/dev_ws) by extensions ['cmake', 'python']
+[0.385s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/dev_ws) by extension 'cmake'
+[0.385s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/dev_ws) by extension 'python'
+[0.385s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/dev_ws) by extensions ['python_setup_py']
+[0.385s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/dev_ws) by extension 'python_setup_py'
+[0.385s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/dev_ws/build) by extensions ['ignore', 'ignore_ament_install']
+[0.385s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/dev_ws/build) by extension 'ignore'
+[0.385s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/dev_ws/build) ignored
+[0.385s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/dev_ws/install) by extensions ['ignore', 'ignore_ament_install']
+[0.386s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/dev_ws/install) by extension 'ignore'
+[0.386s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/dev_ws/install) ignored
+[0.386s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/dev_ws/log) by extensions ['ignore', 'ignore_ament_install']
+[0.386s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/dev_ws/log) by extension 'ignore'
+[0.386s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/dev_ws/log) ignored
+[0.386s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/install) by extensions ['ignore', 'ignore_ament_install']
+[0.386s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/install) by extension 'ignore'
+[0.386s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/install) ignored
+[0.386s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/log) by extensions ['ignore', 'ignore_ament_install']
+[0.386s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/log) by extension 'ignore'
+[0.386s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/log) ignored
+[0.386s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/scripts) by extensions ['ignore', 'ignore_ament_install']
+[0.386s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/scripts) by extension 'ignore'
+[0.386s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/scripts) by extension 'ignore_ament_install'
+[0.386s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/scripts) by extensions ['colcon_pkg']
+[0.386s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/scripts) by extension 'colcon_pkg'
+[0.386s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/scripts) by extensions ['colcon_meta']
+[0.387s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/scripts) by extension 'colcon_meta'
+[0.387s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/scripts) by extensions ['ros']
+[0.387s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/scripts) by extension 'ros'
+[0.387s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/scripts) by extensions ['cmake', 'python']
+[0.387s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/scripts) by extension 'cmake'
+[0.387s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/scripts) by extension 'python'
+[0.387s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/scripts) by extensions ['python_setup_py']
+[0.387s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/scripts) by extension 'python_setup_py'
+[0.387s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src) by extensions ['ignore', 'ignore_ament_install']
+[0.387s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src) by extension 'ignore'
+[0.387s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src) by extension 'ignore_ament_install'
+[0.387s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src) by extensions ['colcon_pkg']
+[0.387s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src) by extension 'colcon_pkg'
+[0.387s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src) by extensions ['colcon_meta']
+[0.387s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src) by extension 'colcon_meta'
+[0.387s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src) by extensions ['ros']
+[0.387s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src) by extension 'ros'
+[0.387s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src) by extensions ['cmake', 'python']
+[0.387s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src) by extension 'cmake'
+[0.387s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src) by extension 'python'
+[0.387s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src) by extensions ['python_setup_py']
+[0.387s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src) by extension 'python_setup_py'
+[0.387s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/build) by extensions ['ignore', 'ignore_ament_install']
+[0.388s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/build) by extension 'ignore'
+[0.388s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/build) ignored
+[0.388s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/install) by extensions ['ignore', 'ignore_ament_install']
+[0.388s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/install) by extension 'ignore'
+[0.388s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/install) ignored
+[0.388s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/log) by extensions ['ignore', 'ignore_ament_install']
+[0.388s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/log) by extension 'ignore'
+[0.388s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/log) ignored
+[0.388s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/rf2o_laser_odometry) by extensions ['ignore', 'ignore_ament_install']
+[0.388s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/rf2o_laser_odometry) by extension 'ignore'
+[0.388s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/rf2o_laser_odometry) by extension 'ignore_ament_install'
+[0.388s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/rf2o_laser_odometry) by extensions ['colcon_pkg']
+[0.388s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/rf2o_laser_odometry) by extension 'colcon_pkg'
+[0.388s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/rf2o_laser_odometry) by extensions ['colcon_meta']
+[0.388s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/rf2o_laser_odometry) by extension 'colcon_meta'
+[0.388s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/rf2o_laser_odometry) by extensions ['ros']
+[0.388s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/rf2o_laser_odometry) by extension 'ros'
+[0.393s] DEBUG:colcon.colcon_core.package_identification:Package 'work_ws/src/rf2o_laser_odometry' with type 'ros.ament_cmake' and name 'rf2o_laser_odometry'
+[0.393s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/salamander_bot) by extensions ['ignore', 'ignore_ament_install']
+[0.393s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/salamander_bot) by extension 'ignore'
+[0.393s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/salamander_bot) by extension 'ignore_ament_install'
+[0.394s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/salamander_bot) by extensions ['colcon_pkg']
+[0.394s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/salamander_bot) by extension 'colcon_pkg'
+[0.394s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/salamander_bot) by extensions ['colcon_meta']
+[0.394s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/salamander_bot) by extension 'colcon_meta'
+[0.394s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/salamander_bot) by extensions ['ros']
+[0.394s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/salamander_bot) by extension 'ros'
+[0.395s] DEBUG:colcon.colcon_core.package_identification:Package 'work_ws/src/salamander_bot' with type 'ros.ament_cmake' and name 'salamander_bot'
+[0.395s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/sllidar_ros2) by extensions ['ignore', 'ignore_ament_install']
+[0.395s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/sllidar_ros2) by extension 'ignore'
+[0.396s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/sllidar_ros2) by extension 'ignore_ament_install'
+[0.396s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/sllidar_ros2) by extensions ['colcon_pkg']
+[0.396s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/sllidar_ros2) by extension 'colcon_pkg'
+[0.396s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/sllidar_ros2) by extensions ['colcon_meta']
+[0.396s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/sllidar_ros2) by extension 'colcon_meta'
+[0.396s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/sllidar_ros2) by extensions ['ros']
+[0.396s] Level 1:colcon.colcon_core.package_identification:_identify(work_ws/src/sllidar_ros2) by extension 'ros'
+[0.397s] DEBUG:colcon.colcon_core.package_identification:Package 'work_ws/src/sllidar_ros2' with type 'ros.ament_cmake' and name 'sllidar_ros2'
+[0.397s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[0.397s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[0.397s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[0.397s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[0.397s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[0.428s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) check parameters
+[0.428s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) discover
+[0.431s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 4 installed packages in /home/enzo/droid/WORK-2026/work_ws/install
+[0.433s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 416 installed packages in /opt/ros/jazzy
+[0.435s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) using defaults
+[0.488s] Level 5:colcon.colcon_core.verb:set package 'rf2o_laser_odometry' build argument 'cmake_args' from command line to 'None'
+[0.488s] Level 5:colcon.colcon_core.verb:set package 'rf2o_laser_odometry' build argument 'cmake_target' from command line to 'None'
+[0.488s] Level 5:colcon.colcon_core.verb:set package 'rf2o_laser_odometry' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.488s] Level 5:colcon.colcon_core.verb:set package 'rf2o_laser_odometry' build argument 'cmake_clean_cache' from command line to 'False'
+[0.489s] Level 5:colcon.colcon_core.verb:set package 'rf2o_laser_odometry' build argument 'cmake_clean_first' from command line to 'False'
+[0.489s] Level 5:colcon.colcon_core.verb:set package 'rf2o_laser_odometry' build argument 'cmake_force_configure' from command line to 'False'
+[0.489s] Level 5:colcon.colcon_core.verb:set package 'rf2o_laser_odometry' build argument 'ament_cmake_args' from command line to 'None'
+[0.489s] Level 5:colcon.colcon_core.verb:set package 'rf2o_laser_odometry' build argument 'catkin_cmake_args' from command line to 'None'
+[0.489s] Level 5:colcon.colcon_core.verb:set package 'rf2o_laser_odometry' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.489s] DEBUG:colcon.colcon_core.verb:Building package 'rf2o_laser_odometry' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/enzo/droid/WORK-2026/build/rf2o_laser_odometry', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry', 'merge_install': False, 'path': '/home/enzo/droid/WORK-2026/work_ws/src/rf2o_laser_odometry', 'symlink_install': False, 'test_result_base': None}
+[0.489s] Level 5:colcon.colcon_core.verb:set package 'salamander_bot' build argument 'cmake_args' from command line to 'None'
+[0.489s] Level 5:colcon.colcon_core.verb:set package 'salamander_bot' build argument 'cmake_target' from command line to 'None'
+[0.489s] Level 5:colcon.colcon_core.verb:set package 'salamander_bot' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.489s] Level 5:colcon.colcon_core.verb:set package 'salamander_bot' build argument 'cmake_clean_cache' from command line to 'False'
+[0.489s] Level 5:colcon.colcon_core.verb:set package 'salamander_bot' build argument 'cmake_clean_first' from command line to 'False'
+[0.489s] Level 5:colcon.colcon_core.verb:set package 'salamander_bot' build argument 'cmake_force_configure' from command line to 'False'
+[0.489s] Level 5:colcon.colcon_core.verb:set package 'salamander_bot' build argument 'ament_cmake_args' from command line to 'None'
+[0.489s] Level 5:colcon.colcon_core.verb:set package 'salamander_bot' build argument 'catkin_cmake_args' from command line to 'None'
+[0.489s] Level 5:colcon.colcon_core.verb:set package 'salamander_bot' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.489s] DEBUG:colcon.colcon_core.verb:Building package 'salamander_bot' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/enzo/droid/WORK-2026/build/salamander_bot', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/enzo/droid/WORK-2026/install/salamander_bot', 'merge_install': False, 'path': '/home/enzo/droid/WORK-2026/work_ws/src/salamander_bot', 'symlink_install': False, 'test_result_base': None}
+[0.489s] Level 5:colcon.colcon_core.verb:set package 'sllidar_ros2' build argument 'cmake_args' from command line to 'None'
+[0.489s] Level 5:colcon.colcon_core.verb:set package 'sllidar_ros2' build argument 'cmake_target' from command line to 'None'
+[0.489s] Level 5:colcon.colcon_core.verb:set package 'sllidar_ros2' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.489s] Level 5:colcon.colcon_core.verb:set package 'sllidar_ros2' build argument 'cmake_clean_cache' from command line to 'False'
+[0.489s] Level 5:colcon.colcon_core.verb:set package 'sllidar_ros2' build argument 'cmake_clean_first' from command line to 'False'
+[0.489s] Level 5:colcon.colcon_core.verb:set package 'sllidar_ros2' build argument 'cmake_force_configure' from command line to 'False'
+[0.489s] Level 5:colcon.colcon_core.verb:set package 'sllidar_ros2' build argument 'ament_cmake_args' from command line to 'None'
+[0.490s] Level 5:colcon.colcon_core.verb:set package 'sllidar_ros2' build argument 'catkin_cmake_args' from command line to 'None'
+[0.490s] Level 5:colcon.colcon_core.verb:set package 'sllidar_ros2' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.490s] DEBUG:colcon.colcon_core.verb:Building package 'sllidar_ros2' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/enzo/droid/WORK-2026/build/sllidar_ros2', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/enzo/droid/WORK-2026/install/sllidar_ros2', 'merge_install': False, 'path': '/home/enzo/droid/WORK-2026/work_ws/src/sllidar_ros2', 'symlink_install': False, 'test_result_base': None}
+[0.490s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[0.491s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[0.491s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/enzo/droid/WORK-2026/work_ws/src/rf2o_laser_odometry' with build type 'ament_cmake'
+[0.491s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/enzo/droid/WORK-2026/work_ws/src/rf2o_laser_odometry'
+[0.495s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[0.495s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.495s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.501s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/enzo/droid/WORK-2026/work_ws/src/salamander_bot' with build type 'ament_cmake'
+[0.501s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/enzo/droid/WORK-2026/work_ws/src/salamander_bot'
+[0.501s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.501s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.505s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/enzo/droid/WORK-2026/work_ws/src/sllidar_ros2' with build type 'ament_cmake'
+[0.505s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/enzo/droid/WORK-2026/work_ws/src/sllidar_ros2'
+[0.505s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.506s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.514s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/enzo/droid/WORK-2026/build/rf2o_laser_odometry': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/enzo/droid/WORK-2026/work_ws/src/rf2o_laser_odometry -DCMAKE_INSTALL_PREFIX=/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry
+[0.518s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/enzo/droid/WORK-2026/build/salamander_bot': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/enzo/droid/WORK-2026/work_ws/src/salamander_bot -DCMAKE_INSTALL_PREFIX=/home/enzo/droid/WORK-2026/install/salamander_bot
+[0.527s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/enzo/droid/WORK-2026/build/sllidar_ros2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/enzo/droid/WORK-2026/work_ws/src/sllidar_ros2 -DCMAKE_INSTALL_PREFIX=/home/enzo/droid/WORK-2026/install/sllidar_ros2
+[2.258s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/enzo/droid/WORK-2026/build/salamander_bot' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/enzo/droid/WORK-2026/work_ws/src/salamander_bot -DCMAKE_INSTALL_PREFIX=/home/enzo/droid/WORK-2026/install/salamander_bot
+[2.260s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/enzo/droid/WORK-2026/build/salamander_bot': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/enzo/droid/WORK-2026/build/salamander_bot -- -j8 -l8
+[2.329s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/enzo/droid/WORK-2026/build/salamander_bot' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/enzo/droid/WORK-2026/build/salamander_bot -- -j8 -l8
+[2.343s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/enzo/droid/WORK-2026/build/salamander_bot': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/enzo/droid/WORK-2026/build/salamander_bot
+[2.398s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(salamander_bot)
+[2.399s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/enzo/droid/WORK-2026/build/salamander_bot' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/enzo/droid/WORK-2026/build/salamander_bot
+[2.408s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/salamander_bot' for CMake module files
+[2.409s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/salamander_bot' for CMake config files
+[2.410s] Level 1:colcon.colcon_core.shell:create_environment_hook('salamander_bot', 'cmake_prefix_path')
+[2.410s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/enzo/droid/WORK-2026/install/salamander_bot/share/salamander_bot/hook/cmake_prefix_path.ps1'
+[2.412s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/enzo/droid/WORK-2026/install/salamander_bot/share/salamander_bot/hook/cmake_prefix_path.dsv'
+[2.413s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/enzo/droid/WORK-2026/install/salamander_bot/share/salamander_bot/hook/cmake_prefix_path.sh'
+[2.416s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/salamander_bot/bin'
+[2.416s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/salamander_bot/lib/pkgconfig/salamander_bot.pc'
+[2.417s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/salamander_bot/lib/python3.12/site-packages'
+[2.418s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/salamander_bot/bin'
+[2.419s] INFO:colcon.colcon_core.shell:Creating package script '/home/enzo/droid/WORK-2026/install/salamander_bot/share/salamander_bot/package.ps1'
+[2.421s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/enzo/droid/WORK-2026/install/salamander_bot/share/salamander_bot/package.dsv'
+[2.422s] INFO:colcon.colcon_core.shell:Creating package script '/home/enzo/droid/WORK-2026/install/salamander_bot/share/salamander_bot/package.sh'
+[2.424s] INFO:colcon.colcon_core.shell:Creating package script '/home/enzo/droid/WORK-2026/install/salamander_bot/share/salamander_bot/package.bash'
+[2.426s] INFO:colcon.colcon_core.shell:Creating package script '/home/enzo/droid/WORK-2026/install/salamander_bot/share/salamander_bot/package.zsh'
+[2.427s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/enzo/droid/WORK-2026/install/salamander_bot/share/colcon-core/packages/salamander_bot)
+[2.429s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(salamander_bot)
+[2.429s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/salamander_bot' for CMake module files
+[2.430s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/salamander_bot' for CMake config files
+[2.431s] Level 1:colcon.colcon_core.shell:create_environment_hook('salamander_bot', 'cmake_prefix_path')
+[2.432s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/enzo/droid/WORK-2026/install/salamander_bot/share/salamander_bot/hook/cmake_prefix_path.ps1'
+[2.433s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/enzo/droid/WORK-2026/install/salamander_bot/share/salamander_bot/hook/cmake_prefix_path.dsv'
+[2.433s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/enzo/droid/WORK-2026/install/salamander_bot/share/salamander_bot/hook/cmake_prefix_path.sh'
+[2.435s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/salamander_bot/bin'
+[2.435s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/salamander_bot/lib/pkgconfig/salamander_bot.pc'
+[2.435s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/salamander_bot/lib/python3.12/site-packages'
+[2.436s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/salamander_bot/bin'
+[2.437s] INFO:colcon.colcon_core.shell:Creating package script '/home/enzo/droid/WORK-2026/install/salamander_bot/share/salamander_bot/package.ps1'
+[2.438s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/enzo/droid/WORK-2026/install/salamander_bot/share/salamander_bot/package.dsv'
+[2.440s] INFO:colcon.colcon_core.shell:Creating package script '/home/enzo/droid/WORK-2026/install/salamander_bot/share/salamander_bot/package.sh'
+[2.441s] INFO:colcon.colcon_core.shell:Creating package script '/home/enzo/droid/WORK-2026/install/salamander_bot/share/salamander_bot/package.bash'
+[2.441s] INFO:colcon.colcon_core.shell:Creating package script '/home/enzo/droid/WORK-2026/install/salamander_bot/share/salamander_bot/package.zsh'
+[2.442s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/enzo/droid/WORK-2026/install/salamander_bot/share/colcon-core/packages/salamander_bot)
+[3.033s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/enzo/droid/WORK-2026/build/sllidar_ros2' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/enzo/droid/WORK-2026/work_ws/src/sllidar_ros2 -DCMAKE_INSTALL_PREFIX=/home/enzo/droid/WORK-2026/install/sllidar_ros2
+[3.034s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/enzo/droid/WORK-2026/build/sllidar_ros2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/enzo/droid/WORK-2026/build/sllidar_ros2 -- -j8 -l8
+[3.551s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/enzo/droid/WORK-2026/build/rf2o_laser_odometry' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/enzo/droid/WORK-2026/work_ws/src/rf2o_laser_odometry -DCMAKE_INSTALL_PREFIX=/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry
+[3.553s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/enzo/droid/WORK-2026/build/rf2o_laser_odometry': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/enzo/droid/WORK-2026/build/rf2o_laser_odometry -- -j8 -l8
+[20.318s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/enzo/droid/WORK-2026/build/sllidar_ros2' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/enzo/droid/WORK-2026/build/sllidar_ros2 -- -j8 -l8
+[20.321s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/enzo/droid/WORK-2026/build/sllidar_ros2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/enzo/droid/WORK-2026/build/sllidar_ros2
+[20.346s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(sllidar_ros2)
+[20.347s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/sllidar_ros2' for CMake module files
+[20.347s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/enzo/droid/WORK-2026/build/sllidar_ros2' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/enzo/droid/WORK-2026/build/sllidar_ros2
+[20.348s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/sllidar_ros2' for CMake config files
+[20.348s] Level 1:colcon.colcon_core.shell:create_environment_hook('sllidar_ros2', 'cmake_prefix_path')
+[20.348s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/enzo/droid/WORK-2026/install/sllidar_ros2/share/sllidar_ros2/hook/cmake_prefix_path.ps1'
+[20.350s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/enzo/droid/WORK-2026/install/sllidar_ros2/share/sllidar_ros2/hook/cmake_prefix_path.dsv'
+[20.351s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/enzo/droid/WORK-2026/install/sllidar_ros2/share/sllidar_ros2/hook/cmake_prefix_path.sh'
+[20.352s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/sllidar_ros2/lib'
+[20.352s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/sllidar_ros2/bin'
+[20.352s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/sllidar_ros2/lib/pkgconfig/sllidar_ros2.pc'
+[20.352s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/sllidar_ros2/lib/python3.12/site-packages'
+[20.353s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/sllidar_ros2/bin'
+[20.353s] INFO:colcon.colcon_core.shell:Creating package script '/home/enzo/droid/WORK-2026/install/sllidar_ros2/share/sllidar_ros2/package.ps1'
+[20.354s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/enzo/droid/WORK-2026/install/sllidar_ros2/share/sllidar_ros2/package.dsv'
+[20.354s] INFO:colcon.colcon_core.shell:Creating package script '/home/enzo/droid/WORK-2026/install/sllidar_ros2/share/sllidar_ros2/package.sh'
+[20.355s] INFO:colcon.colcon_core.shell:Creating package script '/home/enzo/droid/WORK-2026/install/sllidar_ros2/share/sllidar_ros2/package.bash'
+[20.357s] INFO:colcon.colcon_core.shell:Creating package script '/home/enzo/droid/WORK-2026/install/sllidar_ros2/share/sllidar_ros2/package.zsh'
+[20.357s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/enzo/droid/WORK-2026/install/sllidar_ros2/share/colcon-core/packages/sllidar_ros2)
+[20.358s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(sllidar_ros2)
+[20.358s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/sllidar_ros2' for CMake module files
+[20.359s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/sllidar_ros2' for CMake config files
+[20.359s] Level 1:colcon.colcon_core.shell:create_environment_hook('sllidar_ros2', 'cmake_prefix_path')
+[20.359s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/enzo/droid/WORK-2026/install/sllidar_ros2/share/sllidar_ros2/hook/cmake_prefix_path.ps1'
+[20.360s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/enzo/droid/WORK-2026/install/sllidar_ros2/share/sllidar_ros2/hook/cmake_prefix_path.dsv'
+[20.360s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/enzo/droid/WORK-2026/install/sllidar_ros2/share/sllidar_ros2/hook/cmake_prefix_path.sh'
+[20.361s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/sllidar_ros2/lib'
+[20.361s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/sllidar_ros2/bin'
+[20.361s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/sllidar_ros2/lib/pkgconfig/sllidar_ros2.pc'
+[20.361s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/sllidar_ros2/lib/python3.12/site-packages'
+[20.361s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/sllidar_ros2/bin'
+[20.362s] INFO:colcon.colcon_core.shell:Creating package script '/home/enzo/droid/WORK-2026/install/sllidar_ros2/share/sllidar_ros2/package.ps1'
+[20.362s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/enzo/droid/WORK-2026/install/sllidar_ros2/share/sllidar_ros2/package.dsv'
+[20.363s] INFO:colcon.colcon_core.shell:Creating package script '/home/enzo/droid/WORK-2026/install/sllidar_ros2/share/sllidar_ros2/package.sh'
+[20.363s] INFO:colcon.colcon_core.shell:Creating package script '/home/enzo/droid/WORK-2026/install/sllidar_ros2/share/sllidar_ros2/package.bash'
+[20.364s] INFO:colcon.colcon_core.shell:Creating package script '/home/enzo/droid/WORK-2026/install/sllidar_ros2/share/sllidar_ros2/package.zsh'
+[20.364s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/enzo/droid/WORK-2026/install/sllidar_ros2/share/colcon-core/packages/sllidar_ros2)
+[32.967s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/enzo/droid/WORK-2026/build/rf2o_laser_odometry' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/enzo/droid/WORK-2026/build/rf2o_laser_odometry -- -j8 -l8
+[32.971s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/enzo/droid/WORK-2026/build/rf2o_laser_odometry': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/enzo/droid/WORK-2026/build/rf2o_laser_odometry
+[33.007s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(rf2o_laser_odometry)
+[33.008s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry' for CMake module files
+[33.009s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/enzo/droid/WORK-2026/build/rf2o_laser_odometry' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/enzo/droid/WORK-2026/build/rf2o_laser_odometry
+[33.010s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry' for CMake config files
+[33.010s] Level 1:colcon.colcon_core.shell:create_environment_hook('rf2o_laser_odometry', 'cmake_prefix_path')
+[33.010s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry/share/rf2o_laser_odometry/hook/cmake_prefix_path.ps1'
+[33.011s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry/share/rf2o_laser_odometry/hook/cmake_prefix_path.dsv'
+[33.012s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry/share/rf2o_laser_odometry/hook/cmake_prefix_path.sh'
+[33.014s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry/lib'
+[33.014s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry/bin'
+[33.014s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry/lib/pkgconfig/rf2o_laser_odometry.pc'
+[33.015s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry/lib/python3.12/site-packages'
+[33.015s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry/bin'
+[33.016s] INFO:colcon.colcon_core.shell:Creating package script '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry/share/rf2o_laser_odometry/package.ps1'
+[33.018s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry/share/rf2o_laser_odometry/package.dsv'
+[33.018s] INFO:colcon.colcon_core.shell:Creating package script '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry/share/rf2o_laser_odometry/package.sh'
+[33.020s] INFO:colcon.colcon_core.shell:Creating package script '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry/share/rf2o_laser_odometry/package.bash'
+[33.020s] INFO:colcon.colcon_core.shell:Creating package script '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry/share/rf2o_laser_odometry/package.zsh'
+[33.021s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry/share/colcon-core/packages/rf2o_laser_odometry)
+[33.023s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(rf2o_laser_odometry)
+[33.024s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry' for CMake module files
+[33.024s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry' for CMake config files
+[33.025s] Level 1:colcon.colcon_core.shell:create_environment_hook('rf2o_laser_odometry', 'cmake_prefix_path')
+[33.026s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry/share/rf2o_laser_odometry/hook/cmake_prefix_path.ps1'
+[33.027s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry/share/rf2o_laser_odometry/hook/cmake_prefix_path.dsv'
+[33.028s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry/share/rf2o_laser_odometry/hook/cmake_prefix_path.sh'
+[33.029s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry/lib'
+[33.030s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry/bin'
+[33.030s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry/lib/pkgconfig/rf2o_laser_odometry.pc'
+[33.030s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry/lib/python3.12/site-packages'
+[33.031s] Level 1:colcon.colcon_core.environment:checking '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry/bin'
+[33.031s] INFO:colcon.colcon_core.shell:Creating package script '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry/share/rf2o_laser_odometry/package.ps1'
+[33.032s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry/share/rf2o_laser_odometry/package.dsv'
+[33.033s] INFO:colcon.colcon_core.shell:Creating package script '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry/share/rf2o_laser_odometry/package.sh'
+[33.034s] INFO:colcon.colcon_core.shell:Creating package script '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry/share/rf2o_laser_odometry/package.bash'
+[33.035s] INFO:colcon.colcon_core.shell:Creating package script '/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry/share/rf2o_laser_odometry/package.zsh'
+[33.036s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/enzo/droid/WORK-2026/install/rf2o_laser_odometry/share/colcon-core/packages/rf2o_laser_odometry)
+[33.039s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[33.046s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[33.046s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '0'
+[33.047s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[33.106s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[33.106s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[33.107s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[33.212s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[33.215s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/enzo/droid/WORK-2026/install/local_setup.ps1'
+[33.218s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/enzo/droid/WORK-2026/install/_local_setup_util_ps1.py'
+[33.220s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/enzo/droid/WORK-2026/install/setup.ps1'
+[33.227s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/enzo/droid/WORK-2026/install/local_setup.sh'
+[33.229s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/enzo/droid/WORK-2026/install/_local_setup_util_sh.py'
+[33.230s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/enzo/droid/WORK-2026/install/setup.sh'
+[33.234s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/enzo/droid/WORK-2026/install/local_setup.bash'
+[33.235s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/enzo/droid/WORK-2026/install/setup.bash'
+[33.238s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/enzo/droid/WORK-2026/install/local_setup.zsh'
+[33.239s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/enzo/droid/WORK-2026/install/setup.zsh'

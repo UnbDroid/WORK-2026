@@ -1,0 +1,69 @@
+[0.304s] Invoking command in '/home/enzo/droid/WORK-2026/work_ws/build/sllidar_ros2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/enzo/droid/WORK-2026/work_ws/src/sllidar_ros2 -DCMAKE_INSTALL_PREFIX=/home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2
+[0.345s] -- Found ament_cmake: 2.5.6 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[0.742s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.763s] -- Found rclcpp: 28.1.18 (/opt/ros/jazzy/share/rclcpp/cmake)
+[0.845s] -- Found rosidl_generator_c: 4.6.7 (/opt/ros/jazzy/share/rosidl_generator_c/cmake)
+[0.865s] -- Found rosidl_generator_cpp: 4.6.7 (/opt/ros/jazzy/share/rosidl_generator_cpp/cmake)
+[0.894s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.924s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[1.039s] -- Found rmw_implementation_cmake: 7.3.3 (/opt/ros/jazzy/share/rmw_implementation_cmake/cmake)
+[1.042s] -- Found rmw_fastrtps_cpp: 8.4.3 (/opt/ros/jazzy/share/rmw_fastrtps_cpp/cmake)
+[1.147s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[1.263s] -- Found sensor_msgs: 5.3.7 (/opt/ros/jazzy/share/sensor_msgs/cmake)
+[1.347s] -- Found std_srvs: 5.3.7 (/opt/ros/jazzy/share/std_srvs/cmake)
+[1.497s] -- Configuring done (1.2s)
+[1.521s] -- Generating done (0.0s)
+[1.528s] -- Build files have been written to: /home/enzo/droid/WORK-2026/work_ws/build/sllidar_ros2
+[1.537s] Invoked command in '/home/enzo/droid/WORK-2026/work_ws/build/sllidar_ros2' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/enzo/droid/WORK-2026/work_ws/src/sllidar_ros2 -DCMAKE_INSTALL_PREFIX=/home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2
+[1.539s] Invoking command in '/home/enzo/droid/WORK-2026/work_ws/build/sllidar_ros2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/enzo/droid/WORK-2026/work_ws/build/sllidar_ros2 -- -j8 -l8
+[1.635s] [ 10%] Built target sllidar_client
+[1.658s] [100%] Built target sllidar_node
+[1.672s] Invoked command in '/home/enzo/droid/WORK-2026/work_ws/build/sllidar_ros2' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/enzo/droid/WORK-2026/work_ws/build/sllidar_ros2 -- -j8 -l8
+[1.674s] Invoking command in '/home/enzo/droid/WORK-2026/work_ws/build/sllidar_ros2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/enzo/droid/WORK-2026/work_ws/build/sllidar_ros2
+[1.687s] -- Install configuration: ""
+[1.688s] -- Execute custom install script
+[1.689s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/launch/sllidar_a1_launch.py
+[1.689s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/launch/sllidar_a2m12_launch .py
+[1.689s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/launch/sllidar_a2m7_launch.py
+[1.689s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/launch/sllidar_a2m8_launch.py
+[1.690s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/launch/sllidar_a3_launch.py
+[1.690s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/launch/sllidar_c1_launch.py
+[1.690s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/launch/sllidar_s1_launch.py
+[1.690s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/launch/sllidar_s1_tcp_launch.py
+[1.691s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/launch/sllidar_s2_launch.py
+[1.691s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/launch/sllidar_s2e_launch.py
+[1.691s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/launch/sllidar_s3_launch.py
+[1.691s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/launch/sllidar_t1_launch.py
+[1.691s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/launch/view_sllidar_a1_launch.py
+[1.692s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/launch/view_sllidar_a2m12_launch.py
+[1.692s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/launch/view_sllidar_a2m7_launch.py
+[1.692s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/launch/view_sllidar_a2m8_launch.py
+[1.692s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/launch/view_sllidar_a3_launch.py
+[1.692s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/launch/view_sllidar_c1_launch.py
+[1.693s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/launch/view_sllidar_s1_launch.py
+[1.693s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/launch/view_sllidar_s1_tcp_launch.py
+[1.693s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/launch/view_sllidar_s2_launch.py
+[1.693s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/launch/view_sllidar_s2e_launch.py
+[1.693s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/launch/view_sllidar_s3_launch.py
+[1.693s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/launch/view_sllidar_t1_launch.py
+[1.694s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/rviz/sllidar_ros2.rviz
+[1.694s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/lib/sllidar_ros2/sllidar_node
+[1.694s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/lib/sllidar_ros2/sllidar_client
+[1.694s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/ament_index/resource_index/package_run_dependencies/sllidar_ros2
+[1.694s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/ament_index/resource_index/parent_prefix_path/sllidar_ros2
+[1.694s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/environment/ament_prefix_path.sh
+[1.695s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/environment/ament_prefix_path.dsv
+[1.695s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/environment/path.sh
+[1.695s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/environment/path.dsv
+[1.695s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/local_setup.bash
+[1.695s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/local_setup.sh
+[1.695s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/local_setup.zsh
+[1.695s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/local_setup.dsv
+[1.696s] -- Symlinking: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/package.dsv
+[1.704s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/ament_index/resource_index/packages/sllidar_ros2
+[1.704s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/cmake/ament_cmake_export_dependencies-extras.cmake
+[1.704s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/cmake/ament_cmake_export_include_directories-extras.cmake
+[1.705s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/cmake/sllidar_ros2Config.cmake
+[1.705s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/cmake/sllidar_ros2Config-version.cmake
+[1.705s] -- Up-to-date symlink: /home/enzo/droid/WORK-2026/work_ws/install/sllidar_ros2/share/sllidar_ros2/package.xml
+[1.708s] Invoked command in '/home/enzo/droid/WORK-2026/work_ws/build/sllidar_ros2' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/enzo/droid/WORK-2026/work_ws/build/sllidar_ros2

@@ -1,0 +1,69 @@
+[0.143s] Invoking command in '/home/enzo/droid/WORK-2026/work_ws/build/rf2o_laser_odometry': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/enzo/droid/WORK-2026/work_ws/src/rf2o_laser_odometry -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/enzo/droid/WORK-2026/work_ws/install/rf2o_laser_odometry
+[1.102s] -- The C compiler identification is GNU 13.3.0
+[1.111s] -- The CXX compiler identification is GNU 13.3.0
+[1.113s] -- Detecting C compiler ABI info
+[1.113s] -- Detecting C compiler ABI info - done
+[1.114s] -- Check for working C compiler: /usr/bin/cc - skipped
+[1.117s] -- Detecting C compile features
+[1.118s] -- Detecting C compile features - done
+[1.118s] -- Detecting CXX compiler ABI info
+[1.492s] -- Detecting CXX compiler ABI info - done
+[1.517s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[1.520s] -- Detecting CXX compile features
+[1.521s] -- Detecting CXX compile features - done
+[1.535s] -- Found ament_cmake: 2.5.6 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[2.059s] -- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+[2.353s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[2.489s] -- Found rclcpp: 28.1.18 (/opt/ros/jazzy/share/rclcpp/cmake)
+[2.641s] -- Found rosidl_generator_c: 4.6.7 (/opt/ros/jazzy/share/rosidl_generator_c/cmake)
+[2.692s] -- Found rosidl_generator_cpp: 4.6.7 (/opt/ros/jazzy/share/rosidl_generator_cpp/cmake)
+[2.752s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[2.814s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[3.068s] -- Found rmw_implementation_cmake: 7.3.3 (/opt/ros/jazzy/share/rmw_implementation_cmake/cmake)
+[3.079s] -- Found rmw_fastrtps_cpp: 8.4.3 (/opt/ros/jazzy/share/rmw_fastrtps_cpp/cmake)
+[3.378s] -- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.13")  
+[3.449s] -- Found FastRTPS: /opt/ros/jazzy/include (Required is at least version "2.13") 
+[3.525s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[3.791s] -- Found std_msgs: 5.3.7 (/opt/ros/jazzy/share/std_msgs/cmake)
+[3.850s] -- Found geometry_msgs: 5.3.7 (/opt/ros/jazzy/share/geometry_msgs/cmake)
+[3.924s] -- Found tf2_geometry_msgs: 0.36.20 (/opt/ros/jazzy/share/tf2_geometry_msgs/cmake)
+[4.053s] -- Found eigen3_cmake_module: 0.3.0 (/opt/ros/jazzy/share/eigen3_cmake_module/cmake)
+[4.063s] -- Found Eigen3: TRUE (found version "3.4.0") 
+[4.064s] -- Ensuring Eigen3 include directory is part of orocos-kdl CMake target
+[5.614s] -- Found sensor_msgs: 5.3.7 (/opt/ros/jazzy/share/sensor_msgs/cmake)
+[5.724s] -- Found nav_msgs: 5.3.7 (/opt/ros/jazzy/share/nav_msgs/cmake)
+[5.942s] -- Found Boost: /usr/lib/x86_64-linux-gnu/cmake/Boost-1.83.0/BoostConfig.cmake (found version "1.83.0")  
+[7.182s] -- Configuring done (7.0s)
+[7.474s] -- Generating done (0.2s)
+[7.531s] -- Build files have been written to: /home/enzo/droid/WORK-2026/work_ws/build/rf2o_laser_odometry
+[7.644s] Invoked command in '/home/enzo/droid/WORK-2026/work_ws/build/rf2o_laser_odometry' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/enzo/droid/WORK-2026/work_ws/src/rf2o_laser_odometry -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/enzo/droid/WORK-2026/work_ws/install/rf2o_laser_odometry
+[7.645s] Invoking command in '/home/enzo/droid/WORK-2026/work_ws/build/rf2o_laser_odometry': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/enzo/droid/WORK-2026/work_ws/build/rf2o_laser_odometry -- -j8 -l8
+[8.033s] [ 20%] [32mBuilding CXX object CMakeFiles/rf2o_laser_odometry_node.dir/src/CLaserOdometry2DNode.cpp.o[0m
+[62.776s] [ 40%] [32mBuilding CXX object CMakeFiles/rf2o_laser_odometry_node.dir/src/CLaserOdometry2D.cpp.o[0m
+[151.509s] [ 60%] [32m[1mLinking CXX executable rf2o_laser_odometry_node[0m
+[156.724s] [ 60%] Built target rf2o_laser_odometry_node
+[156.785s] [ 80%] [32mBuilding CXX object CMakeFiles/rf2o_laser_odometry.dir/src/CLaserOdometry2D.cpp.o[0m
+[245.344s] [100%] [32m[1mLinking CXX static library librf2o_laser_odometry.a[0m
+[246.242s] [100%] Built target rf2o_laser_odometry
+[246.296s] Invoked command in '/home/enzo/droid/WORK-2026/work_ws/build/rf2o_laser_odometry' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/enzo/droid/WORK-2026/work_ws/build/rf2o_laser_odometry -- -j8 -l8
+[246.303s] Invoking command in '/home/enzo/droid/WORK-2026/work_ws/build/rf2o_laser_odometry': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/enzo/droid/WORK-2026/work_ws/build/rf2o_laser_odometry
+[246.342s] -- Install configuration: ""
+[246.345s] -- Execute custom install script
+[246.346s] -- Symlinking: /home/enzo/droid/WORK-2026/work_ws/install/rf2o_laser_odometry/lib/rf2o_laser_odometry/rf2o_laser_odometry_node
+[246.393s] -- Symlinking: /home/enzo/droid/WORK-2026/work_ws/install/rf2o_laser_odometry/share/rf2o_laser_odometry/launch/rf2o_laser_odometry.launch.py
+[246.432s] -- Symlinking: /home/enzo/droid/WORK-2026/work_ws/install/rf2o_laser_odometry/share/ament_index/resource_index/package_run_dependencies/rf2o_laser_odometry
+[246.476s] -- Symlinking: /home/enzo/droid/WORK-2026/work_ws/install/rf2o_laser_odometry/share/ament_index/resource_index/parent_prefix_path/rf2o_laser_odometry
+[246.515s] -- Symlinking: /home/enzo/droid/WORK-2026/work_ws/install/rf2o_laser_odometry/share/rf2o_laser_odometry/environment/ament_prefix_path.sh
+[246.552s] -- Symlinking: /home/enzo/droid/WORK-2026/work_ws/install/rf2o_laser_odometry/share/rf2o_laser_odometry/environment/ament_prefix_path.dsv
+[246.593s] -- Symlinking: /home/enzo/droid/WORK-2026/work_ws/install/rf2o_laser_odometry/share/rf2o_laser_odometry/environment/path.sh
+[246.632s] -- Symlinking: /home/enzo/droid/WORK-2026/work_ws/install/rf2o_laser_odometry/share/rf2o_laser_odometry/environment/path.dsv
+[246.673s] -- Symlinking: /home/enzo/droid/WORK-2026/work_ws/install/rf2o_laser_odometry/share/rf2o_laser_odometry/local_setup.bash
+[246.716s] -- Symlinking: /home/enzo/droid/WORK-2026/work_ws/install/rf2o_laser_odometry/share/rf2o_laser_odometry/local_setup.sh
+[246.756s] -- Symlinking: /home/enzo/droid/WORK-2026/work_ws/install/rf2o_laser_odometry/share/rf2o_laser_odometry/local_setup.zsh
+[246.801s] -- Symlinking: /home/enzo/droid/WORK-2026/work_ws/install/rf2o_laser_odometry/share/rf2o_laser_odometry/local_setup.dsv
+[246.839s] -- Symlinking: /home/enzo/droid/WORK-2026/work_ws/install/rf2o_laser_odometry/share/rf2o_laser_odometry/package.dsv
+[246.873s] -- Symlinking: /home/enzo/droid/WORK-2026/work_ws/install/rf2o_laser_odometry/share/ament_index/resource_index/packages/rf2o_laser_odometry
+[246.913s] -- Symlinking: /home/enzo/droid/WORK-2026/work_ws/install/rf2o_laser_odometry/share/rf2o_laser_odometry/cmake/rf2o_laser_odometryConfig.cmake
+[246.959s] -- Symlinking: /home/enzo/droid/WORK-2026/work_ws/install/rf2o_laser_odometry/share/rf2o_laser_odometry/cmake/rf2o_laser_odometryConfig-version.cmake
+[247.001s] -- Symlinking: /home/enzo/droid/WORK-2026/work_ws/install/rf2o_laser_odometry/share/rf2o_laser_odometry/package.xml
+[247.042s] Invoked command in '/home/enzo/droid/WORK-2026/work_ws/build/rf2o_laser_odometry' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/enzo/droid/WORK-2026/work_ws/install/robot_odometry:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/enzo/droid/WORK-2026/work_ws/build/rf2o_laser_odometry

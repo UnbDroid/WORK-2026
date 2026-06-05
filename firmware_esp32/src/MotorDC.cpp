@@ -108,8 +108,8 @@ float MotorDC::calcularRPM() {
 double MotorDC::updatePI(float rpm_alvo) {
     const float MAX_PWM_FLOAT = 255.0f;
     const float MIN_PWM_FLOAT = -255.0f;
-    const double MAX_RPM = 100.0;
-    const float DEADZONE = 120.0f;
+    const double MAX_RPM = 113.5775;
+    const float DEADZONE = 30.0f; 
     const float ZERO_BAND = 1.0f;
 
     // Verificação de Mudança de Direção (Reseta o Erro Acumulado Linearmente).
