@@ -1,1 +1,163 @@
-/home/enzo/droid/WORK-2026/work_ws/src/salamander_bot/description/robot_core.xacro
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<xacro:include filename="$(find salamander_bot)/description/colors.xacro" />
+<xacro:include filename="$(find salamander_bot)/description/salamander_bot.ros2control" />
+<xacro:include filename="$(find salamander_bot)/description/salamander_bot.gazebo" />
+
+<!-- Adicionado SLAM -->
+
+<link name="base_link">
+</link>
+
+<joint name="base_footprint_joint" type="fixed">
+  <parent link="base_link"/>
+  <child link="base_footprint"/>
+  <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+</joint>
+
+<link name="base_footprint">
+</link>
+
+<!-- fim SLAM -->
+
+<link name="chassis">
+  <inertial>
+    <origin xyz="-0.031027251343893784 0.006588573186617724 0.08110908537527221" rpy="0 0 0"/>
+    <mass value="4.3632165889636445"/>
+    <inertia ixx="0.042227" iyy="0.075384" izz="0.090994" ixy="0.004338" iyz="-0.000531" ixz="0.008602"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find salamander_bot)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find salamander_bot)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+
+<joint name="chassis_joint" type="fixed">
+  <parent link="base_link"/>
+  <child link="chassis"/>
+  <origin xyz="0.0 0.0 0.0"/>
+</joint>
+
+<link name="wheel_lf_1">
+  <inertial>
+    <origin xyz="0.11315 0.142 -0.03865" rpy="0 0 0"/>
+    <mass value="0.216322"/>
+    <inertia ixx="8.8e-05" iyy="0.00011" izz="8.8e-05" ixy="0.0" iyz="0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find salamander_bot)/meshes/wheel_lf_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="black"/>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find salamander_bot)/meshes/wheel_lf_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<joint name="wheel_lf_joint" type="continuous">
+  <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/> <parent link="base_link"/>
+  <child link="wheel_lf_1"/>
+  <axis xyz="0.0 1.0 0.0"/>
+</joint>
+
+<link name="wheel_lb_1">
+  <inertial>
+    <origin xyz="-0.11315 0.142 -0.03865" rpy="0 0 0"/>
+    <mass value="0.216322"/>
+    <inertia ixx="8.8e-05" iyy="0.00011" izz="8.8e-05" ixy="0.0" iyz="0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find salamander_bot)/meshes/wheel_lb_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="black"/>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find salamander_bot)/meshes/wheel_lb_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<joint name="wheel_lb_joint" type="continuous">
+  <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="wheel_lb_1"/>
+  <axis xyz="0.0 1.0 0.0"/>
+</joint>
+
+<link name="wheel_rf_1">
+  <inertial>
+    <origin xyz="0.11315 -0.142 -0.03865" rpy="0 0 0"/>
+    <mass value="0.216322"/>
+    <inertia ixx="8.8e-05" iyy="0.00011" izz="8.8e-05" ixy="0.0" iyz="0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find salamander_bot)/meshes/wheel_rf_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="black"/>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find salamander_bot)/meshes/wheel_rf_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<joint name="wheel_rf_joint" type="continuous">
+  <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="wheel_rf_1"/>
+  <axis xyz="0.0 1.0 0.0"/>
+</joint>
+
+<link name="wheel_rb_1">
+  <inertial>
+    <origin xyz="-0.11315 -0.142 -0.03865" rpy="0 0 0"/>
+    <mass value="0.216322"/>
+    <inertia ixx="8.8e-05" iyy="0.00011" izz="8.8e-05" ixy="0.0" iyz="0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find salamander_bot)/meshes/wheel_rb_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="black"/>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find salamander_bot)/meshes/wheel_rb_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<joint name="wheel_rb_joint" type="continuous">
+  <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="wheel_rb_1"/>
+  <axis xyz="0.0 1.0 0.0"/>
+</joint>
+
+</robot>

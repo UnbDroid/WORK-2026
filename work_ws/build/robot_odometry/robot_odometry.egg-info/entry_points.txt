@@ -1,2 +1,0 @@
-[console_scripts]
-odom_node = robot_odometry.odom_node:main

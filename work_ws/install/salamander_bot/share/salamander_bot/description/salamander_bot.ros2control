@@ -1,1 +1,4 @@
-/home/enzo/droid/WORK-2026/work_ws/src/salamander_bot/description/salamander_bot.ros2control
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
+
+</robot>
