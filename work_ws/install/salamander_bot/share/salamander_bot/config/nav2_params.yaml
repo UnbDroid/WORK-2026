@@ -52,7 +52,7 @@ amcl:
 bt_navigator:
   ros__parameters:
     global_frame: map
-    robot_base_frame: base_link    
+    robot_base_frame: base_link  # ALTERADO: De base_link para base_link
     odom_topic: /odom
     bt_loop_duration: 10
     default_server_timeout: 20
