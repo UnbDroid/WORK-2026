@@ -8,7 +8,7 @@ from launch import LaunchDescription
 
 def generate_launch_description():
     salamander_share = get_package_share_directory('salamander_bot')
-
+    
     # DECLARADO: Argumento para controlar o tempo de simulação de forma dinâmica
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 

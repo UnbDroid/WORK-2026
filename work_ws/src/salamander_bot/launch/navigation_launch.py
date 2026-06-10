@@ -125,6 +125,7 @@ def generate_launch_description():
         'log_level', default_value='info', description='log level'
     )
 
+    #Aqui é onde os nós de navegação são carregados.
     load_nodes = GroupAction(
         condition=IfCondition(PythonExpression(['not ', use_composition])),
         actions=[
@@ -249,6 +250,7 @@ def generate_launch_description():
             ),
         ],
     )
+
 
     load_composable_nodes = GroupAction(
         condition=IfCondition(use_composition),

@@ -35,6 +35,7 @@ def generate_launch_description():
         ),
         launch_arguments={
             'frame_id': 'rplidar_a1m8_1',
+            'serial_port': '/dev/ttyUSB1', # Agora o lidar está configurado para usar a porta USB1
         }.items()
     )
 
