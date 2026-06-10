@@ -1,3 +1,9 @@
+*/build/
+*/install/
+*/log/
+build/
+install/
+log/
 work_ws/build/
 work_ws/install/
 work_ws/log/
@@ -36,5 +42,9 @@ Thumbs.db
 **/.mypy_cache/
 
 # Dependencias
+*/sllidar_ros2/
+*/rf2o_laser_odometry/
+*/uros/
 sllidar_ros2/
 rf2o_laser_odometry/
+uros/

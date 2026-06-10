@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <robot name="salamander_bot" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-<xacro:include filename="$(find salamander_bot)/description/materials.xacro" />
+<xacro:include filename="$(find salamander_bot)/description/colors.xacro" />
 <xacro:include filename="$(find salamander_bot)/description/salamander_bot.ros2control" />
 <xacro:include filename="$(find salamander_bot)/description/salamander_bot.gazebo" />
 
@@ -14,7 +14,7 @@
   <visual>
     <origin xyz="0 0 0" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="file://$(find salamander_bot)/description/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="file://$(find salamander_bot)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
     </geometry>
     <material name="silver"/>
   </visual>

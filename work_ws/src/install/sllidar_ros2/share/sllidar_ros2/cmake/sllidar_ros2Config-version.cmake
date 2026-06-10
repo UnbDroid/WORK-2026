@@ -1,1 +1,0 @@
-/home/enzo/droid/WORK-2026/work_ws/src/build/sllidar_ros2/ament_cmake_core/sllidar_ros2Config-version.cmake
