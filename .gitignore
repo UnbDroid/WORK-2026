@@ -25,6 +25,7 @@ __pycache__/
 **/.vscode/
 .history/
 *.code-workspace
+**/.idea
 
 .DS_Store
 Thumbs.db
