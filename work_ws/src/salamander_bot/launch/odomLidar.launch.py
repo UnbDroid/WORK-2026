@@ -14,19 +14,17 @@ def generate_launch_description():
     sllidar_share = get_package_share_directory('sllidar_ros2')
     rf2o_share = get_package_share_directory('rf2o_laser_odometry')
 
-    robot_description_path = os.path.join(
-        salamander_share,
-        'description',
-        'robot.urdf.xacro'
-    )
-    robot_description = xacro.process_file(robot_description_path).toxml()
+    robot_description_file = os.path.join(salamander_share, 'description', 'robot.urdf.xacro')
+    
+    robot_description_config = xacro.process_file(robot_description_file)
+    robot_description = {'robot_description': robot_description_config.toxml()}
 
     robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
         name='robot_state_publisher',
         output='screen',
-        parameters=[{'robot_description': robot_description}],
+        parameters=[robot_description],
     )
 
     lidar = IncludeLaunchDescription(
@@ -35,7 +33,7 @@ def generate_launch_description():
         ),
         launch_arguments={
             'frame_id': 'rplidar_a1m8_1',
-            'serial_port': '/dev/ttyUSB1', # Agora o lidar está configurado para usar a porta USB1
+            'serial_port': '/dev/ttyUSB0', # Agora o lidar está configurado para usar a porta USB1
         }.items()
     )
 
