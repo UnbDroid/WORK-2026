@@ -21,7 +21,7 @@ amcl:
 
     max_particles: 2000 # Máximo de amostras geradas no mapa. Aumentar esse valor pode melhorar a precisão da localização, mas também aumenta o tempo de processamento. O valor ideal depende do ambiente e do desempenho desejado.
     min_particles: 500 # Mínimo de amostras geradas no mapa
-    odom_frame_id: "odom"
+    odom_frame_id: "odom_rf2o"
     pf_err: 0.05 # Erro permitido para considerar uma amostra como válida. Valores menores podem aumentar a precisão, mas também podem levar a uma convergência mais lenta.
     pf_z: 0.99 # Percentual de amostras que devem estar dentro do erro permitido para considerar a localização como confiável.
     robot_model_type: "nav2_amcl::OmniMotionModel" #alterado
@@ -411,7 +411,7 @@ velocity_smoother:
 collision_monitor:
   ros__parameters:
     base_frame_id: "base_link"
-    odom_frame_id: "odom"
+    odom_frame_id: "odom_rf2o"
     cmd_vel_in_topic: "cmd_vel_smoothed"
     cmd_vel_out_topic: "cmd_vel"
     state_topic: "collision_monitor_state"
@@ -495,7 +495,7 @@ docking_server:
 loopback_simulator:
   ros__parameters:
     base_frame_id: "base_link"
-    odom_frame_id: "odom"
+    odom_frame_id: "odom_rf2o"
     map_frame_id: "map"
     scan_frame_id: "rplidar_a1m8_1"  
     update_duration: 0.02

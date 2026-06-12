@@ -8,6 +8,8 @@ src/micro_ros_setup/
 .vscode/
 **/.vscode/
 *.code-workspace
+**/.idea/
+.idea/*
 
 # Python cache
 __pycache__/
