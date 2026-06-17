@@ -30,37 +30,5 @@
   </collision>
 </link>
 
-
-<gazebo reference="rplidar_a1m8_1">
-  <sensor name="lidar" type="lidar">
-    <pose>0 0 0 0 0 0</pose>
-
-    <update_rate>10</update_rate>
-    <visualize>false</visualize>
-
-    <topic>/sim/scan</topic>
-
-    <lidar>
-      <scan>
-        <horizontal>
-          <samples>360</samples>
-          <resolution>1</resolution>
-          <min_angle>-3.14</min_angle>
-          <max_angle>3.14</max_angle>
-        </horizontal>
-      </scan>
-
-      <range>
-        <min>0.15</min>
-        <max>12.0</max>
-      </range>
-    </lidar>
-
-    <gz_frame_id>rplidar_a1m8_1</gz_frame_id>
-    <always_on>true</always_on>
-
-  </sensor>
-</gazebo>
-
 </robot>
 

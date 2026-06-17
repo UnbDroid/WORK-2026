@@ -11,9 +11,14 @@
   
   <depend>xacro</depend>
   <depend>rviz2</depend>
+
   <depend>robot_state_publisher</depend>
   <depend>joint_state_publisher</depend>
   <depend>joint_state_publisher_gui</depend>
+  <depend>ros_gz</depend>
+  <depend>ros_gz_sim</depend>
+  <depend>ros_gz_bridge</depend>
+
   <exec_depend>slam_toolbox</exec_depend>
   <exec_depend>tf2_ros</exec_depend>
 
@@ -25,6 +30,7 @@
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
+  
   <test_depend>python3-pytest</test_depend>
 
   <export>

@@ -10,12 +10,9 @@ set -e
 #git pull
 
 
-
 source /opt/ros/jazzy/setup.bash
 
-if [ -f dependencies.repos ]; then
-  vcs import src < dependencies.repos
-fi
+vcs import src < dependencies.repos
 
 #rosdep install --from-paths src --ignore-src -y
 

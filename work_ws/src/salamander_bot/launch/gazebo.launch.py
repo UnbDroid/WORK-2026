@@ -13,8 +13,9 @@ def generate_launch_description():
     pkg_ros_gz_rbot = get_package_share_directory('salamander_bot')
 
 
-    robot_description_file = os.path.join(pkg_ros_gz_rbot, 'description', 'robot.urdf.xacro')
+    robot_description_file = os.path.join(pkg_ros_gz_rbot, 'description', 'salamander_bot.xacro')
     ros_gz_bridge_config = os.path.join(pkg_ros_gz_rbot, 'config', 'ros_gz_bridge_gazebo.yaml')
+    world_path = os.path.join(pkg_ros_gz_rbot, 'worlds', 'mundo.sdf')
     
     robot_description_config = xacro.process_file(robot_description_file)
     robot_description = {'robot_description': robot_description_config.toxml()}
@@ -29,7 +30,7 @@ def generate_launch_description():
 
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(join(pkg_ros_gz_sim, "launch", "gz_sim.launch.py")),
-        launch_arguments={"gz_args": "-r empty.sdf"}.items()
+        launch_arguments={"gz_args": f"-r -v 4 {world_path}"}.items()
     )
 
     spawn_robot = TimerAction(
