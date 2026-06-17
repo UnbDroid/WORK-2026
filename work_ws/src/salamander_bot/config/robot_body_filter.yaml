@@ -1,0 +1,10 @@
+scan_to_scan_filter_chain:
+  ros__parameters:
+    filter1:
+      name: footprint_filter
+      type: laser_filters/LaserScanFootprintFilter
+      params:
+        # Aqui desenhamos um "quadrado" ao redor do seu robô (chassi + rodas)
+        # O formato é: [[X_frente_esq, Y_frente_esq], [X_frente_dir, Y_frente_dir], [X_tras_dir, Y_tras_dir], [X_tras_esq, Y_tras_esq]]
+        # Meça do centro do robô (0.0) até as bordas das rodas em metros.
+        footprint: "[[0.18, 0.21], [0.18, -0.21], [-0.18, -0.21], [-0.18, 0.21]]" 
