@@ -21,7 +21,7 @@ amcl:
 
     max_particles: 2000 # Máximo de amostras geradas no mapa. Aumentar esse valor pode melhorar a precisão da localização, mas também aumenta o tempo de processamento. O valor ideal depende do ambiente e do desempenho desejado.
     min_particles: 500 # Mínimo de amostras geradas no mapa
-    odom_frame_id: "odom_rf2o"
+    odom_frame_id: "odom"
     pf_err: 0.05 # Erro permitido para considerar uma amostra como válida. Valores menores podem aumentar a precisão, mas também podem levar a uma convergência mais lenta.
     pf_z: 0.99 # Percentual de amostras que devem estar dentro do erro permitido para considerar a localização como confiável.
     robot_model_type: "nav2_amcl::OmniMotionModel" #alterado
@@ -224,7 +224,7 @@ local_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0 #incentiva o robo a manter uma distância segura dos obstáculos.
-        inflation_radius: 0.70 #distancia em metros que o robo deve manter dos obstáculos.
+        inflation_radius: 0.1 #distancia em metros que o robo deve manter dos obstáculos.
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True 
@@ -281,14 +281,14 @@ global_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.7
+        inflation_radius: 0.1
       always_send_full_costmap: True
 
 # The yaml_filename does not need to be specified since it going to be set by defaults in launch.
 # If you'd rather set it in the yaml, remove the default "map" value in the tb3_simulation_launch.py
 # file & provide full path to map below. If CLI map configuration or launch default is provided, that will be used.
 # map_server:
-#   ros__parameters:
+#   ros__parameters:  
 #     yaml_filename: ""
 
 map_saver:
@@ -305,7 +305,7 @@ planner_server:
     costmap_update_timeout: 1.0
     GridBased:
       plugin: "nav2_navfn_planner::NavfnPlanner"
-      tolerance: 0.5
+      tolerance: 0.3
       use_astar: false
       allow_unknown: true
 
@@ -408,14 +408,16 @@ velocity_smoother:
     deadband_velocity: [0.0, 0.0, 0.0]
     velocity_timeout: 1.0
 
+# O Collision Monitor é um plugin que monitora o ambiente ao redor do robô para detectar possíveis colisões.
+
 collision_monitor:
   ros__parameters:
     base_frame_id: "base_link"
-    odom_frame_id: "odom_rf2o"
+    odom_frame_id: "odom"
     cmd_vel_in_topic: "cmd_vel_smoothed"
     cmd_vel_out_topic: "cmd_vel"
     state_topic: "collision_monitor_state"
-    transform_tolerance: 0.2
+    transform_tolerance: 1.0
     source_timeout: 1.0
     base_shift_correction: True
     stop_pub_timeout: 2.0
@@ -495,7 +497,7 @@ docking_server:
 loopback_simulator:
   ros__parameters:
     base_frame_id: "base_link"
-    odom_frame_id: "odom_rf2o"
+    odom_frame_id: "odom"
     map_frame_id: "map"
     scan_frame_id: "rplidar_a1m8_1"  
     update_duration: 0.02
