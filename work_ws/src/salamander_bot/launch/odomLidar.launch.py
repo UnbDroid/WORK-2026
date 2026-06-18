@@ -19,7 +19,7 @@ def generate_launch_description():
     robot_description_config = xacro.process_file(robot_description_file)
     robot_description = {'robot_description': robot_description_config.toxml()}
 
-    config_dir = os.path.join(get_package_share_directory('salamander_bot'), 'config', 'laser_filter.yaml')
+    config_dir = os.path.join(get_package_share_directory('salamander_bot'), 'config', 'robot_body_filter.yaml')
 
     # 2. Criamos o nó do filtro
     laser_filter_node = Node(
