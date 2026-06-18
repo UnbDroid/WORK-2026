@@ -9,7 +9,7 @@ set -e
 # Reorganizar pastas na rasp --> atualmente está com teste_work
 cd ~/WORK-2026
 
-git checkout main
+#git checkout main
 
 git pull
 
