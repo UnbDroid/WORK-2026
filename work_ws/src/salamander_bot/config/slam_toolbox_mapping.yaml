@@ -4,7 +4,7 @@ slam_toolbox:
 
     mode: mapping
     map_frame: map
-    odom_frame: odom
+    odom_frame: odom_rf2o
     base_frame: base_footprint
     scan_topic: /scan_filtered
 
