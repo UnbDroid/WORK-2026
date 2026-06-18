@@ -58,10 +58,13 @@ def generate_launch_description():
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(
                     os.path.join(rf2o_share, 'launch', 'rf2o_laser_odometry.launch.py')
-                )
+                ),
+            
+                launch_arguments={
+                    'laser_scan_topic': '/scan_filtered', # MODIFICADO: Agora o RF2O recebe os dados do tópico filtrado
+                    'odom_frame': 'odom'
+                }.items()
             )
-            launch_arguments={
-                'laser_scan_topic': '/scan_filtered', # MODIFICADO: Agora o RF2O recebe os dados do tópico filtrado
         ]
     )
 

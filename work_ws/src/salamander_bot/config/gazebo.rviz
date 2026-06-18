@@ -186,7 +186,7 @@ Visualization Manager:
           Value: true
         rplidar_a1m8_1:
           Value: true
-        odom_rf2o:
+        odom:
           Value: true
         wheel_lb_1:
           Value: true
@@ -203,7 +203,7 @@ Visualization Manager:
       Show Names: false
       Tree:
         map:
-          odom_rf2o:
+          odom:
             base_link:
               base_footprint:
                 {}

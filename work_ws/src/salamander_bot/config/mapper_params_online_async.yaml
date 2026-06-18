@@ -10,7 +10,7 @@ slam_toolbox:
     ceres_loss_function: None
 
     # ROS Parameters
-    odom_frame: odom_rf2o # trocar -> odom_rf2o
+    odom_frame: odom # trocar -> odom
     map_frame: map
     base_frame: base_footprint
     scan_topic: /scan_filtered
