@@ -46,7 +46,7 @@ amcl:
     recovery_alpha_fast: 0.0
     recovery_alpha_slow: 0.0
     resample_interval: 1
-    scan_topic: scan
+    scan_topic: /scan_filtered
 
 #Executa a árvore de comportamento para navegação e recuperação
 bt_navigator:
@@ -436,7 +436,7 @@ collision_monitor:
     observation_sources: ["scan"]
     scan:
       type: "scan"
-      topic: "scan"
+      topic: "/scan_filtered"
       min_height: 0.15
       max_height: 2.0
       enabled: True
