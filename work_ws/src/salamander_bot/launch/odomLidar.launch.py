@@ -34,6 +34,13 @@ def generate_launch_description():
         output='screen'
     )
 
+    joint_state_publisher = Node(
+        package='joint_state_publisher',
+        executable='joint_state_publisher',
+        name='joint_state_publisher',
+        output='screen',
+    )
+
     robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -61,14 +68,19 @@ def generate_launch_description():
                 ),
             
                 launch_arguments={
-                    'laser_scan_topic': '/scan_filtered', # MODIFICADO: Agora o RF2O recebe os dados do tópico filtrado
-                    'odom_frame': 'odom'
+                    'laser_scan_topic': '/scan', # MODIFICADO: Agora o RF2O recebe os dados do tópico filtrado
+                    'odom_topic': '/odom_rf2o',                # Sobrescreve o "/odom_rf2o" do C++
+                    'publish_tf': "true",
+                    'base_frame_id': 'base_link',
+                    'odom_frame_id': 'odom_rf2o',
+                    'freq': '10.0',
                 }.items()
             )
         ]
     )
 
     return LaunchDescription([
+        joint_state_publisher, # adicionado para publicar os estados das juntas do robô
         robot_state_publisher,
         lidar,
         rf2o,

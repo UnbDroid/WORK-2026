@@ -18,11 +18,11 @@ def generate_launch_description():
         'mapper_params_online_async.yaml'
     )
 
-    odom_lidar_launch_path = os.path.join(
-        salamander_share,
-        'launch',
-        'odomLidar.launch.py'
-    )
+    #odom_lidar_launch_path = os.path.join(
+    #    salamander_share,
+    #    'launch',
+    #    'odomLidar.launch.py'
+    #)
 
     slam_toolbox_share = get_package_share_directory('slam_toolbox')
     slam_toolbox_launch_path = os.path.join(
@@ -39,9 +39,9 @@ def generate_launch_description():
             description='Use simulation (Gazebo) clock if true'
         ),
 
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(odom_lidar_launch_path)
-        ),
+        #IncludeLaunchDescription(
+        #    PythonLaunchDescriptionSource(odom_lidar_launch_path)
+        #),
 
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(slam_toolbox_launch_path),
