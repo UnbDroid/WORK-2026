@@ -19,6 +19,8 @@ def generate_launch_description():
     robot_description_config = xacro.process_file(robot_description_file)
     robot_description = {'robot_description': robot_description_config.toxml()}
 
+    config_dir = os.path.join(get_package_share_directory('salamander_bot'), 'config', 'robot_body_filter.yaml')
+
     robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -37,18 +39,36 @@ def generate_launch_description():
         }.items()
     )
 
+    laser_filter_node = Node(
+        package='laser_filters',
+        executable='scan_to_scan_filter_chain',
+        name='scan_to_scan_filter_chain',
+        parameters=[config_dir],
+        remappings=[
+            ('scan', '/scan'),
+            ('scan_filtered', '/scan_filtered')
+        ],
+        output='screen'
+    )
+
     rf2o = TimerAction(
         period=3.0,
         actions=[
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(
                     os.path.join(rf2o_share, 'launch', 'rf2o_laser_odometry.launch.py')
-                )
+                ),
+                launch_arguments={
+                    'laser_scan_topic': '/scan_filtered', # Agora o rf2o está configurado para usar o tópico filtrado
+                    'odom_frame': 'odom',
+                    'freq': '10.0',
+                }.items()
             )
         ]
     )
 
     return LaunchDescription([
+        laser_filter_node,
         robot_state_publisher,
         lidar,
         rf2o,
