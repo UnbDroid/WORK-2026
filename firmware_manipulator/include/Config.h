@@ -16,7 +16,7 @@
 
 #define DIR_M2_PIN 32
 #define STEP_M2_PIN 33
-#define ENABLE_M2_PIN 14
+#define ENABLE_M2_PIN 27
 
 #define MS1_M2_PIN 22
 #define MS2_M2_PIN 23

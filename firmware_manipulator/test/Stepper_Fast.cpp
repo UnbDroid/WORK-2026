@@ -1,6 +1,5 @@
 #include <Arduino.h>
 #include "Config.h"
-#include "Arm.h"
 
 #include <ESP32Servo.h>
 #include <FastAccelStepper.h>
@@ -8,20 +7,16 @@
 FastAccelStepperEngine engine;
 FastAccelStepper *stepper_arm = nullptr;
 FastAccelStepper *stepper_base = nullptr;
-Servo gripper;
+Servo Gripper;
 
-Manipulator Arm;
+void setup() {
 
-void setup() { 
-  
   pinMode(MS1_M1_PIN, OUTPUT);
   pinMode(MS2_M1_PIN, OUTPUT);
   pinMode(MS3_M1_PIN, OUTPUT);
   pinMode(MS1_M2_PIN, OUTPUT);
   pinMode(MS2_M2_PIN, OUTPUT);
   pinMode(MS3_M2_PIN, OUTPUT);
-  pinMode(ENABLE_M1_PIN, OUTPUT);
-  pinMode(ENABLE_M2_PIN, OUTPUT);
 
   digitalWrite(MS1_M1_PIN, HIGH);
   digitalWrite(MS2_M1_PIN, HIGH);
@@ -29,8 +24,8 @@ void setup() {
   digitalWrite(MS1_M2_PIN, HIGH);
   digitalWrite(MS2_M2_PIN, HIGH);
   digitalWrite(MS3_M2_PIN, HIGH);
-
-  gripper.attach(GRIPPER_PIN);
+  
+  Gripper.attach(GRIPPER_PIN);
 
   engine.init();
 
@@ -48,16 +43,15 @@ void setup() {
 
   if (stepper_arm) {
     stepper_arm->setDirectionPin(DIR_M2_PIN);
-    stepper_arm->setEnablePin(ENABLE_M2_PIN);
-    stepper_arm->setAutoEnable(true);
+    stepper_base->setEnablePin(ENABLE_M2_PIN);
+    stepper_base->setAutoEnable(false);
 
     stepper_arm->setSpeedInHz((1.0f * STEPS_PER_REV_ARM * MICROSTEPPING_MULT) / (2.0f * PI));
     stepper_arm->setAcceleration((1.5f * STEPS_PER_REV_ARM * MICROSTEPPING_MULT) / (2.0f * PI));
   }
-  
-  Arm.init(stepper_base, stepper_arm, &gripper);
 
-  Arm.drive_angle(22400, 7400, 110);
+  stepper_base->moveTo(22400);
+  stepper_arm->moveTo(1395);
 }
 
 void loop() {
