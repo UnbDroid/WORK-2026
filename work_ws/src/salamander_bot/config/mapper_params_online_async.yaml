@@ -12,8 +12,8 @@ slam_toolbox:
     # ROS Parameters
     odom_frame: odom # trocar -> odom
     map_frame: map
-    base_frame: base_footprint
-    scan_topic: /scan_filtered
+    base_frame: base_link
+    scan_topic: /scan
     use_map_saver: true
     mode: mapping #localization -> muda dps de salvar o mapa
 

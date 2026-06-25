@@ -224,7 +224,7 @@ local_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0 #incentiva o robo a manter uma distância segura dos obstáculos.
-        inflation_radius: 0.1 #distancia em metros que o robo deve manter dos obstáculos.
+        inflation_radius: 0.35 #distancia em metros que o robo deve manter dos obstáculos.
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True 
@@ -281,7 +281,7 @@ global_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.1
+        inflation_radius: 0.35
       always_send_full_costmap: True
 
 # The yaml_filename does not need to be specified since it going to be set by defaults in launch.
@@ -289,7 +289,7 @@ global_costmap:
 # file & provide full path to map below. If CLI map configuration or launch default is provided, that will be used.
 # map_server:
 #   ros__parameters:  
-#     yaml_filename: ""
+#     yaml_filename: "" 
 
 map_saver:
   ros__parameters:

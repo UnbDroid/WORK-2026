@@ -59,8 +59,7 @@ def generate_launch_description():
                     os.path.join(rf2o_share, 'launch', 'rf2o_laser_odometry.launch.py')
                 ),
                 launch_arguments={
-                    'laser_scan_topic': '/scan_filtered', # Agora o rf2o está configurado para usar o tópico filtrado
-                    'odom_frame': 'odom',
+                    'laser_scan_topic': '/scan', # TODO: testar com rf2o recebendo scan comum
                     'freq': '10.0',
                 }.items()
             )
@@ -68,8 +67,8 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
+        lidar,
         laser_filter_node,
         robot_state_publisher,
-        lidar,
         rf2o,
     ])
