@@ -22,9 +22,9 @@ def generate_launch_description():
     config_dir = os.path.join(get_package_share_directory('salamander_bot'), 'config', 'robot_body_filter.yaml')
 
     robot_state_publisher = Node(
-        package='robot_state_publisher',
+        package='robot_state_publisher',    
         executable='robot_state_publisher',
-        name='robot_state_publisher',
+        name='state_publisher',
         output='screen',
         parameters=[robot_description],
     )
@@ -42,7 +42,7 @@ def generate_launch_description():
     laser_filter_node = Node(
         package='laser_filters',
         executable='scan_to_scan_filter_chain',
-        name='scan_to_scan_filter_chain',
+        name='laser_filter_chain',
         parameters=[config_dir],
         remappings=[
             ('scan', '/scan'),
@@ -58,10 +58,6 @@ def generate_launch_description():
                 PythonLaunchDescriptionSource(
                     os.path.join(rf2o_share, 'launch', 'rf2o_laser_odometry.launch.py')
                 ),
-                launch_arguments={
-                    'laser_scan_topic': '/scan', # TODO: testar com rf2o recebendo scan comum
-                    'freq': '10.0',
-                }.items()
             )
         ]
     )

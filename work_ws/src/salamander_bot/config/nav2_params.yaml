@@ -224,7 +224,7 @@ local_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0 #incentiva o robo a manter uma distância segura dos obstáculos.
-        inflation_radius: 0.35 #distancia em metros que o robo deve manter dos obstáculos.
+        inflation_radius: 0.20 #distancia em metros que o robo deve manter dos obstáculos.
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True 
@@ -281,7 +281,7 @@ global_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.35
+        inflation_radius: 0.20
       always_send_full_costmap: True
 
 # The yaml_filename does not need to be specified since it going to be set by defaults in launch.
