@@ -100,6 +100,7 @@ controller_server:
       plugin: "nav2_controller::SimpleProgressChecker"
       required_movement_radius: 0.5
       movement_time_allowance: 10.0
+      current_goal_checker: "general_goal_checker" #parametro que define qual verificador de objetivo será usado para determinar se o robô está progredindo em direção ao objetivo. Neste caso, está configurado para usar o "general_goal_checker", que é um verificador de objetivo mais geral e menos preciso, adequado para a maioria das situações de navegação.
     # Goal checker parameters
     #precise_goal_checker:
     #  plugin: "nav2_controller::SimpleGoalChecker"
@@ -120,15 +121,15 @@ controller_server:
       time_steps: 56
       model_dt: 0.05
       batch_size: 2000
-      ax_max: 3.0
-      ax_min: -3.0
-      ay_max: 3.0
-      ay_min: -3.0
-      az_max: 3.5
-      vx_std: 0.2
-      vy_std: 0.2
-      wz_std: 0.4
-      vx_max: 0.5
+      ax_max: 6.0
+      ax_min: -6.0 
+      ay_max: 5.0
+      ay_min: -5.0 
+      az_max: 3.0
+      vx_std: 0.55
+      vy_std: 0.35
+      wz_std: 0.3
+      vx_max: 0.65
       vx_min: -0.35
       vy_max: 0.5
       wz_max: 1.9
