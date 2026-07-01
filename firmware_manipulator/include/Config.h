@@ -1,10 +1,14 @@
 #include <Arduino.h>
 
-// Gripper Limits = Fully Open: 180 Degrees, Fully Closed: 100 Degrees. 
+// Gripper Limits = Fully Open: 180 Degrees, Fully Closed: 100 Degrees.
 
-#define STEPS_PER_REV_ARM 872    // 200 Steps per Rotation (Full Step Mode) * 4.36:1 Gearbox.
-#define STEPS_PER_REV_BASE 1400  // 200 Steps per Rotation (Full Step Mode) * 7:1 Gearbox.
-#define MICROSTEPPING_MULT 16    // All Microstepping Pins Set to High.
+#define STEPS_PER_REV_ARM 872           // 200 Steps per Rotation (Full Step Mode) * 4.36:1 Gearbox.
+#define STEPS_PER_REV_BASE 1400         // 200 Steps per Rotation (Full Step Mode) * 7:1 Gearbox.
+#define MICROSTEPPING_MULT 16           // All Microstepping Pins Set to High.
+
+#define ARM_HEIGHT 0.2075               // In Relation to Midplane of Base Driven Gear [Meters].
+#define ARM_LATERAL_OFFSET 0.043666     // In Relation to Base Rotation Axis [Meters].
+#define ARM_LENGTH 0.335                // In Relation to Arm Rotation Axis - Total Length: Arm + Gripper [Meters].
 
 #define DIR_M1_PIN 26
 #define STEP_M1_PIN 25

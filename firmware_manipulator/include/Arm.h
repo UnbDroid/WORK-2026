@@ -19,7 +19,7 @@ class Manipulator {
         Manipulator();
         void init(FastAccelStepper* base, FastAccelStepper* arm, Servo* gripper);
         void drive_angle(double theta_base, double theta_arm, double theta_gripper);
-        void drive_posi(double x, double y, double z);
+        bool drive_position(double x, double y, double z);
 };
 
 #endif // ARM_H
