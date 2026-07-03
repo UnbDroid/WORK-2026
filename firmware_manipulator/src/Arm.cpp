@@ -24,12 +24,6 @@ Manipulator::Manipulator() {
     this->stepper_base = nullptr;
     this->stepper_arm = nullptr;
     this->servo_gripper = nullptr;
-    this->x = 0.0;
-    this->y = 0.0;
-    this->z = 0.0;
-    this->theta_arm = 0.0;
-    this->theta_base = 0.0;
-    this->theta_gripper = 0.0;
 };
 
 void Manipulator::init(FastAccelStepper* base, FastAccelStepper* arm, Servo* gripper){
@@ -62,42 +56,60 @@ void Manipulator::init(FastAccelStepper* base, FastAccelStepper* arm, Servo* gri
     }
 };
 
-void Manipulator::drive_angle(double fk_theta_base, double fk_theta_arm, double fk_theta_gripper){
-    this->theta_base = fk_theta_base;
-    this->theta_arm = fk_theta_arm;
-    this->theta_gripper = fk_theta_gripper;
+fk_position Manipulator::forward_kinematics(double fk_theta_base, double fk_theta_arm){
+    fk_position end_factor_position;
     
+    end_factor_position.fk_x = (ARM_LATERAL_OFFSET + (ARM_LENGTH * cos(fk_theta_arm))) * cos(fk_theta_base);
+    end_factor_position.fk_y = (ARM_LATERAL_OFFSET + (ARM_LENGTH * cos(fk_theta_arm))) * sin(fk_theta_base);
+    end_factor_position.fk_z = ARM_HEIGHT + (ARM_LENGTH * sin(fk_theta_arm));
+
+    return end_factor_position;
+}
+
+ik_angle Manipulator::inverse_kinematics(double ik_x, double ik_y, double ik_z){
+    ik_angle end_factor_angle;
+
+    double radial_distance = sqrt((ik_x * ik_x) + (ik_y * ik_y));
+    
+    end_factor_angle.ik_theta_base = atan2(ik_y, ik_x);
+    end_factor_angle.ik_theta_arm = atan2(ik_z - ARM_HEIGHT, radial_distance - ARM_LATERAL_OFFSET);
+
+    return end_factor_angle;
+}
+
+void Manipulator::drive_angle(double drive_theta_base, double drive_theta_arm, double drive_theta_gripper){
     if (stepper_base) {
-        stepper_base->moveTo(base_rad_to_steps(fk_theta_base));
+        stepper_base->moveTo(base_rad_to_steps(drive_theta_base));
     };
     if (stepper_arm) {
-        stepper_arm->moveTo(arm_rad_to_steps(fk_theta_arm));
+        stepper_arm->moveTo(arm_rad_to_steps(drive_theta_arm));
     };
     if (servo_gripper) {
-        servo_gripper->write(fk_theta_gripper * 180.0 / PI);
+        servo_gripper->write(drive_theta_gripper * 180.0 / PI);
     };
+
+    this->theta_base = drive_theta_base;
+    this->theta_arm = drive_theta_arm;
+    this->theta_gripper = drive_theta_gripper;
+
+    fk_position output_position = forward_kinematics(drive_theta_base, drive_theta_arm);
+
+    this->x = output_position.fk_x;
+    this->y = output_position.fk_y;
+    this->z = output_position.fk_z;
 };
 
-bool Manipulator::drive_position(double ik_x, double ik_y, double ik_z){
-    this->x = ik_x;
-    this->y = ik_y;
-    this->z = ik_z;
-    
-    double radial_distance = sqrt((ik_x * ik_x) + (ik_y * ik_y));
+void Manipulator::drive_position(double drive_x, double drive_y, double drive_z){
 
-    double reachability_error = pow(radial_distance - ARM_LATERAL_OFFSET, 2) + pow(ik_z - ARM_HEIGHT, 2) - pow(ARM_LENGTH, 2);
+    double test_radial_distance = sqrt((drive_x * drive_x) + (drive_y * drive_y));
+
+    double reachability_error = pow(test_radial_distance - ARM_LATERAL_OFFSET, 2) + pow(drive_z - ARM_HEIGHT, 2) - pow(ARM_LENGTH, 2);
 
     if (fabs(reachability_error) > 1.0E-6) {
-        return false;
+        return;
     }
-    
-    double ik_theta_base = atan2(ik_y, ik_x);
 
-    double ik_theta_arm = atan2(ik_z - ARM_HEIGHT, radial_distance - ARM_LATERAL_OFFSET);
+    ik_angle output_angle = inverse_kinematics(drive_x, drive_y, drive_z);
 
-    double ik_theta_gripper = PI;
-
-    drive_angle(ik_theta_base, ik_theta_arm, ik_theta_gripper);
-
-    return true;
+    drive_angle(output_angle.ik_theta_base, output_angle.ik_theta_arm, PI);
 };

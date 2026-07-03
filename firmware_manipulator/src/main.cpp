@@ -13,7 +13,6 @@ Servo gripper;
 Manipulator robot_arm;
 
 void setup() { 
-  
   pinMode(MS1_M1_PIN, OUTPUT);
   pinMode(MS2_M1_PIN, OUTPUT);
   pinMode(MS3_M1_PIN, OUTPUT);
@@ -42,9 +41,14 @@ void setup() {
 
   delay(2000);
 
-  robot_arm.drive_position(0.236021, 0.236021, 0.375000);
+  robot_arm.drive_position(0.189333, 0.327933, 0.2075);
+
+  printf("X: %.6lf\n", robot_arm.get_x_position());
+  printf("Y: %.6lf\n", robot_arm.get_y_position());
+  printf("Z: %.6lf\n", robot_arm.get_z_position());
+  printf("Theta_Base: %.6lf\n", robot_arm.get_base_angle());
+  printf("Theta_Arm: %.6lf\n", robot_arm.get_arm_angle());
+  printf("Theta_Gripper: %.6lf", robot_arm.get_gripper_angle());
 }
 
-void loop() {
-
-}
+void loop() {}
