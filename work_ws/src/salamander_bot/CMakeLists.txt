@@ -23,7 +23,7 @@ find_package(ament_cmake REQUIRED)
 
 install(DIRECTORY launch description config worlds meshes
   DESTINATION share/${PROJECT_NAME}
-  FILES_MATCHING PATTERN "*.py" PATTERN "*.xacro" PATTERN "*.ros2control" PATTERN "*.gazebo" PATTERN "*.sdf" PATTERN "*.yaml" PATTERN "*.rviz" PATTERN "*.stl" PATTERN "*.dae" PATTERN "*.urdf"
+  FILES_MATCHING PATTERN "*.py" PATTERN "*.xacro" PATTERN "*.ros2control" PATTERN "*.gazebo" PATTERN "*.world" PATTERN "*.sdf" PATTERN "*.yaml" PATTERN "*.rviz" PATTERN "*.stl" PATTERN "*.dae" PATTERN "*.urdf"
 )
 
 if(BUILD_TESTING)

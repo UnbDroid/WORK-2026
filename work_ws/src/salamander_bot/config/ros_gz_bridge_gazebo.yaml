@@ -5,6 +5,13 @@
   gz_type_name: "gz.msgs.Clock"
   direction: GZ_TO_ROS
 
+# Joint states published by JointState plugin
+  ros_topic_name: "joint_states"
+  gz_topic_name: "joint_states"
+  ros_type_name: "sensor_msgs/msg/JointState"
+  gz_type_name: "gz.msgs.Model"
+  direction: GZ_TO_ROS
+
 # Command velocity subscribed to by DiffDrive plugin
 - ros_topic_name: "cmd_vel" # Nav2
   gz_topic_name: "cmd_vel"
@@ -34,8 +41,9 @@
   direction: GZ_TO_ROS
 
 # Laser Scan Topics
-- ros_topic_name: "/sim/scan"
-  gz_topic_name: "/sim/scan"
+- ros_topic_name: "/simscan"
+  gz_topic_name: "/simscan"
   ros_type_name: "sensor_msgs/msg/LaserScan"
   gz_type_name: "gz.msgs.LaserScan"
   direction: GZ_TO_ROS
+  lazy: false

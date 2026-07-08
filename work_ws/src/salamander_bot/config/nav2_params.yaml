@@ -46,7 +46,7 @@ amcl:
     recovery_alpha_fast: 0.0
     recovery_alpha_slow: 0.0
     resample_interval: 1
-    scan_topic: scan
+    scan_topic: /scan_filtered
 
 #Executa a árvore de comportamento para navegação e recuperação
 bt_navigator:
@@ -100,6 +100,7 @@ controller_server:
       plugin: "nav2_controller::SimpleProgressChecker"
       required_movement_radius: 0.5
       movement_time_allowance: 10.0
+      current_goal_checker: "general_goal_checker" #parametro que define qual verificador de objetivo será usado para determinar se o robô está progredindo em direção ao objetivo. Neste caso, está configurado para usar o "general_goal_checker", que é um verificador de objetivo mais geral e menos preciso, adequado para a maioria das situações de navegação.
     # Goal checker parameters
     #precise_goal_checker:
     #  plugin: "nav2_controller::SimpleGoalChecker"
@@ -120,15 +121,15 @@ controller_server:
       time_steps: 56
       model_dt: 0.05
       batch_size: 2000
-      ax_max: 3.0
-      ax_min: -3.0
-      ay_max: 3.0
-      ay_min: -3.0
-      az_max: 3.5
-      vx_std: 0.2
-      vy_std: 0.2
-      wz_std: 0.4
-      vx_max: 0.5
+      ax_max: 6.0
+      ax_min: -6.0 
+      ay_max: 5.0
+      ay_min: -5.0 
+      az_max: 3.0
+      vx_std: 0.55
+      vy_std: 0.35
+      wz_std: 0.3
+      vx_max: 0.65
       vx_min: -0.35
       vy_max: 0.5
       wz_max: 1.9
@@ -224,7 +225,7 @@ local_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0 #incentiva o robo a manter uma distância segura dos obstáculos.
-        inflation_radius: 0.1 #distancia em metros que o robo deve manter dos obstáculos.
+        inflation_radius: 0.20 #distancia em metros que o robo deve manter dos obstáculos.
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True 
@@ -236,7 +237,7 @@ local_costmap:
         mark_threshold: 0
         observation_sources: scan
         scan:
-          topic: /scan
+          topic: /scan_filtered
           max_obstacle_height: 2.0
           clearing: True
           marking: True
@@ -266,7 +267,7 @@ global_costmap:
         enabled: True
         observation_sources: scan
         scan:
-          topic: /scan
+          topic: /scan_filtered
           max_obstacle_height: 2.0
           clearing: True
           marking: True
@@ -281,7 +282,7 @@ global_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.1
+        inflation_radius: 0.20
       always_send_full_costmap: True
 
 # The yaml_filename does not need to be specified since it going to be set by defaults in launch.
@@ -289,7 +290,7 @@ global_costmap:
 # file & provide full path to map below. If CLI map configuration or launch default is provided, that will be used.
 # map_server:
 #   ros__parameters:  
-#     yaml_filename: ""
+#     yaml_filename: "" 
 
 map_saver:
   ros__parameters:
@@ -436,7 +437,7 @@ collision_monitor:
     observation_sources: ["scan"]
     scan:
       type: "scan"
-      topic: "scan"
+      topic: "/scan_filtered"
       min_height: 0.15
       max_height: 2.0
       enabled: True
