@@ -2,31 +2,27 @@
 <sdf version="1.8">
 
   <world name="default">
-    <!-- Physics -->
     <plugin
       filename="gz-sim-physics-system"
       name="gz::sim::systems::Physics">
     </plugin>
 
-    <!-- User commands -->
     <plugin
       filename="gz-sim-user-commands-system"
       name="gz::sim::systems::UserCommands">
     </plugin>
 
-    <!-- Scene broadcaster -->
     <plugin
       filename="gz-sim-scene-broadcaster-system"
       name="gz::sim::systems::SceneBroadcaster">
     </plugin>
 
-    <!-- Sensors -->
     <plugin
       filename="gz-sim-sensors-system"
       name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
     </plugin>
 
-    <!-- Ground -->
     <model name="ground_plane">
       <static>true</static>
       <link name="link">
@@ -46,12 +42,15 @@
               <size>100 100</size>
             </plane>
           </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+          </material>
         </visual>
       </link>
     </model>
 
-    <!-- Light -->
-    <light name="sun" type="directional">
+    <light type="directional" name="sun">
       <cast_shadows>true</cast_shadows>
       <pose>0 0 10 0 0 0</pose>
       <diffuse>0.8 0.8 0.8 1</diffuse>
@@ -60,5 +59,4 @@
     </light>
 
   </world>
-
 </sdf>

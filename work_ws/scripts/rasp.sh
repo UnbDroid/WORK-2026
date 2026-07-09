@@ -3,17 +3,12 @@
 # se qualquer comando falhar, o script para
 set -e 
 
-# ssh droid@192.168.1.200
-# distrobox enter ubuntu
+cd ~/WORK-2026/work_ws
 
-# Reorganizar pastas na rasp --> atualmente está com teste_work
-cd ~/WORK-2026
-
-git checkout main
+# Mostrar em qual branch estamos trabalhando
+git branch 
 
 git pull
-
-cd work_ws
 
 source /opt/ros/jazzy/setup.bash
 
@@ -23,6 +18,4 @@ source install/local_setup.bash
 
 ros2 run micro_ros_setup build_agent.sh
 
-sudo chmod 777 /dev/ttyUSB0
-
-ros2 launch salamander_bot odomLidar.launch.py
+ros2 launch salamander_bot mapping.launch.py

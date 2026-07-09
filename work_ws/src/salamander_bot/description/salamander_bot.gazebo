@@ -47,7 +47,70 @@
 </gazebo>
 
 <gazebo>
-  
+  <plugin name="gz::sim::systems::DiffDrive" filename="gz-sim-diff-drive-system">
+
+    <left_joint>wheel_lf_1_joint</left_joint>
+    <left_joint>wheel_lb_1_joint</left_joint>
+    <right_joint>wheel_rf_1_joint</right_joint>
+    <right_joint>wheel_rb_1_joint</right_joint>
+    
+    <wheel_separation>0.3</wheel_separation> <!-- Ajustar -->
+    <wheel_radius>0.05</wheel_radius> <!-- Ajustar -->
+
+    <max_linear_acceleration>10.0</max_linear_acceleration> <!-- Ajustar -->
+
+    <topic>/cmd_vel</topic>
+    <tf_topic>/tf</tf_topic>
+    <odom_topic>/odom_rf2o</odom_topic>
+    <frame_id>/odom_rf2o</frame_id>
+    <child_frame_id>base_footprint</child_frame_id>
+    <odom_publisher_frequency>10.0</odom_publisher_frequency>
+  </plugin>
+
+  <plugin name="gz::sim::systems::JointStatePublisher" filename="gz-sim-joint-state-publisher-system">
+    <topic>/joint_states</topic>
+    <joint_name>wheel_lf_1_joint</joint_name>
+    <joint_name>wheel_lb_1_joint</joint_name>
+    <joint_name>wheel_rf_1_joint</joint_name>
+    <joint_name>wheel_rb_1_joint</joint_name>
+  </plugin>
+</gazebo>
+
+<gazebo reference="rplidar_a1m8_1">
+  <sensor name="lidar" type="gpu_lidar">
+    <pose relative_to="rplidar_a1m8_1">0 0 0 0 0 0</pose>
+
+    <update_rate>10</update_rate>
+
+    <topic>/simscan</topic>
+
+    <lidar>
+      <scan>
+        <horizontal>
+          <samples>720</samples>
+          <resolution>1</resolution>
+          <min_angle>-3.14</min_angle>
+          <max_angle>3.14</max_angle>
+        </horizontal>
+      </scan>
+
+      <range>
+        <min>0.01</min>
+        <max>12.0</max>
+        <resolution>0.005</resolution>
+      </range>
+
+      <noise>
+        <type>gaussian</type>
+        <mean>0.0</mean>
+        <stddev>0.001</stddev>
+      </noise>
+    </lidar>
+
+    <always_on>true</always_on>
+    <visualize>true</visualize>
+
+  </sensor>
 </gazebo>
 
 </robot>

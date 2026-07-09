@@ -2,8 +2,12 @@
 <robot name="salamander_bot" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
 <xacro:include filename="$(find salamander_bot)/description/colors.xacro" />
+<xacro:include filename="$(find salamander_bot)/description/lidar.xacro" />
 <xacro:include filename="$(find salamander_bot)/description/salamander_bot.ros2control" />
 <xacro:include filename="$(find salamander_bot)/description/salamander_bot.gazebo" />
+
+<link name="base_footprint">
+</link>
 
 <link name="base_link">
   <inertial>
@@ -11,6 +15,7 @@
     <mass value="4.267628583572636"/>
     <inertia ixx="0.038378" iyy="0.079589" izz="0.097881" ixy="0.004056" iyz="-0.001772" ixz="0.008003"/>
   </inertial>
+
   <visual>
     <origin xyz="0 0 0" rpy="0 0 0"/>
     <geometry>
@@ -18,22 +23,23 @@
     </geometry>
     <material name="silver"/>
   </visual>
+
   <collision>
     <origin xyz="0 0 0" rpy="0 0 0"/>
     <geometry>
       <mesh filename="file://$(find salamander_bot)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
     </geometry>
   </collision>
+  
 </link>
 
-<joint name="base_footprint_joint" type="fixed">
-  <parent link="base_link"/>
-  <child link="base_footprint"/>
+<joint name="base_link_joint" type="fixed">
+  <parent link="base_footprint"/>
+  <child link="base_link"/>
   <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
 </joint>
 
-<link name="base_footprint">
-</link>
+<!-- Rodas -->
 
 <link name="wheel_lf_1">
   <inertial>
@@ -119,28 +125,28 @@
   </collision>
 </link>
 
-<joint name="wheel_lf_joint" type="continuous">
+<joint name="wheel_lf_1_joint" type="continuous">
   <origin xyz="0.11315 0.142 0.03865" rpy="0 0 0"/>
   <parent link="base_link"/>
   <child link="wheel_lf_1"/>
   <axis xyz="0.0 1.0 -0.0"/>
 </joint>
 
-<joint name="wheel_lb_joint" type="continuous">
+<joint name="wheel_lb_1_joint" type="continuous">
   <origin xyz="-0.11315 0.142 0.03865" rpy="0 0 0"/>
   <parent link="base_link"/>
   <child link="wheel_lb_1"/>
   <axis xyz="-0.0 1.0 -0.0"/>
 </joint>
 
-<joint name="wheel_rf_joint" type="continuous">
+<joint name="wheel_rf_1_joint" type="continuous">
   <origin xyz="0.11315 -0.142 0.03865" rpy="0 0 0"/>
   <parent link="base_link"/>
   <child link="wheel_rf_1"/>
   <axis xyz="-0.0 -1.0 0.0"/>
 </joint>
 
-<joint name="wheel_rb_joint" type="continuous">
+<joint name="wheel_rb_1_joint" type="continuous">
   <origin xyz="-0.11315 -0.142 0.03865" rpy="0 0 0"/>
   <parent link="base_link"/>
   <child link="wheel_rb_1"/>
