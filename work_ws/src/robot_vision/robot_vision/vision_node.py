@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 import os
 import cv2
 import rclpy
