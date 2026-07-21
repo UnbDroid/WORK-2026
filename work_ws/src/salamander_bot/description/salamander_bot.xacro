@@ -19,7 +19,7 @@
   <visual>
     <origin xyz="0 0 0" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="file://$(find salamander_bot)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="package://salamander_bot/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
     </geometry>
     <material name="silver"/>
   </visual>
@@ -27,7 +27,7 @@
   <collision>
     <origin xyz="0 0 0" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="file://$(find salamander_bot)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="package://salamander_bot/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
     </geometry>
   </collision>
   
@@ -50,14 +50,14 @@
   <visual>
     <origin xyz="-0.11315 -0.142 -0.03865" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="file://$(find salamander_bot)/meshes/wheel_lf_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="package://salamander_bot/meshes/wheel_lf_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
     <material name="silver"/>
   </visual>
   <collision>
     <origin xyz="-0.11315 -0.142 -0.03865" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="file://$(find salamander_bot)/meshes/wheel_lf_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="package://salamander_bot/meshes/wheel_lf_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
   </collision>
 </link>
@@ -71,14 +71,14 @@
   <visual>
     <origin xyz="0.11315 -0.142 -0.03865" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="file://$(find salamander_bot)/meshes/wheel_lb_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="package://salamander_bot/meshes/wheel_lb_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
     <material name="silver"/>
   </visual>
   <collision>
     <origin xyz="0.11315 -0.142 -0.03865" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="file://$(find salamander_bot)/meshes/wheel_lb_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="package://salamander_bot/meshes/wheel_lb_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
   </collision>
 </link>
@@ -92,14 +92,14 @@
   <visual>
     <origin xyz="-0.11315 0.142 -0.03865" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="file://$(find salamander_bot)/meshes/wheel_rf_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="package://salamander_bot/meshes/wheel_rf_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
     <material name="silver"/>
   </visual>
   <collision>
     <origin xyz="-0.11315 0.142 -0.03865" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="file://$(find salamander_bot)/meshes/wheel_rf_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="package://salamander_bot/meshes/wheel_rf_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
   </collision>
 </link>
@@ -113,14 +113,14 @@
   <visual>
     <origin xyz="0.11315 0.142 -0.03865" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="file://$(find salamander_bot)/meshes/wheel_rb_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="package://salamander_bot/meshes/wheel_rb_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
     <material name="silver"/>
   </visual>
   <collision>
     <origin xyz="0.11315 0.142 -0.03865" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="file://$(find salamander_bot)/meshes/wheel_rb_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="package://salamander_bot/meshes/wheel_rb_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
   </collision>
 </link>
