@@ -35,7 +35,7 @@ def generate_launch_description():
         ),
         launch_arguments={
             'frame_id': 'rplidar_a1m8_1',
-            'serial_port': '/dev/ttyUSB1', # Agora o lidar está configurado para usar a porta USB0
+            'serial_port': '/dev/ttyUSB0', # Agora o lidar está configurado para usar a porta USB0
         }.items()
     )
 
@@ -51,15 +51,25 @@ def generate_launch_description():
         output='screen'
     )
 
+    rf2o_node = Node(
+    package='rf2o_laser_odometry',
+    executable='rf2o_laser_odometry_node',
+    name='rf2o_laser_odometry',
+    output='screen',
+    parameters=[{
+        'laser_scan_topic': '/scan',
+        'odom_topic': '/odom_rf2o',
+        'publish_tf': True,
+        'base_frame_id': 'base_footprint',      # <- a correção
+        'odom_frame_id': 'odom',
+        'init_pose_from_topic': '',
+        'freq': 20.0,
+    }],
+)
+
     rf2o = TimerAction(
         period=3.0,
-        actions=[
-            IncludeLaunchDescription(
-                PythonLaunchDescriptionSource(
-                    os.path.join(rf2o_share, 'launch', 'rf2o_laser_odometry.launch.py')
-                ),
-            )
-        ]
+        actions=[rf2o_node]
     )
 
     return LaunchDescription([
