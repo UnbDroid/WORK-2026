@@ -119,7 +119,7 @@ controller_server:
     FollowPath:
       plugin: "nav2_mppi_controller::MPPIController" #The plugin to use for the motion model constraints of the MPPI planner
       time_steps: 40 #TODO: testando valor menor orig=56
-      model_dt: 0.05
+      model_dt: 0.1
       batch_size: 1000 #TODO: testando valor menor orig=2000
       ax_max: 6.0
       ax_min: -6.0 
