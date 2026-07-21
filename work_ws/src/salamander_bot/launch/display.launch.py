@@ -31,7 +31,7 @@ def generate_launch_description():
     robot_state_publisher_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        name='robot_state_publisher',
+        name='state_publisher',
         parameters=[
             {'robot_description': robot_urdf,
              'use_sim_time': LaunchConfiguration('use_sim_time', default='false')

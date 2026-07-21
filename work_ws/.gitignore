@@ -26,3 +26,5 @@ sllidar_ros2/
 rf2o_laser_odometry/
 uros/
 
+src/arm_platform/models/
+analise/
