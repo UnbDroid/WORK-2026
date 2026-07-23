@@ -20,7 +20,7 @@ class VisionNode(Node):
         self.cube_pub = self.create_publisher(CubeArray, "detected_cubes", 10)
         self.get_logger().info("Publisher do tópico 'detected_cubes' inicializado!")
 
-        self.indice_camera = 0
+        self.indice_camera = 3
         self.cap = cv2.VideoCapture(self.indice_camera, cv2.CAP_V4L2)
 
         if not self.cap.isOpened():
