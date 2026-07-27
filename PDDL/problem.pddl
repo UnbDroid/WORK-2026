@@ -1,24 +1,31 @@
-(define (problem exercise0-problem-robot)
+(define (problem basic-manipulation-test)
   (:domain exercise0)
 
   (:objects
-    robot1 robot2 - robot
-    loc1 loc2 loc3 - location
-    box1 box2 - object
+    robot1 - robot
+
+    start target - location
+
+    attc1 attc2 attc3 attc4 - object
   )
 
   (:init
-    (at-robot robot1 loc1)
-    (at-robot robot2 loc2)
-    (at-object box1 loc1)
-    (at-object box2 loc3)
+    ;; posição inicial do robô
+    (at-robot robot1 start)
+
+    ;; os quatro objetos começam na área inicial
+    (at-object attc1 start)
+    (at-object attc2 start)
+    (at-object attc3 start)
+    (at-object attc4 start)
   )
 
   (:goal
     (and
-      (at-robot robot1 loc2)
-      (at-object box1 loc2)
-      (at-object box2 loc1)
+      ;; apenas três objetos precisam ser transportados
+      (at-object attc1 target)
+      (at-object attc2 target)
+      (at-object attc3 target)
     )
   )
 )
