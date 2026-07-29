@@ -7,10 +7,11 @@
 // Funcionam Somente com Leitura de Dados (INPUT): 34, 35, 36 e 39.
 
 #define TICKS_PER_REVOLUTION        1440
-#define PWM_FREQUENCY               5000
+#define PWM_FREQUENCY               15000
 #define PWM_RESOLUTION              8
 #define MAX_PWM                     255
-#define WHEEL_RADIUS                0.04      // Wheel Radius in Meters.
+#define WHEEL_RADIUS                0.04      // Wheel Radius in
+ Meters.
 #define DISTANCE_BETWEEN_WHEELS_Y   0.11315   // Distance Between Wheels and Center of Robot (Y Axes) in Meters.
 #define DISTANCE_BETWEEN_WHEELS_X   0.15200   // Distance Between Wheels and Center of Robot (X Axes) in Meters.
 
@@ -36,8 +37,8 @@
 #define M2_IN1          GPIO_NUM_22         //2 -> 22
 #define M2_IN2          GPIO_NUM_23         //15 -> 23
 #define M2_PWM          GPIO_NUM_4
-#define M2_ENC_A        GPIO_NUM_12
-#define M2_ENC_B        GPIO_NUM_14 
+#define M2_ENC_A        GPIO_NUM_14
+#define M2_ENC_B        GPIO_NUM_15 
 #define M2_CANAL_PWM    LEDC_CHANNEL_2
 #define M2_KP           2.5
 #define M2_KI           0.75
