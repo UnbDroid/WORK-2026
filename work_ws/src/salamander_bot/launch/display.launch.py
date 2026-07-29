@@ -26,9 +26,20 @@ def generate_launch_description():
         default_value='True'
     )
 
+    publish_state_publisher_arg = DeclareLaunchArgument(
+        name='publish_state_publisher',
+        default_value='false',
+        description=(
+            'Start robot_state_publisher locally. Keep false when the robot '
+            'already publishes its TF and robot description.'
+        )
+    )
+
     show_gui = LaunchConfiguration('gui')
+    publish_state_publisher = LaunchConfiguration('publish_state_publisher')
 
     robot_state_publisher_node = Node(
+        condition=IfCondition(publish_state_publisher),
         package='robot_state_publisher',
         executable='robot_state_publisher',
         name='state_publisher',
@@ -63,6 +74,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         gui_arg,
+        publish_state_publisher_arg,
         robot_state_publisher_node,
         joint_state_publisher_node,
         joint_state_publisher_gui_node,

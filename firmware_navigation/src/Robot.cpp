@@ -15,10 +15,10 @@ void Robot::moveRobot(double Vx, double Vy, double Omega) {
     double Vy_meters = Vy * WHEEL_RADIUS;
 
     // Cálculo da Cinemática Inversa:
-    double V_M1 = Vx_meters + Vy_meters + (DISTANCE_BETWEEN_WHEELS_Y * Omega) - (DISTANCE_BETWEEN_WHEELS_X * Omega);
-    double V_M2 = Vx_meters - Vy_meters - (DISTANCE_BETWEEN_WHEELS_Y * Omega) + (DISTANCE_BETWEEN_WHEELS_X * Omega);
-    double V_M3 = Vx_meters - Vy_meters + (DISTANCE_BETWEEN_WHEELS_Y * Omega) - (DISTANCE_BETWEEN_WHEELS_X * Omega);
-    double V_M4 = Vx_meters + Vy_meters - (DISTANCE_BETWEEN_WHEELS_Y * Omega) + (DISTANCE_BETWEEN_WHEELS_X * Omega);
+    double V_M1 = Vx_meters + Vy_meters + (DISTANCE_BETWEEN_WHEELS_Y + DISTANCE_BETWEEN_WHEELS_X) * Omega;
+    double V_M2 = Vx_meters - Vy_meters - (DISTANCE_BETWEEN_WHEELS_Y + DISTANCE_BETWEEN_WHEELS_X) * Omega;
+    double V_M3 = Vx_meters - Vy_meters + (DISTANCE_BETWEEN_WHEELS_Y + DISTANCE_BETWEEN_WHEELS_X) * Omega;
+    double V_M4 = Vx_meters + Vy_meters - (DISTANCE_BETWEEN_WHEELS_Y + DISTANCE_BETWEEN_WHEELS_X) * Omega;
 
     // Conversão: m/s -> RPM:
     double V_M1_RPM = (V_M1 * 60.f) / (PI * 2.f * WHEEL_RADIUS);
