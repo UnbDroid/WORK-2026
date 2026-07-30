@@ -12,7 +12,7 @@ amcl:
     alpha4: 0.2
     alpha5: 0.2
 
-    base_frame_id: "base_footprint"
+    base_frame_id: "base_link"
     global_frame_id: "map"
     laser_max_range: 100.0
     laser_min_range: -1.0
@@ -52,7 +52,7 @@ amcl:
 bt_navigator:
   ros__parameters:
     global_frame: map
-    robot_base_frame: base_footprint  
+    robot_base_frame: base_link  
     odom_topic: /odom
     bt_loop_duration: 10
     default_server_timeout: 20
@@ -207,7 +207,7 @@ controller_server:
         cost_weight: 3.81
         near_collision_cost: 253
         critical_cost: 300.0
-        consider_footprint: true # Considera o footprint do robô ao avaliar colisões (default = false)
+        consider_footprint: false # Considera o footprint do robô ao avaliar colisões (default = false)
         collision_cost: 1000000.0
         near_goal_distance: 1.0
         trajectory_point_step: 2
@@ -247,7 +247,7 @@ local_costmap:
       update_frequency: 5.0
       publish_frequency: 2.0
       global_frame: odom
-      robot_base_frame: base_footprint
+      robot_base_frame: base_link
       rolling_window: true # Mantém o costmap centrado no robo.
       width: 3 # Largura do costmap em metros. 
       height: 3 # Altura do costmap em metros.
@@ -257,7 +257,7 @@ local_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0 #incentiva o robo a manter uma distância segura dos obstáculos.
-        inflation_radius: 0.20 #distancia em metros que o robo deve manter dos obstáculos.
+        inflation_radius: 0.25 #distancia em metros que o robo deve manter dos obstáculos.
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True 
@@ -289,7 +289,7 @@ global_costmap:
       update_frequency: 1.0
       publish_frequency: 1.0
       global_frame: map
-      robot_base_frame: base_footprint
+      robot_base_frame: base_link
       robot_radius: 0.22
       resolution: 0.05
       track_unknown_space: true
@@ -314,7 +314,7 @@ global_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.20
+        inflation_radius: 0.25
       always_send_full_costmap: True
 
 # The yaml_filename does not need to be specified since it going to be set by defaults in launch.
