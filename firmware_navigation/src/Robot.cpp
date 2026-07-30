@@ -11,14 +11,14 @@ Robot::Robot(MotorDC& Motor1, MotorDC& Motor2, MotorDC& Motor3, MotorDC& Motor4)
 
 void Robot::moveRobot(double Vx, double Vy, double Omega) {
     // Conversão: rad/s -> m/s:
-    // double Vx_meters = Vx * WHEEL_RADIUS;
-    // double Vy_meters = Vy * WHEEL_RADIUS;
+    double Vx_meters = Vx * WHEEL_RADIUS;
+    double Vy_meters = Vy * WHEEL_RADIUS;
 
     // Cálculo da Cinemática Inversa:
-    double V_M1 = Vx + Vy + (DISTANCE_BETWEEN_WHEELS_Y + DISTANCE_BETWEEN_WHEELS_X) * Omega;
-    double V_M2 = Vx - Vy - (DISTANCE_BETWEEN_WHEELS_Y + DISTANCE_BETWEEN_WHEELS_X) * Omega;
-    double V_M3 = Vx - Vy + (DISTANCE_BETWEEN_WHEELS_Y + DISTANCE_BETWEEN_WHEELS_X) * Omega;
-    double V_M4 = Vx + Vy - (DISTANCE_BETWEEN_WHEELS_Y + DISTANCE_BETWEEN_WHEELS_X) * Omega;
+    double V_M1 = Vx_meters + Vy_meters + (DISTANCE_BETWEEN_WHEELS_Y + DISTANCE_BETWEEN_WHEELS_X) * Omega;
+    double V_M2 = Vx_meters - Vy_meters - (DISTANCE_BETWEEN_WHEELS_Y + DISTANCE_BETWEEN_WHEELS_X) * Omega;
+    double V_M3 = Vx_meters - Vy_meters + (DISTANCE_BETWEEN_WHEELS_Y + DISTANCE_BETWEEN_WHEELS_X) * Omega;
+    double V_M4 = Vx_meters + Vy_meters - (DISTANCE_BETWEEN_WHEELS_Y + DISTANCE_BETWEEN_WHEELS_X) * Omega;
 
     // Conversão: m/s -> RPM:
     double V_M1_RPM = (V_M1 * 60.f) / (PI * 2.f * WHEEL_RADIUS);
