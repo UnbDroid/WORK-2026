@@ -77,7 +77,7 @@ void setup() {
 
   std_msgs__msg__Float32MultiArray__init(&msg);
 
-  msg.data.data = (double*) malloc(3 * sizeof(double));
+  msg.data.data = (float*) malloc(3 * sizeof(float));
   msg.data.size = 3;
   msg.data.capacity = 3;
 
