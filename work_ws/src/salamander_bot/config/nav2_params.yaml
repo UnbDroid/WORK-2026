@@ -129,10 +129,10 @@ controller_server:
       vx_std: 0.2
       vy_std: 0.2
       wz_std: 0.3
-      vx_max: 0.5
+      vx_max: 0.3
       vx_min: 0.0
-      vy_max: 0.5 #TODO: testar valores mais baixos pra ver se é por isso que anda torto
-      wz_max: 1.9
+      vy_max: 0.2 #TODO: testar valores mais baixos pra ver se é por isso que anda torto
+      wz_max: 1.0
       iteration_count: 1
       prune_distance: 1.7
       transform_tolerance: 0.1
