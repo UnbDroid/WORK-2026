@@ -12,7 +12,7 @@ amcl:
     alpha4: 0.2
     alpha5: 0.2
 
-    base_frame_id: "base_link"
+    base_frame_id: "base_footprint"
     global_frame_id: "map"
     laser_max_range: 100.0
     laser_min_range: -1.0
@@ -52,7 +52,7 @@ amcl:
 bt_navigator:
   ros__parameters:
     global_frame: map
-    robot_base_frame: base_link    
+    robot_base_frame: base_footprint  
     odom_topic: /odom
     bt_loop_duration: 10
     default_server_timeout: 20
@@ -80,12 +80,12 @@ bt_navigator:
 # Executa o algoritmo que gera os comandos de velocidade direta para os motores
 controller_server:
   ros__parameters:
-    controller_frequency: 20.0
+    controller_frequency: 10.0 #TODO: testando valor menor orig=20.0
     costmap_update_timeout: 0.30 #The timeout value (seconds) for the costmap to be fully updated before a control effort can be computed.
 
     # Limites mínimos para o robô considerar que parou ou deve se mover
-    min_x_velocity_threshold: 0.001
-    min_y_velocity_threshold: 0.01 #reduzido de 0.5
+    min_x_velocity_threshold: 0.0001
+    min_y_velocity_threshold: 0.001 #reduzido de 0.5
     min_theta_velocity_threshold: 0.001
 
 
@@ -99,7 +99,7 @@ controller_server:
     progress_checker:
       plugin: "nav2_controller::SimpleProgressChecker"
       required_movement_radius: 0.5
-      movement_time_allowance: 10.0
+      movement_time_allowance: 15.0 # TODO: mais tempo pra andar se tver lento
       current_goal_checker: "general_goal_checker" #parametro que define qual verificador de objetivo será usado para determinar se o robô está progredindo em direção ao objetivo. Neste caso, está configurado para usar o "general_goal_checker", que é um verificador de objetivo mais geral e menos preciso, adequado para a maioria das situações de navegação.
     # Goal checker parameters
     #precise_goal_checker:
@@ -113,31 +113,59 @@ controller_server:
       stateful: True
       plugin: "nav2_controller::SimpleGoalChecker"
       xy_goal_tolerance: 0.25
-      yaw_goal_tolerance: 0.25
+      yaw_goal_tolerance: 0.50 #valor que faz o robo dançar (default = 0.25))
 
     # MPPI CONTROLLER CONFIGURADO PARA MECANUM
     FollowPath:
       plugin: "nav2_mppi_controller::MPPIController" #The plugin to use for the motion model constraints of the MPPI planner
-      time_steps: 56
-      model_dt: 0.05
-      batch_size: 2000
-      ax_max: 6.0
-      ax_min: -6.0 
-      ay_max: 5.0
-      ay_min: -5.0 
-      az_max: 3.0
-      vx_std: 0.55
-      vy_std: 0.35
+      time_steps: 30 #TODO: testando valor menor orig=56
+      model_dt: 0.1
+      batch_size: 5000 #TODO: testando valor maior orig=1000
+      ax_max: 3.0
+      ax_min: -3.0
+      ay_max: 3.0
+      ay_min: 0.0
+      az_max: 3.5
+      vx_std: 0.2
+      vy_std: 0.2
       wz_std: 0.3
-      vx_max: 0.65
-      vx_min: -0.35
-      vy_max: 0.5
+      vx_max: 0.5
+      vx_min: 0.0
+      vy_max: 0.5 #TODO: testar valores mais baixos pra ver se é por isso que anda torto
       wz_max: 1.9
       iteration_count: 1
       prune_distance: 1.7
       transform_tolerance: 0.1
       temperature: 0.3
-      gamma: 0.015
+      gamma: 0.015 #With a higher gamma (like 0.03), the controller will strongly prefer the very best trajectories and mostly ignore mediocre ones
+
+      #Parametros adicionados seguindo o tutorial
+      desired_linear_vel: 0.3 #adicionado: velocidade linear desejada
+      lookahead_dist: 0.5 #adicionado: distância de antecipação para o controlador MPPI, que define quanto à frente o controlador deve considerar ao planejar a trajetória do robô.
+      min_lookahead_dist: 0.3 #adicionado: distância mínima de antecipação para o controlador.
+      max_lookahead_dist: 1.0 #adicionado: distância máxima de antecipação para o controlador.
+      lookahead_time: 1.5 #adicionado: tempo de antecipação para o controlador MPPI, que define quanto tempo no futuro o controlador deve considerar ao planejar a trajetória do robô.
+      rotate_to_heading_angular_vel: 0.5 #adicionado: velocidade angular desejada para o controlador MPPI, que define a velocidade com que o robô deve girar para se alinhar com a direção desejada.
+      use_velocity_scaled_lookahead_dist: true #adicionado: indica se a distância de antecipação deve ser escalada com base na velocidade atual do robo.
+      min_approach_linear_velocity: 0.05 #adicionado: velocidade linear mínima para o controlador MPPI, que define a velocidade mínima com que o robô deve se aproximar do objetivo.
+      approach_velocity_scaling_dist: 0.6 #the robot starts slowing down earlier when approaching the goal
+      use_cost_regulated_linear_velocity_scaling: true #adicionado: indica se a velocidade linear deve ser escalada com base no custo da trajetória planejada.
+      regulated_linear_scaling_min_radius: 0.8 #adicionado: raio mínimo para o escalonamento da velocidade linear regulada, que define a distância mínima do robô ao objetivo antes de começar a reduzir a velocidade.
+      regulated_linear_scaling_min_speed: 0.25 #adicionado: velocidade mínima para o escalonamento da velocidade linear regulada, que define a velocidade mínima com que o robô deve se aproximar do objetivo.
+      use_fixed_curvature_lookahead: false #adicionado: indica se o controlador MPPI deve usar uma distância de antecipação de curvatura fixa ao planejar a trajetória do robô.
+      curvature_lookahead_dist : 0.5 #adicionado: distância de antecipação de curvatura para o controlador MPPI, que define quanto à frente o controlador deve considerar ao planejar a trajetória do robô com base na curvatura da trajetória.
+      use_rotate_to_heading: true #adicionado: indica se o controlador MPPI deve girar para se alinhar com a direção desejada antes de se mover em linha reta.
+      rotate_to_heading_min_angle: 0.7 #adicionado: ângulo mínimo para o controlador MPPI girar para se alinhar com a direção desejada antes de se mover em linha reta.
+      max_angular_accel: 3.2 #adicionado: aceleração angular máxima para o controlador MPPI, que define a taxa máxima de mudança da velocidade angular do robô.
+      interpolated_curvature_after_goal: false #adicionado: indica se o controlador MPPI deve usar uma curvatura interpolada após atingir o objetivo.
+      use_cancel_deceleration: false #adicionado: indica se o controlador MPPI deve cancelar a desaceleração ao atingir o objetivo.
+      cancel_deceleration: 3.2 #adicionado: taxa de desaceleração para o controlador MPPI ao atingir o objetivo.
+      max_robot_pose_search_dist: 10.0 #adicionado: distância máxima para o controlador MPPI procurar a pose do robô ao planejar a trajetória.
+      use_collision_detection: true #adicionado: indica se o controlador MPPI deve usar detecção de colisão ao planejar a trajetória do robô.
+      max_allowed_time_to_collision_up_to_carrot: 1.5 #adicionado: tempo máximo permitido para o controlador MPPI detectar uma colisão ao planejar a trajetória do robô.
+      
+    
+
       motion_model: "Omni" #The desired motion model plugin to use for trajectory planning. Alterado: de "DiffDrive" para "Omni"
       visualize: true
       regenerate_noises: true
@@ -151,7 +179,7 @@ controller_server:
       critics: [
         "ConstraintCritic", "CostCritic", "GoalCritic",
         "GoalAngleCritic", "PathAlignCritic", "PathFollowCritic",
-        "PathAngleCritic"] #Removido : "PreferForwardCritic" : forçava o robô a preferir trajetórias para frente. A remoção desse crítico permite incluir movimentos laterais ou para trás.
+        "PathAngleCritic", "TwirlingCritic", "PreferForwardCritic"]
       ConstraintCritic:
         enabled: true
         cost_power: 1
@@ -161,30 +189,32 @@ controller_server:
         cost_power: 1
         cost_weight: 5.0
         threshold_to_consider: 1.4
-      GoalAngleCritic:
+      GoalAngleCritic: #importante para nossa competição.
         enabled: true
         cost_power: 1
         cost_weight: 3.0
         threshold_to_consider: 0.5
-      #PreferForwardCritic:
-      # enabled: true
-      # cost_power: 1
-      #  cost_weight: 5.0
-      #  threshold_to_consider: 0.5
+      #descomentei o PreferForwardCritic para ver se melhora a precisão do robô ao seguir o caminho.
+      PreferForwardCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 6.0 #default = 5.0
+        threshold_to_consider: 0.4
+
       CostCritic:
         enabled: true
         cost_power: 1
         cost_weight: 3.81
         near_collision_cost: 253
         critical_cost: 300.0
-        consider_footprint: false
+        consider_footprint: true # Considera o footprint do robô ao avaliar colisões (default = false)
         collision_cost: 1000000.0
         near_goal_distance: 1.0
         trajectory_point_step: 2
       PathAlignCritic:
         enabled: true
         cost_power: 1
-        cost_weight: 14.0
+        cost_weight: 14.0 #default = 10.0
         max_path_occupancy_ratio: 0.05
         trajectory_point_step: 4
         threshold_to_consider: 0.5
@@ -193,9 +223,9 @@ controller_server:
       PathFollowCritic:
         enabled: true
         cost_power: 1
-        cost_weight: 5.0
+        cost_weight: 6.0 #vou mudar aqui para ver se melhora a precisão do robô ao seguir o caminho.
         offset_from_furthest: 5
-        threshold_to_consider: 1.4
+        threshold_to_consider: 0.4 #vou mudar aqui para ver se melhora a precisão do robô ao seguir o caminho.
       PathAngleCritic:
         enabled: true
         cost_power: 1
@@ -204,10 +234,12 @@ controller_server:
         threshold_to_consider: 0.5
         max_angle_to_furthest: 1.0
         mode: 0
-      # TwirlingCritic:
-      #   enabled: true
-      #   twirling_cost_power: 1
-      #   twirling_cost_weight: 10.0
+
+      #descomentei o TwirlingCritic para ver se melhora a precisão do robô ao seguir o caminho, sem ficar girando.
+      TwirlingCritic:
+        enabled: true
+        twirling_cost_power: 1
+        twirling_cost_weight: 10.0
 
 local_costmap:
   local_costmap:
@@ -215,7 +247,7 @@ local_costmap:
       update_frequency: 5.0
       publish_frequency: 2.0
       global_frame: odom
-      robot_base_frame: base_link  
+      robot_base_frame: base_footprint
       rolling_window: true # Mantém o costmap centrado no robo.
       width: 3 # Largura do costmap em metros. 
       height: 3 # Altura do costmap em metros.
@@ -257,7 +289,7 @@ global_costmap:
       update_frequency: 1.0
       publish_frequency: 1.0
       global_frame: map
-      robot_base_frame: base_link  
+      robot_base_frame: base_footprint
       robot_radius: 0.22
       resolution: 0.05
       track_unknown_space: true
