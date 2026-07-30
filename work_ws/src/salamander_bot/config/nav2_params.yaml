@@ -248,11 +248,15 @@ local_costmap:
       publish_frequency: 2.0
       global_frame: odom
       robot_base_frame: base_footprint
+      footprint: "[[0.14, 0.17],
+             [0.14,-0.17],
+             [-0.14,-0.17],
+             [-0.14, 0.17]]"
       rolling_window: true # Mantém o costmap centrado no robo.
       width: 3 # Largura do costmap em metros. 
       height: 3 # Altura do costmap em metros.
       resolution: 0.05
-      robot_radius: 0.22
+      #robot_radius: 0.22
       plugins: ["voxel_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
@@ -290,7 +294,11 @@ global_costmap:
       publish_frequency: 1.0
       global_frame: map
       robot_base_frame: base_footprint
-      robot_radius: 0.22
+      footprint: "[[0.14, 0.17],
+             [0.14,-0.17],
+             [-0.14,-0.17],
+             [-0.14, 0.17]]"
+      # robot_radius: 0.22
       resolution: 0.05
       track_unknown_space: true
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
