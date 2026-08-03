@@ -121,18 +121,18 @@ controller_server:
       time_steps: 30 #TODO: testando valor menor orig=56
       model_dt: 0.1
       batch_size: 5000 #TODO: testando valor maior orig=1000
-      ax_max: 1.0
-      ax_min: -1.0
-      ay_max: 3.0
-      ay_min: -1.0
-      az_max: 3.5
+      ax_max: 0.5
+      ax_min: -0.5
+      ay_max: 0.5
+      ay_min: -0.5
+      az_max: 1.0
       vx_std: 0.2
       vy_std: 0.2
       wz_std: 0.3
       vx_max: 0.5
       vx_min: -0.5
       vy_max: 0.5 #TODO: testar valores mais baixos pra ver se é por isso que anda torto
-      wz_max: 1.9
+      wz_max: 1.0
       iteration_count: 1
       prune_distance: 1.7
       transform_tolerance: 0.1
