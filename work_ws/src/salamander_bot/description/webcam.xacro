@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<robot name="salamander_bot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<link name="webcam">
+  <inertial>
+    <origin xyz="18.314038e-03 46.775002e-03 177.993585e-03" rpy="0 0 0"/>
+    <mass value="69.436269e-03"/>
+    <inertia ixx="0.001" iyy="0.001" izz="0.001" ixy="0.0" iyz="0.0" ixz="0.0"/> <!-- TODO -->
+  </inertial>
+
+  <visual>
+    <origin xyz="-12.753605e-03 0.16967e-03 51.105768e-03" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://salamander_bot/meshes/webcam.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+
+  <collision>
+    <origin xyz="-12.753605e-03 0.16967e-03 51.105768e-03" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://salamander_bot/meshes/webcam.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<joint name="webcam_joint" type="fixed">
+  <origin xyz="0.504998e-03 42.70432e-03 188.254995e-03" rpy="0 0 0"/>
+  <parent link="height_link"/>
+  <child link="webcam"/>
+</joint>
+
+</robot>

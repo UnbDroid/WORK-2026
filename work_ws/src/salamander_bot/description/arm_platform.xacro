@@ -1,0 +1,162 @@
+<?xml version="1.0" ?>
+<robot name="salamander_bot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<link name="platform_link">
+  <inertial>
+    <origin xyz="-42.269942e-03 42.271801e-03 29.786424e-03" rpy="0 0 0"/>
+    <mass value="638.06279e-03"/>
+    <inertia ixx="0.001" iyy="0.001" izz="0.001" ixy="0.0" iyz="0.0" ixz="0.0"/> <!-- TODO -->
+  </inertial>
+
+  <visual>
+    <origin xyz="-106.224243e-03 -4.427118e-03 21.00e-03" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://salamander_bot/meshes/platform_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+
+  <collision>
+    <origin xyz="-106.224243e-03 -4.427118e-03 21.00e-03" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://salamander_bot/meshes/platform_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+  
+</link>
+
+<link name="height_link">
+  <inertial>
+    <origin xyz="0.000482e-03 15.812434e-03 100.010944e-03" rpy="0 0 0"/>
+    <mass value="1267.057673e-03"/>
+    <inertia ixx="0.001" iyy="0.001" izz="0.001" ixy="0.0" iyz="0.0" ixz="0.0"/> <!-- TODO -->
+  </inertial>
+
+  <visual>
+    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://salamander_bot/meshes/height_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+
+  <collision>
+    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://salamander_bot/meshes/height_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+
+</link>
+
+<link name="arm_link">
+  <inertial>
+    <origin xyz="-17.367474e-03 -42.823048e-03 177.415764e-03" rpy="0 0 0"/>
+    <mass value="661.287992e-03"/>
+    <inertia ixx="0.001" iyy="0.001" izz="0.001" ixy="0.0" iyz="0.0" ixz="0.0"/> <!-- TODO -->
+  </inertial>
+  <visual>
+    <origin xyz="0.045e-03 44.633664e-03 -162.505e-03" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://salamander_bot/meshes/arm_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.045e-03 44.633664e-03 -162.505e-03" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://salamander_bot/meshes/arm_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="gripper_left">
+  <inertial>
+    <origin xyz="260.442473e-03 -16.618872e-03 162.503304e-03" rpy="0 0 0"/>
+    <mass value="21.356874e-03"/>
+    <inertia ixx="0.001" iyy="0.001" izz="0.001" ixy="0.0" iyz="0.0" ixz="0.0"/> <!-- TODO -->
+  </inertial>
+  <visual>
+    <origin xyz="-257.955e-03 30.533664e-03 -162.505e-03" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://salamander_bot/meshes/gripper_left.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-257.955e-03 30.533664e-03 -162.505e-03" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://salamander_bot/meshes/gripper_left.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="gripper_right">
+  <inertial>
+    <origin xyz="260.442473e-03 -70.714456e-03 162.503304e-03" rpy="0 0 0"/>
+    <mass value="21.356874e-03"/>
+    <inertia ixx="0.001" iyy="0.001" izz="0.001" ixy="0.0" iyz="0.0" ixz="0.0"/> <!-- TODO -->
+  </inertial>
+  <visual>
+    <origin xyz="-257.955e-03 58.733664e-03 -162.505e-03" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://salamander_bot/meshes/gripper_right.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-257.955e-03 58.733664e-03 -162.505e-03" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://salamander_bot/meshes/gripper_right.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<joint name="platform_joint" type="fixed">
+  <origin xyz="255.00e-03 0.0 74.50e-03" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="platform_link"/>
+</joint>
+
+<joint name="height_joint" type="continuous">
+  <origin xyz="-106.224243e-03 -4.427118e-03 21.00e-03" rpy="0 0 0"/>
+  <parent link="platform_link"/>
+  <child link="height_link"/>
+  <axis xyz="0.0 0.0 1.0"/>
+</joint>
+
+<joint name="arm_joint" type="continuous">
+  <origin xyz="-0.045e-03 -43.666664e-03 162.505e-03" rpy="0 0 0"/>
+  <parent link="height_link"/>
+  <child link="arm_link"/>
+  <axis xyz="0.0 1.0 0.0"/>
+</joint>
+
+<joint name="gripper_left_joint" type="prismatic">
+  <origin xyz="248.00e-03 14.10e-03 0.0" rpy="0 0 0"/>
+  <parent link="arm_link"/>
+  <child link="gripper_left"/>
+  <axis xyz="0.0 -1.0 0.0"/>
+  <limit
+    lower="0.0"
+    upper="0.0125"
+    effort="25"
+    velocity="0.05"/>
+</joint>
+
+<joint name="gripper_right_joint" type="prismatic">
+  <origin xyz="248.00e-03 -14.10e-03 0.0" rpy="0 0 0"/>
+  <parent link="arm_link"/>
+  <child link="gripper_right"/>
+  <mimic joint="gripper_left_joint"
+         multiplier="-1"
+         offset="0"/>
+  <axis xyz="0.0 -1.0 0.0"/>
+  <limit
+    lower="0.0"
+    upper="0.0125"
+    effort="25"
+    velocity="0.05"/>
+</joint>
+
+</robot>
