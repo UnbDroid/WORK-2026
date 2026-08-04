@@ -11,8 +11,8 @@
 #define PWM_RESOLUTION              8
 #define MAX_PWM                     255
 #define WHEEL_RADIUS                0.04      // Wheel Radius in Meters.
-#define DISTANCE_BETWEEN_WHEELS_X   0.11315   // Distance Between Wheels and Center of Robot (Y Axes) in Meters.
-#define DISTANCE_BETWEEN_WHEELS_Y   0.14875   // Distance Between Wheels and Center of Robot (X Axes) in Meters.
+#define DISTANCE_BETWEEN_WHEELS_X   0.11315   // Distance Between Wheels and Center of Robot (X Axes) in Meters.
+#define DISTANCE_BETWEEN_WHEELS_Y   0.14875   // Distance Between Wheels and Center of Robot (Y Axes) in Meters.
 
 
 #define M1_IN1          GPIO_NUM_26           // IN1 Pin Connected to Motor Driver.
