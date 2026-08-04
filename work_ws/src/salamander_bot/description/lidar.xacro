@@ -8,9 +8,9 @@
     <inertia ixx="1.5e-05" iyy="1.2e-05" izz="2.3e-05" ixy="-0.0" iyz="0.0" ixz="-0.0"/>
   </inertial>
   <visual>
-    <origin xyz="-219.933902e-03 0.526156e-03 -29.599964e-03" rpy="0 0 0"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="file://$(find salamander_bot)/meshes/rplidar_a1m8.stl" scale="0.001 0.001 0.001"/>
+      <cylinder length="0.0235" radius="0.035075" />
     </geometry>
     <material name="silver"/>
   </visual>
