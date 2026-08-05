@@ -17,7 +17,7 @@
   </inertial>
 
   <visual>
-    <origin xyz="16.16414e-03 -4.12017e-03 -79.543971e-03" rpy="0 0 0"/>
+    <origin xyz="16.16414e-03 -4.12017e-03 -39.543971e-03" rpy="0 0 0"/>
     <geometry>
       <mesh filename="package://salamander_bot/meshes/base_link_collision.stl" scale="0.001 0.001 0.001"/>
     </geometry>
@@ -25,7 +25,7 @@
   </visual>
 
   <collision>
-    <origin xyz="16.16414e-03 -4.12017e-03 -79.543971e-03" rpy="0 0 0"/>
+    <origin xyz="16.16414e-03 -4.12017e-03 -39.543971e-03" rpy="0 0 0"/>
     <geometry>
       <mesh filename="package://salamander_bot/meshes/base_link_collision.stl" scale="0.001 0.001 0.001"/>
     </geometry>
@@ -33,84 +33,84 @@
   
 </link>
 
-<link name="wheel_lf">
+<link name="wheel_lf_1">
   <inertial>
     <origin xyz="113.15e-03 148.75e-03 40.0e-03" rpy="0 0 0"/>
     <mass value="118.563707e-03"/>
     <inertia ixx="61319.657896e-09" iyy="94850.959272e-09" izz="61319.670145e-09" ixy="0.0" iyz="0.0" ixz="0.0"/>
   </inertial>
   <visual>
-    <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+    <origin xyz="0 0 0.04" rpy="${pi/2} 0 0"/>
     <geometry>
       <cylinder length="0.0375" radius="0.04" />
     </geometry>
     <material name="black"/>
   </visual>
   <collision>
-    <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+    <origin xyz="0 0 0.04" rpy="${pi/2} 0 0"/>
     <geometry>
       <cylinder length="0.0375" radius="0.04" />
     </geometry>
   </collision>
 </link>
 
-<link name="wheel_lb">
+<link name="wheel_lb_1">
   <inertial>
     <origin xyz="-113.15e-03 148.75e-03 40.0e-03" rpy="0 0 0"/>
     <mass value="118.563707e-03"/>
     <inertia ixx="61319.657896e-09" iyy="94850.959272e-09" izz="61319.670145e-09" ixy="-0.0" iyz="0.0" ixz="0.0"/>
   </inertial>
   <visual>
-    <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+    <origin xyz="0 0 0.04" rpy="${pi/2} 0 0"/>
     <geometry>
       <cylinder length="0.0375" radius="0.04" />
     </geometry>
     <material name="black"/>
   </visual>
   <collision>
-    <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+    <origin xyz="0 0 0.04" rpy="${pi/2} 0 0"/>
     <geometry>
       <cylinder length="0.0375" radius="0.04" />
     </geometry>
   </collision>
 </link>
 
-<link name="wheel_rf">
+<link name="wheel_rf_1">
   <inertial>
     <origin xyz="113.15e-03 -148.75e-03 40.0e-03" rpy="0 0 0"/>
     <mass value="118.563707e-03"/>
     <inertia ixx="61319.657896e-09" iyy="94850.959272e-09" izz="61319.670145e-09" ixy="0.0" iyz="0.0" ixz="0.0"/>
   </inertial>
   <visual>
-    <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+    <origin xyz="0 0 0.04" rpy="${pi/2} 0 0"/>
     <geometry>
       <cylinder length="0.0375" radius="0.04" />
     </geometry>
     <material name="black"/>
   </visual>
   <collision>
-    <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+    <origin xyz="0 0 0.04" rpy="${pi/2} 0 0"/>
     <geometry>
       <cylinder length="0.0375" radius="0.04" />
     </geometry>
   </collision>
 </link>
 
-<link name="wheel_rb">
+<link name="wheel_rb_1">
   <inertial>
     <origin xyz="-113.15e-03 -148.75e-03 40.0e-03" rpy="0 0 0"/>
     <mass value="118.563707e-03"/>
     <inertia ixx="61319.657896e-09" iyy="94850.959272e-09" izz="61319.670145e-09" ixy="0.0" iyz="0.0" ixz="0.0"/>
   </inertial>
   <visual>
-    <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+    <origin xyz="0 0 0.04" rpy="${pi/2} 0 0"/>
     <geometry>
       <cylinder length="0.0375" radius="0.04" />
     </geometry>
     <material name="black"/>
   </visual>
   <collision>
-    <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+    <origin xyz="0 0 0.04" rpy="${pi/2} 0 0"/>
     <geometry>
       <cylinder length="0.0375" radius="0.04" />
     </geometry>
@@ -123,31 +123,31 @@
   <origin xyz="0.0 0.0 40.0e-03" rpy="0.0 0.0 0.0"/>
 </joint>
 
-<joint name="wheel_lf_joint" type="continuous">
+<joint name="wheel_lf_1_joint" type="continuous">
   <origin xyz="113.15e-03 148.75e-03 0.0" rpy="0 0 0"/>
   <parent link="base_link"/>
-  <child link="wheel_lf"/>
+  <child link="wheel_lf_1"/>
   <axis xyz="0.0 1.0 0.0"/>
 </joint>
 
-<joint name="wheel_lb_joint" type="continuous">
+<joint name="wheel_lb_1_joint" type="continuous">
   <origin xyz="-113.15e-03 148.75e-03 0.0" rpy="0 0 0"/>
   <parent link="base_link"/>
-  <child link="wheel_lb"/>
+  <child link="wheel_lb_1"/>
   <axis xyz="0.0 1.0 0.0"/>
 </joint>
 
-<joint name="wheel_rf_joint" type="continuous">
+<joint name="wheel_rf_1_joint" type="continuous">
   <origin xyz="113.15e-03 -148.75e-03 0.0" rpy="0 0 0"/>
   <parent link="base_link"/>
-  <child link="wheel_rf"/>
+  <child link="wheel_rf_1"/>
   <axis xyz="0.0 1.0 0.0"/>
 </joint>
 
-<joint name="wheel_rb_joint" type="continuous">
+<joint name="wheel_rb_1_joint" type="continuous">
   <origin xyz="-113.15e-03 -148.75e-03 0.0" rpy="0 0 0"/>
   <parent link="base_link"/>
-  <child link="wheel_rb"/>
+  <child link="wheel_rb_1"/>
   <axis xyz="0.0 1.0 0.0"/>
 </joint>
 
