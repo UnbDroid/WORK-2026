@@ -128,14 +128,7 @@ double MotorDC::updatePI(float rpm_alvo) {
     }
 
     // Feedforward - Determinação do PWM Aproximado para Atingir o Alvo.
-    double initial_pwm = ((MAX_PWM_FLOAT - DEADZONE) / MAX_RPM) * rpm_alvo;
-
-    // Tratamento de Zona Morta de PWM dos Motores.
-    if (fabs(rpm_alvo) > ZERO_BAND) {
-        initial_pwm += (rpm_alvo > 0 ? DEADZONE : -DEADZONE);
-    } else {
-        initial_pwm = 0;
-    }
+    double initial_pwm = feedforward(rpm_alvo);
 
     double pwm_proporcional = this->Kp * this->erro_atual;
 
@@ -169,4 +162,39 @@ double MotorDC::updatePI(float rpm_alvo) {
     // Envio de Módulo do PWM Controlado.
     this->pwm_atual = fabs(output_pwm);
     return output_pwm; 
+}
+
+double MotorDC::feedforward(float rpm)
+{
+    if (rpm == 0)
+        return 0;
+
+    switch (this->canal_pwm)
+    {
+        case 0: // Motor 1
+            if (rpm > 0)
+                return 0.583 * rpm + 24.5;
+            else
+                return 0.598 * rpm - 20.7;
+
+        case 1: // Motor 2
+            if (rpm > 0)
+                return 0.578 * rpm + 24.0;
+            else
+                return 0.611 * rpm - 19.7;
+
+        case 2: // Motor 3
+            if (rpm > 0)
+                return 0.602 * rpm + 25.5;
+            else
+                return 0.633 * rpm - 21.5;
+
+        case 3: // Motor 4
+            if (rpm > 0)
+                return 0.650 * rpm + 19.0;
+            else
+                return 0.576 * rpm - 24.7;
+    }
+
+    return 0;
 }
