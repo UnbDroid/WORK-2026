@@ -17,7 +17,7 @@
   </inertial>
 
   <visual>
-    <origin xyz="16.16414e-03 -4.12017e-03 -39.543971e-03" rpy="0 0 0"/>
+    <origin xyz="16.16414e-03 -4.12017e-03 -39.543971e-03" rpy="0 0 ${pi/2}"/>
     <geometry>
       <mesh filename="package://salamander_bot/meshes/base_link_collision.stl" scale="0.001 0.001 0.001"/>
     </geometry>
@@ -25,7 +25,7 @@
   </visual>
 
   <collision>
-    <origin xyz="16.16414e-03 -4.12017e-03 -39.543971e-03" rpy="0 0 0"/>
+    <origin xyz="16.16414e-03 -4.12017e-03 -39.543971e-03" rpy="0 0 ${pi/2}"/>
     <geometry>
       <mesh filename="package://salamander_bot/meshes/base_link_collision.stl" scale="0.001 0.001 0.001"/>
     </geometry>
