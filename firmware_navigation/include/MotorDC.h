@@ -30,6 +30,7 @@ class MotorDC {
         void mover_pwm(uint32_t pwm, bool direction);
         float calcularRPM();
         double updatePI(float rpm_alvo);
+        double feedforward(float rpm);
 
         long getTicks() { return this->ticks_contador; }
         long getTicksAnterior() { return this->ticks_anterior; }
