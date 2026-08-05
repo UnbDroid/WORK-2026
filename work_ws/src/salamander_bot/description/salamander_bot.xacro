@@ -124,28 +124,28 @@
 </joint>
 
 <joint name="wheel_lf_1_joint" type="continuous">
-  <origin xyz="113.15e-03 148.75e-03 0.0" rpy="0 0 0"/>
+  <origin xyz="148.75e-03 113.15e-03 0.0" rpy="0 0 0"/>
   <parent link="base_link"/>
   <child link="wheel_lf_1"/>
   <axis xyz="0.0 1.0 0.0"/>
 </joint>
 
 <joint name="wheel_lb_1_joint" type="continuous">
-  <origin xyz="-113.15e-03 148.75e-03 0.0" rpy="0 0 0"/>
+  <origin xyz="148.75e-03 -113.15e-03 0.0" rpy="0 0 0"/>
   <parent link="base_link"/>
   <child link="wheel_lb_1"/>
   <axis xyz="0.0 1.0 0.0"/>
 </joint>
 
 <joint name="wheel_rf_1_joint" type="continuous">
-  <origin xyz="113.15e-03 -148.75e-03 0.0" rpy="0 0 0"/>
+  <origin xyz="-148.75e-03 113.15e-03 0.0" rpy="0 0 0"/>
   <parent link="base_link"/>
   <child link="wheel_rf_1"/>
   <axis xyz="0.0 1.0 0.0"/>
 </joint>
 
 <joint name="wheel_rb_1_joint" type="continuous">
-  <origin xyz="-113.15e-03 -148.75e-03 0.0" rpy="0 0 0"/>
+  <origin xyz="-148.75e-03 -113.15e-03 0.0" rpy="0 0 0"/>
   <parent link="base_link"/>
   <child link="wheel_rb_1"/>
   <axis xyz="0.0 1.0 0.0"/>

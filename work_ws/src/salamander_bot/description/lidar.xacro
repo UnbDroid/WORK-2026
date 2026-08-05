@@ -3,7 +3,7 @@
 
 <link name="rplidar_a1m8_1">
   <inertial>
-    <origin xyz="219.933902e-03 -0.526156e-03 29.599964e-03" rpy="0 0 0"/>
+    <origin xyz="-0.526156e-03 219.933902e-03 29.599964e-03" rpy="0 0 0"/>
     <mass value="125.885678e-03"/>
     <inertia ixx="44511.257312e-09" iyy="44511.247312e-09" izz="77435.776975e-09" ixy="0.0" iyz="0.0" ixz="0.0"/>
   </inertial>
@@ -25,7 +25,8 @@
 <joint name="rplidar_a1m8_1_joint" type="fixed">
   <parent link="base_link"/>
   <child link="rplidar_a1m8_1"/>
-  <origin xyz="219.933902e-03 -0.526156e-03 -10.400036e-03" rpy="0 0 0"/>
+  <!-- X e Y invertidos para o sensor não flutuar do lado do robô -->
+  <origin xyz="-0.526156e-03 219.933902e-03 -10.400036e-03" rpy="0 0 0"/>
 </joint>
 
 </robot>
