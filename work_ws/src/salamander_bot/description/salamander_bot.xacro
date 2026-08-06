@@ -11,146 +11,145 @@
 
 <link name="base_link">
   <inertial>
-    <origin xyz="-0.020630794834057973 0.00998649462328631 0.07392745780763998" rpy="0 0 0"/>
-    <mass value="4.267628583572636"/>
-    <inertia ixx="0.038378" iyy="0.079589" izz="0.097881" ixy="0.004056" iyz="-0.001772" ixz="0.008003"/>
+    <origin xyz="-26.696774e-03 5.87186e-03 79.358812e-03" rpy="0 0 0"/>
+    <mass value="4163.756809e-03"/>
+    <inertia ixx="0.03356" iyy="0.07829" izz="0.0953" ixy="0.003164" iyz="-0.0008321" ixz="0.007467"/>
   </inertial>
 
   <visual>
-    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <origin xyz="16.16414e-03 -4.12017e-03 -39.543971e-03" rpy="0 0 ${pi/2}"/>
     <geometry>
-      <mesh filename="package://salamander_bot/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="package://salamander_bot/meshes/base_link_collision.stl" scale="0.001 0.001 0.001"/>
     </geometry>
     <material name="silver"/>
   </visual>
 
   <collision>
-    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <origin xyz="16.16414e-03 -4.12017e-03 -39.543971e-03" rpy="0 0 ${pi/2}"/>
     <geometry>
-      <mesh filename="package://salamander_bot/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="package://salamander_bot/meshes/base_link_collision.stl" scale="0.001 0.001 0.001"/>
     </geometry>
   </collision>
-  
 </link>
-
-<joint name="base_link_joint" type="fixed">
-  <parent link="base_footprint"/>
-  <child link="base_link"/>
-  <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
-</joint>
-
-<!-- Rodas -->
 
 <link name="wheel_lf_1">
   <inertial>
-    <origin xyz="6.732011406662686e-09 0.013415334217220576 -2.2496351934075953e-09" rpy="0 0 0"/>
-    <mass value="0.2163222450067834"/>
-    <inertia ixx="8.8e-05" iyy="0.00011" izz="8.8e-05" ixy="0.0" iyz="-0.0" ixz="0.0"/>
+    <origin xyz="113.15e-03 148.75e-03 40.0e-03" rpy="0 0 0"/>
+    <mass value="118.563707e-03"/>
+    <!-- Inverti ixx e iyy para acompanhar o giro da roda -->
+    <inertia ixx="94850.959272e-09" iyy="61319.657896e-09" izz="61319.670145e-09" ixy="0.0" iyz="0.0" ixz="0.0"/>
   </inertial>
   <visual>
-    <origin xyz="-0.11315 -0.142 -0.03865" rpy="0 0 0"/>
+    <origin xyz="0 0 0.04" rpy="${pi/2} 0 0"/>
     <geometry>
-      <mesh filename="package://salamander_bot/meshes/wheel_lf_1.stl" scale="0.001 0.001 0.001"/>
+      <cylinder length="0.0375" radius="0.04" />
     </geometry>
-    <material name="silver"/>
+    <material name="black"/>
   </visual>
   <collision>
-    <origin xyz="-0.11315 -0.142 -0.03865" rpy="0 0 0"/>
+    <origin xyz="0 0 0.04" rpy="${pi/2} 0 0"/>
     <geometry>
-      <mesh filename="package://salamander_bot/meshes/wheel_lf_1.stl" scale="0.001 0.001 0.001"/>
+      <cylinder length="0.0375" radius="0.04" />
     </geometry>
   </collision>
 </link>
 
 <link name="wheel_lb_1">
   <inertial>
-    <origin xyz="3.7014641768307044e-09 0.01344735270580652 -3.504848446189701e-09" rpy="0 0 0"/>
-    <mass value="0.21632224500656735"/>
-    <inertia ixx="8.8e-05" iyy="0.00011" izz="8.8e-05" ixy="-0.0" iyz="-0.0" ixz="0.0"/>
+    <origin xyz="-113.15e-03 148.75e-03 40.0e-03" rpy="0 0 0"/>
+    <mass value="118.563707e-03"/>
+    <inertia ixx="94850.959272e-09" iyy="61319.657896e-09" izz="61319.670145e-09" ixy="-0.0" iyz="0.0" ixz="0.0"/>
   </inertial>
   <visual>
-    <origin xyz="0.11315 -0.142 -0.03865" rpy="0 0 0"/>
+    <origin xyz="0 0 0.04" rpy="${pi/2} 0 0"/>
     <geometry>
-      <mesh filename="package://salamander_bot/meshes/wheel_lb_1.stl" scale="0.001 0.001 0.001"/>
+      <cylinder length="0.0375" radius="0.04" />
     </geometry>
-    <material name="silver"/>
+    <material name="black"/>
   </visual>
   <collision>
-    <origin xyz="0.11315 -0.142 -0.03865" rpy="0 0 0"/>
+    <origin xyz="0 0 0.04" rpy="${pi/2} 0 0"/>
     <geometry>
-      <mesh filename="package://salamander_bot/meshes/wheel_lb_1.stl" scale="0.001 0.001 0.001"/>
+      <cylinder length="0.0375" radius="0.04" />
     </geometry>
   </collision>
 </link>
 
 <link name="wheel_rf_1">
   <inertial>
-    <origin xyz="6.7541714166008404e-09 -0.013367918230393266 -2.072007607156756e-09" rpy="0 0 0"/>
-    <mass value="0.21632224116980406"/>
-    <inertia ixx="8.8e-05" iyy="0.00011" izz="8.8e-05" ixy="-0.0" iyz="0.0" ixz="0.0"/>
+    <origin xyz="113.15e-03 -148.75e-03 40.0e-03" rpy="0 0 0"/>
+    <mass value="118.563707e-03"/>
+    <inertia ixx="94850.959272e-09" iyy="61319.657896e-09" izz="61319.670145e-09" ixy="0.0" iyz="0.0" ixz="0.0"/>
   </inertial>
   <visual>
-    <origin xyz="-0.11315 0.142 -0.03865" rpy="0 0 0"/>
+    <origin xyz="0 0 0.04" rpy="${pi/2} 0 0"/>
     <geometry>
-      <mesh filename="package://salamander_bot/meshes/wheel_rf_1.stl" scale="0.001 0.001 0.001"/>
+      <cylinder length="0.0375" radius="0.04" />
     </geometry>
-    <material name="silver"/>
+    <material name="black"/>
   </visual>
   <collision>
-    <origin xyz="-0.11315 0.142 -0.03865" rpy="0 0 0"/>
+    <origin xyz="0 0 0.04" rpy="${pi/2} 0 0"/>
     <geometry>
-      <mesh filename="package://salamander_bot/meshes/wheel_rf_1.stl" scale="0.001 0.001 0.001"/>
+      <cylinder length="0.0375" radius="0.04" />
     </geometry>
   </collision>
 </link>
 
 <link name="wheel_rb_1">
   <inertial>
-    <origin xyz="3.723448854797695e-09 -0.013447353552784869 -3.327369837990979e-09" rpy="0 0 0"/>
-    <mass value="0.21632224116958718"/>
-    <inertia ixx="8.8e-05" iyy="0.00011" izz="8.8e-05" ixy="0.0" iyz="0.0" ixz="0.0"/>
+    <origin xyz="-113.15e-03 -148.75e-03 40.0e-03" rpy="0 0 0"/>
+    <mass value="118.563707e-03"/>
+    <inertia ixx="94850.959272e-09" iyy="61319.657896e-09" izz="61319.670145e-09" ixy="0.0" iyz="0.0" ixz="0.0"/>
   </inertial>
   <visual>
-    <origin xyz="0.11315 0.142 -0.03865" rpy="0 0 0"/>
+    <origin xyz="0 0 0.04" rpy="${pi/2} 0 0"/>
     <geometry>
-      <mesh filename="package://salamander_bot/meshes/wheel_rb_1.stl" scale="0.001 0.001 0.001"/>
+      <cylinder length="0.0375" radius="0.04" />
     </geometry>
-    <material name="silver"/>
+    <material name="black"/>
   </visual>
   <collision>
-    <origin xyz="0.11315 0.142 -0.03865" rpy="0 0 0"/>
+    <origin xyz="0 0 0.04" rpy="${pi/2} 0 0"/>
     <geometry>
-      <mesh filename="package://salamander_bot/meshes/wheel_rb_1.stl" scale="0.001 0.001 0.001"/>
+      <cylinder length="0.0375" radius="0.04" />
     </geometry>
   </collision>
 </link>
 
+<joint name="base_link_joint" type="fixed">
+  <parent link="base_footprint"/>
+  <child link="base_link"/>
+  <origin xyz="0.0 0.0 40.0e-03" rpy="0.0 0.0 0.0"/>
+</joint>
+
+<!-- A MÁGICA ESTÁ AQUI: X e Y INVERTIDOS PARA AS 4 RODAS -->
 <joint name="wheel_lf_1_joint" type="continuous">
-  <origin xyz="0.11315 0.142 0.03865" rpy="0 0 0"/>
+  <origin xyz="148.75e-03 113.15e-03 0.0" rpy="0 0 0"/>
   <parent link="base_link"/>
   <child link="wheel_lf_1"/>
-  <axis xyz="0.0 1.0 -0.0"/>
+  <axis xyz="0.0 1.0 0.0"/>
 </joint>
 
 <joint name="wheel_lb_1_joint" type="continuous">
-  <origin xyz="-0.11315 0.142 0.03865" rpy="0 0 0"/>
+  <origin xyz="-148.75e-03 113.15e-03 0.0" rpy="0 0 0"/>
   <parent link="base_link"/>
   <child link="wheel_lb_1"/>
-  <axis xyz="-0.0 1.0 -0.0"/>
+  <axis xyz="0.0 1.0 0.0"/>
 </joint>
 
 <joint name="wheel_rf_1_joint" type="continuous">
-  <origin xyz="0.11315 -0.142 0.03865" rpy="0 0 0"/>
+  <origin xyz="148.75e-03 -113.15e-03 0.0" rpy="0 0 0"/>
   <parent link="base_link"/>
   <child link="wheel_rf_1"/>
-  <axis xyz="-0.0 -1.0 0.0"/>
+  <axis xyz="0.0 1.0 0.0"/>
 </joint>
 
 <joint name="wheel_rb_1_joint" type="continuous">
-  <origin xyz="-0.11315 -0.142 0.03865" rpy="0 0 0"/>
+  <origin xyz="-148.75e-03 -113.15e-03 0.0" rpy="0 0 0"/>
   <parent link="base_link"/>
   <child link="wheel_rb_1"/>
-  <axis xyz="-0.0 -1.0 0.0"/>
+  <axis xyz="0.0 1.0 0.0"/>
 </joint>
 
 </robot>
