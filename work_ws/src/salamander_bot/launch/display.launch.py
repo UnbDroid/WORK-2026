@@ -39,7 +39,8 @@ def generate_launch_description():
         ]
     )
 
-    joint_state_publisher_node = Node(
+    # Joint State Publisher : serve para publicar os estados das juntas do robô, como ângulos e posições. Ele é útil para simulações e visualizações em RViz.
+    joint_state_publisher_node = Node( 
         condition=UnlessCondition(show_gui),
         package='joint_state_publisher',
         executable='joint_state_publisher',
