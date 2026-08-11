@@ -19,7 +19,7 @@ def generate_launch_description():
 
     # Caminho padrão para os parâmetros 
     default_params_path = os.path.join(salamander_dir, 'config', 'nav2_params.yaml')
-    default_map_path = os.path.join(salamander_dir, 'launch', 'mapper_params_online_async.yaml')
+    default_map_path = os.path.join(salamander_dir, 'maps', 'sala.yaml')
 
     # Declara os argumentos de inicialização que o terminal aceitará
     declare_use_sim_time_cmd = DeclareLaunchArgument(

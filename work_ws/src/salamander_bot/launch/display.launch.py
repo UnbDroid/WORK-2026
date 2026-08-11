@@ -47,12 +47,12 @@ def generate_launch_description():
         name='joint_state_publisher'
     )
 
-    #joint_state_publisher_gui_node = Node(
-    #    condition=IfCondition(show_gui),
-    #    package='joint_state_publisher_gui',
-    #    executable='joint_state_publisher_gui',
-    #    name='joint_state_publisher_gui'
-    #)
+    joint_state_publisher_gui_node = Node(
+        condition=IfCondition(show_gui),
+        package='joint_state_publisher_gui',
+        executable='joint_state_publisher_gui',
+        name='joint_state_publisher_gui'
+    )
 
     rviz_node = Node(
         package='rviz2',
@@ -66,6 +66,6 @@ def generate_launch_description():
         gui_arg,
         robot_state_publisher_node,
         joint_state_publisher_node,
-        #joint_state_publisher_gui_node,
+        joint_state_publisher_gui_node,
         rviz_node
     ])
