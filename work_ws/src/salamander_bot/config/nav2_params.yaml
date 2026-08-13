@@ -189,18 +189,22 @@ controller_server:
         cost_power: 1
         cost_weight: 5.0
         threshold_to_consider: 1.4
-      GoalAngleCritic: #importante para nossa competição.
+
+      #This parameter helps the robot turn to face the right direction at the goal. When the robot gets within 0.5 meters (threshold_to_consider) of its goal, it starts focusing on turning to the requested final direction. 
+      #The weight of 3.0 determines how much the robot cares about getting this final rotation
+      GoalAngleCritic:
         enabled: true
         cost_power: 1
-        cost_weight: 3.0
+        cost_weight: 3.4 #aumentei um pouco.
         threshold_to_consider: 0.5
-      #descomentei o PreferForwardCritic para ver se melhora a precisão do robô ao seguir o caminho.
+      #plugin que incentiva o robô a se mover para frente sempre que possível, penalizando movimentos de ré e movimentos laterais desnecessários. (importante)
       PreferForwardCritic:
         enabled: true
         cost_power: 1
-        cost_weight: 6.0 #default = 5.0
+        cost_weight: 5.0 #default = 5.0
         threshold_to_consider: 0.4
 
+      #plugin que avalia o custo da trajetória planejada, penalizando trajetórias que se aproximam de obstáculos ou que estão em risco de colisão. (importante)
       CostCritic:
         enabled: true
         cost_power: 1
@@ -211,6 +215,8 @@ controller_server:
         collision_cost: 1000000.0
         near_goal_distance: 1.0
         trajectory_point_step: 2
+
+      #plugin que avalia o alinhamento da trajetória planejada com o caminho desejado, penalizando trajetórias que se desviam do caminho. (importante)
       PathAlignCritic:
         enabled: true
         cost_power: 1
@@ -226,6 +232,8 @@ controller_server:
         cost_weight: 6.0 #vou mudar aqui para ver se melhora a precisão do robô ao seguir o caminho.
         offset_from_furthest: 5
         threshold_to_consider: 0.4 #vou mudar aqui para ver se melhora a precisão do robô ao seguir o caminho.
+
+      #plugin que avalia o ângulo da trajetória planejada em relação ao caminho desejado, penalizando trajetórias que se desviam do caminho. (importante)
       PathAngleCritic:
         enabled: true
         cost_power: 1
@@ -235,7 +243,7 @@ controller_server:
         max_angle_to_furthest: 1.0
         mode: 0
 
-      #descomentei o TwirlingCritic para ver se melhora a precisão do robô ao seguir o caminho, sem ficar girando.
+      #plugin que penaliza movimentos de rotação desnecessários, incentivando o robô a se mover para frente sempre que possível.
       TwirlingCritic:
         enabled: true
         twirling_cost_power: 1
@@ -256,8 +264,8 @@ local_costmap:
       plugins: ["voxel_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 3.0 #incentiva o robo a manter uma distância segura dos obstáculos.
-        inflation_radius: 0.25 #distancia em metros que o robo deve manter dos obstáculos.
+        cost_scaling_factor: 2.0 #incentiva o robo a manter uma distância segura dos obstáculos.
+        inflation_radius: 0.30 #distancia em metros que o robo deve manter dos obstáculos.
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True 
@@ -313,8 +321,8 @@ global_costmap:
         map_subscribe_transient_local: True
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 3.0
-        inflation_radius: 0.25
+        cost_scaling_factor: 2.0
+        inflation_radius: 0.30
       always_send_full_costmap: True
 
 # The yaml_filename does not need to be specified since it going to be set by defaults in launch.
