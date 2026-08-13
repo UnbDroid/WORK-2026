@@ -123,13 +123,19 @@
   <parent link="platform_link"/>
   <child link="height_link"/>
   <axis xyz="0.0 0.0 1.0"/>
+  <limit effort="25" velocity="0.05"/>
 </joint>
 
-<joint name="arm_joint" type="continuous">
+<joint name="arm_joint" type="revolute">
   <origin xyz="-0.045e-03 -43.666664e-03 162.505e-03" rpy="0 0 0"/>
   <parent link="height_link"/>
   <child link="arm_link"/>
   <axis xyz="0.0 1.0 0.0"/>
+  <limit
+    lower="${-pi/6}"
+    upper="${5*pi/18}"
+    effort="25"
+    velocity="0.05"/>
 </joint>
 
 <joint name="gripper_left_joint" type="prismatic">
