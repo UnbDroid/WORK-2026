@@ -55,17 +55,23 @@ void setup() {
   allocator = rcl_get_default_allocator();
 
   RCCHECK(rclc_support_init(&support, 0, NULL, &allocator));
-  RCCHECK(rclc_node_init_default(&node, "esp32_manipulator_node", "", &support));
+  RCCHECK(rclc_node_init_default(&node, "arm_controller_node", "", &support));
+
+  std_msgs__msg__Float32MultiArray__init(&msg);
+  static float memory_buffer[3];
+  msg.data.capacity = 3;
+  msg.data.size = 0;
+  msg.data.data = memory_buffer;
 
   RCCHECK(rclc_subscription_init_default(
     &subscriber,
     &node,
     ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Float32MultiArray),
-    "/arm_cmd"
-    ));
+    "cube_coordinates"
+  ));
 
   // Initialize an executor that will manage the execution of all the ROS2 entities (publishers, subscribers, services, timers).
-  RCCHECK(rclc_executor_init(&executor, &support.context, 1, &allocator));
+  // RCCHECK(rclc_executor_init(&executor, &support.context, 1, &allocator));
   
   RCCHECK(rclc_executor_add_subscription(
     &executor,

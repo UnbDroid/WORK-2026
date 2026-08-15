@@ -1,4 +1,3 @@
 int32 id
 string color
 string waypoint
-geometry_msgs/Point position_relative_to_camera
