@@ -113,7 +113,7 @@ controller_server:
       stateful: True
       plugin: "nav2_controller::SimpleGoalChecker"
       xy_goal_tolerance: 0.25
-      yaw_goal_tolerance: 0.50 #valor que faz o robo dançar (default = 0.25))
+      yaw_goal_tolerance: 0.30
 
     # MPPI CONTROLLER CONFIGURADO PARA MECANUM
     FollowPath:
@@ -195,7 +195,7 @@ controller_server:
       GoalAngleCritic:
         enabled: true
         cost_power: 1
-        cost_weight: 3.4 #aumentei um pouco.
+        cost_weight: 3.8 #aumentei um pouco.
         threshold_to_consider: 0.5
       #plugin que incentiva o robô a se mover para frente sempre que possível, penalizando movimentos de ré e movimentos laterais desnecessários. (importante)
       PreferForwardCritic:
@@ -264,8 +264,8 @@ local_costmap:
       plugins: ["voxel_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 2.0 #incentiva o robo a manter uma distância segura dos obstáculos.
-        inflation_radius: 0.30 #distancia em metros que o robo deve manter dos obstáculos.
+        cost_scaling_factor: 2.5 #incentiva o robo a manter uma distância segura dos obstáculos.
+        inflation_radius: 0.22 #distancia em metros que o robo deve manter dos obstáculos.
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True 
@@ -321,8 +321,8 @@ global_costmap:
         map_subscribe_transient_local: True
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 2.0
-        inflation_radius: 0.30
+        cost_scaling_factor: 2.5
+        inflation_radius: 0.22
       always_send_full_costmap: True
 
 # The yaml_filename does not need to be specified since it going to be set by defaults in launch.
