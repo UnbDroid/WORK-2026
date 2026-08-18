@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 import os
 import cv2
 import rclpy
@@ -7,7 +6,10 @@ from rclpy.node import Node
 import apriltag
 import numpy as np
 
-from cube_msgs.msg import Cube, CubeArray
+from std_msgs.msg import Float32MultiArray
+from std_msgs.msg import MultiArrayLayout
+from robot_vision.msg import Cube
+from robot_vision.msg import CubeArray
 
 class VisionNode(Node):
 
@@ -19,8 +21,10 @@ class VisionNode(Node):
         options = apriltag.DetectorOptions(families="tag36h11")
         self.detector = apriltag.Detector(options)
 
-        self.cube_pub = self.create_publisher(CubeArray, "detected_cubes", 10)
-        self.get_logger().info("Publisher do tópico 'detected_cubes' inicializado!")
+        self.coord_pub = self.create_publisher(Float32MultiArray, "cube_coordinates", 10)
+        self.cube_data_pub = self.create_publisher(CubeArray, "cube_data", 10)
+
+        self.get_logger().info("Publishers 'cube_coordinates' e 'cube_data' inicializados!")
 
         self.indice_camera = 2
         self.cap = cv2.VideoCapture(self.indice_camera, cv2.CAP_V4L2)
@@ -37,7 +41,6 @@ class VisionNode(Node):
         
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-        self.get_logger().info(f"Câmera inicializada com sucesso no índice {self.indice_camera}!")
 
         self.timer = self.create_timer(0.033, self.process_frame_callback)
 
@@ -52,6 +55,7 @@ class VisionNode(Node):
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         detections = self.detector.detect(gray)
 
+        coordinates_msg = Float32MultiArray()
         array_msg = CubeArray()
         array_msg.header.stamp = self.get_clock().now().to_msg()
         array_msg.header.frame_id = "camera_link"
@@ -60,13 +64,17 @@ class VisionNode(Node):
             tag_id = det.tag_id
 
             camera_params = [500.0, 500.0, 320.0, 240.0] 
-            pose, init_error, final_error = self.detector.detection_pose(
+            pose, _, _ = self.detector.detection_pose(
                 det, camera_params, tag_size=self.tag_size_cm
             )
 
-            x_cm = pose[0][3]
-            y_cm = pose[1][3]
-            z_cm = pose[2][3]
+            x_m = pose[0][3] / 100.0
+            y_m = pose[1][3] / 100.0
+            z_m = pose[2][3] / 100.0
+
+            coord_msg = Float32MultiArray()
+            coord_msg.data = [float(x_m), float(y_m), float(z_m)]
+            self.coord_pub.publish(coord_msg)
 
             center_x = int(det.center[0])
             center_y = int(det.center[1])
@@ -86,25 +94,15 @@ class VisionNode(Node):
             cube_msg.id = int(tag_id)
             cube_msg.waypoint = "default"  
             cube_msg.color = self.color_detection(roi)    
-
             array_msg.cubes.append(cube_msg)
-            
-            cube_msg.position_relative_to_camera.x = x_cm / 100.0
-            cube_msg.position_relative_to_camera.y = y_cm / 100.0
-            cube_msg.position_relative_to_camera.z = z_cm / 100.0
 
-            # remover para aplicacao sem interface grafica
-            self.render_preview(display_frame, det, tag_id, x_cm, y_cm, z_cm)
-
-            self.get_logger().info(f"Cubo {tag_id} visível -> Z: {z_cm:.1f}cm  | Y: {y_cm:.1f}cm   | X: {x_cm:.1f}cm")
+            self.render_preview(display_frame, det, tag_id, pose[0][3], pose[1][3], pose[2][3])
 
         if len(array_msg.cubes) > 0:
-            self.cube_pub.publish(array_msg)
-            self.get_logger().info(f"Publicados {len(array_msg.cubes)} cubos no tópico!", once=True)
+            self.cube_data_pub.publish(array_msg)
 
-        # exibicao grafica
         cv2.imshow("Deteccao de Cubos - UnbDroid", display_frame)
-        cv2.waitKey(1) 
+        cv2.waitKey(1)
 
     def color_detection(self, roi):
         hsv_frame = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)

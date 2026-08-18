@@ -1,3 +1,9 @@
+*/build/
+*/install/
+*/log/
+build/
+install/
+log/
 work_ws/build/
 work_ws/install/
 work_ws/log/
@@ -7,6 +13,8 @@ __pycache__/
 *.pyo
 *.pyd
 .pytest_cache/
+**/__pycache__/
+*.py[cod]
 
 *.o
 *.so
@@ -14,8 +22,10 @@ __pycache__/
 *.dylib
 
 .vscode/
+**/.vscode/
 .history/
 *.code-workspace
+**/.idea
 
 .DS_Store
 Thumbs.db
@@ -28,3 +38,20 @@ Thumbs.db
 **install
 **log
 **.pio
+
+# PlatformIO
+.pio
+
+# Test / lint caches
+.pytest_cache/
+**/.pytest_cache/
+.mypy_cache/
+**/.mypy_cache/
+
+# Dependencias
+*/sllidar_ros2/
+*/rf2o_laser_odometry/
+*/uros/
+sllidar_ros2/
+rf2o_laser_odometry/
+uros/

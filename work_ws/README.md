@@ -58,3 +58,6 @@ ros2 launch salamander_bot gazebo.launch.py
 * You’ll need to quit and relaunch display.launch.py (or gazebo.launch.py) each time you make a change.
 
 * RViz sometimes won’t pick up all your changes straight away. In this case you'll need to hit the “Reset” button in the bottom corner. If it’s still not updating, try ticking and unticking the display items, or closing and reopening the program.
+
+## Como rodar scripts:
+

@@ -3,3 +3,28 @@ install/*
 log/*
 
 src/micro_ros_setup/
+
+# VS Code workspace/settings
+.vscode/
+**/.vscode/
+*.code-workspace
+**/.idea/
+.idea/*
+
+# Python cache
+__pycache__/
+**/__pycache__/
+*.py[cod]
+
+# Test / lint caches
+.pytest_cache/
+**/.pytest_cache/
+.mypy_cache/
+**/.mypy_cache/
+
+sllidar_ros2/
+rf2o_laser_odometry/
+uros/
+
+src/arm_platform/models/
+analise/
