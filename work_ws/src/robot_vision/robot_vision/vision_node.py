@@ -5,6 +5,7 @@ import cv2
 import rclpy
 from rclpy.node import Node
 import apriltag
+import numpy as np
 
 from cube_msgs.msg import Cube, CubeArray
 
@@ -21,8 +22,14 @@ class VisionNode(Node):
         self.cube_pub = self.create_publisher(CubeArray, "detected_cubes", 10)
         self.get_logger().info("Publisher do tópico 'detected_cubes' inicializado!")
 
-        self.indice_camera = 0
+        self.indice_camera = 2
         self.cap = cv2.VideoCapture(self.indice_camera, cv2.CAP_V4L2)
+
+        self.red_lower = np.array([136, 87, 111], np.uint8)
+        self.red_upper = np.array([180, 255, 255], np.uint8)
+
+        self.blue_lower = np.array([94, 80, 2], np.uint8)
+        self.blue_upper = np.array([120, 255, 255], np.uint8)
 
         if not self.cap.isOpened():
             self.get_logger().error(f"Não foi possível abrir a câmera no índice {self.indice_camera}!")
@@ -61,10 +68,24 @@ class VisionNode(Node):
             y_cm = pose[1][3]
             z_cm = pose[2][3]
 
+            center_x = int(det.center[0])
+            center_y = int(det.center[1])
+
+            size = 50
+
+            x1 = max(0, center_x - size)
+            x2 = min(frame.shape[1], center_x + size)
+
+            y1 = max(0, center_y - size)
+            y2 = min(frame.shape[0], center_y + size)
+
+            # Região do cubo
+            roi = frame[y1:y2, x1:x2]
+
             cube_msg = Cube()
             cube_msg.id = int(tag_id)
             cube_msg.waypoint = "default"  
-            cube_msg.color = "unknown"     
+            cube_msg.color = self.color_detection(roi)    
 
             array_msg.cubes.append(cube_msg)
             
@@ -84,6 +105,25 @@ class VisionNode(Node):
         # exibicao grafica
         cv2.imshow("Deteccao de Cubos - UnbDroid", display_frame)
         cv2.waitKey(1) 
+
+    def color_detection(self, roi):
+        hsv_frame = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
+
+        edge = cv2.Canny(hsv_frame, 100, 200)
+
+        red_mask = cv2.inRange(edge, self.red_lower, self.red_upper)
+        blue_mask = cv2.inRange(edge, self.blue_lower, self.blue_upper)
+
+        red_count = cv2.countNonZero(red_mask)
+        blue_count = cv2.countNonZero(blue_mask)
+
+        if red_count > blue_count:
+            return "red"
+        elif blue_count > red_count:
+            return "blue"
+        else:
+            self.get_logger().error("Nenhuma cor detectada.")
+            return "unknown"
 
     def render_preview(self, image, detection, tag_id, x, y, z):
         """Função dedicada para desenhar os elementos gráficos na tela usando OpenCV."""

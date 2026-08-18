@@ -1,5 +1,5 @@
-build/
-install/
-log/
+build/*
+install/*
+log/*
 
 src/micro_ros_setup/
