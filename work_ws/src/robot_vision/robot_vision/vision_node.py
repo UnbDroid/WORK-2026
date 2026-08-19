@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 import os
 import cv2
 import rclpy
@@ -8,8 +9,8 @@ import numpy as np
 
 from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import MultiArrayLayout
-from robot_vision.msg import Cube
-from robot_vision.msg import CubeArray
+from cube_msgs.msg import Cube
+from cube_msgs.msg import CubeArray
 
 class VisionNode(Node):
 
@@ -96,7 +97,7 @@ class VisionNode(Node):
             cube_msg.color = self.color_detection(roi)    
             array_msg.cubes.append(cube_msg)
 
-            self.render_preview(display_frame, det, tag_id, pose[0][3], pose[1][3], pose[2][3])
+            self.render_preview(display_frame, det, tag_id, pose[0][3], pose[1][3], pose[2][3], cube_msg.color, roi)
 
         if len(array_msg.cubes) > 0:
             self.cube_data_pub.publish(array_msg)
@@ -107,10 +108,10 @@ class VisionNode(Node):
     def color_detection(self, roi):
         hsv_frame = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
 
-        edge = cv2.Canny(hsv_frame, 100, 200)
+        #edge = cv2.Canny(hsv_frame, 100, 200)
 
-        red_mask = cv2.inRange(edge, self.red_lower, self.red_upper)
-        blue_mask = cv2.inRange(edge, self.blue_lower, self.blue_upper)
+        red_mask = cv2.inRange(hsv_frame, self.red_lower, self.red_upper)
+        blue_mask = cv2.inRange(hsv_frame, self.blue_lower, self.blue_upper)
 
         red_count = cv2.countNonZero(red_mask)
         blue_count = cv2.countNonZero(blue_mask)
@@ -123,7 +124,7 @@ class VisionNode(Node):
             self.get_logger().error("Nenhuma cor detectada.")
             return "unknown"
 
-    def render_preview(self, image, detection, tag_id, x, y, z):
+    def render_preview(self, image, detection, tag_id, x, y, z, color, roi):
         """Função dedicada para desenhar os elementos gráficos na tela usando OpenCV."""
 
         corners = detection.corners.astype(int)
@@ -134,18 +135,23 @@ class VisionNode(Node):
 
         center = (int(detection.center[0]), int(detection.center[1]))
         cv2.circle(image, center, 5, (0, 0, 255), -1)
+        
 
         texto_id = f"ID: {tag_id}"
         texto_coords = f"X:{x:.1f} Y:{y:.1f} Z:{z:.1f} cm"
+        texto_color = f"Cor: {color}"
 
         pos_id = (center[0] - 40, center[1] - 25)
         pos_coords = (center[0] - 75, center[1] - 10)
+        pos_color = (center[0] - 40, center[1] + 15)
 
         cv2.putText(image, texto_id, pos_id, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 3)
         cv2.putText(image, texto_coords, pos_coords, cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 3)
+        cv2.putText(image, texto_color, pos_color, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 3)
 
         cv2.putText(image, texto_id, pos_id, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 1)
         cv2.putText(image, texto_coords, pos_coords, cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 255), 1)
+        cv2.putText(image, texto_color, pos_color, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
 
     def __del__(self):
         if hasattr(self, "cap") and self.cap.isOpened():
