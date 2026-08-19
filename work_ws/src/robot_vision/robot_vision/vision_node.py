@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
+
 import os
 import cv2
 import rclpy
 from rclpy.node import Node
 import apriltag
+import numpy as np
 
 from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import MultiArrayLayout
-from robot_vision.msg import Cube
-from robot_vision.msg import CubeArray
+from cube_msgs.msg import Cube
+from cube_msgs.msg import CubeArray
 
 class VisionNode(Node):
 
@@ -25,8 +27,14 @@ class VisionNode(Node):
 
         self.get_logger().info("Publishers 'cube_coordinates' e 'cube_data' inicializados!")
 
-        self.indice_camera = 3
+        self.indice_camera = 2
         self.cap = cv2.VideoCapture(self.indice_camera, cv2.CAP_V4L2)
+
+        self.red_lower = np.array([136, 87, 111], np.uint8)
+        self.red_upper = np.array([180, 255, 255], np.uint8)
+
+        self.blue_lower = np.array([94, 80, 2], np.uint8)
+        self.blue_upper = np.array([120, 255, 255], np.uint8)
 
         if not self.cap.isOpened():
             self.get_logger().error(f"Não foi possível abrir a câmera no índice {self.indice_camera}!")
@@ -69,13 +77,27 @@ class VisionNode(Node):
             coord_msg.data = [float(x_m), float(y_m), float(z_m)]
             self.coord_pub.publish(coord_msg)
 
+            center_x = int(det.center[0])
+            center_y = int(det.center[1])
+
+            size = 50
+
+            x1 = max(0, center_x - size)
+            x2 = min(frame.shape[1], center_x + size)
+
+            y1 = max(0, center_y - size)
+            y2 = min(frame.shape[0], center_y + size)
+
+            # Região do cubo
+            roi = frame[y1:y2, x1:x2]
+
             cube_msg = Cube()
             cube_msg.id = int(tag_id)
             cube_msg.waypoint = "default"  
-            cube_msg.color = "unknown"     
+            cube_msg.color = self.color_detection(roi)    
             array_msg.cubes.append(cube_msg)
 
-            self.render_preview(display_frame, det, tag_id, pose[0][3], pose[1][3], pose[2][3])
+            self.render_preview(display_frame, det, tag_id, pose[0][3], pose[1][3], pose[2][3], cube_msg.color, roi)
 
         if len(array_msg.cubes) > 0:
             self.cube_data_pub.publish(array_msg)
@@ -83,7 +105,26 @@ class VisionNode(Node):
         cv2.imshow("Deteccao de Cubos - UnbDroid", display_frame)
         cv2.waitKey(1)
 
-    def render_preview(self, image, detection, tag_id, x, y, z):
+    def color_detection(self, roi):
+        hsv_frame = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
+
+        #edge = cv2.Canny(hsv_frame, 100, 200)
+
+        red_mask = cv2.inRange(hsv_frame, self.red_lower, self.red_upper)
+        blue_mask = cv2.inRange(hsv_frame, self.blue_lower, self.blue_upper)
+
+        red_count = cv2.countNonZero(red_mask)
+        blue_count = cv2.countNonZero(blue_mask)
+
+        if red_count > blue_count:
+            return "red"
+        elif blue_count > red_count:
+            return "blue"
+        else:
+            self.get_logger().error("Nenhuma cor detectada.")
+            return "unknown"
+
+    def render_preview(self, image, detection, tag_id, x, y, z, color, roi):
         """Função dedicada para desenhar os elementos gráficos na tela usando OpenCV."""
 
         corners = detection.corners.astype(int)
@@ -94,18 +135,23 @@ class VisionNode(Node):
 
         center = (int(detection.center[0]), int(detection.center[1]))
         cv2.circle(image, center, 5, (0, 0, 255), -1)
+        
 
         texto_id = f"ID: {tag_id}"
         texto_coords = f"X:{x:.1f} Y:{y:.1f} Z:{z:.1f} cm"
+        texto_color = f"Cor: {color}"
 
         pos_id = (center[0] - 40, center[1] - 25)
         pos_coords = (center[0] - 75, center[1] - 10)
+        pos_color = (center[0] - 40, center[1] + 15)
 
         cv2.putText(image, texto_id, pos_id, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 3)
         cv2.putText(image, texto_coords, pos_coords, cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 3)
+        cv2.putText(image, texto_color, pos_color, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 3)
 
         cv2.putText(image, texto_id, pos_id, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 1)
         cv2.putText(image, texto_coords, pos_coords, cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 255), 1)
+        cv2.putText(image, texto_color, pos_color, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
 
     def __del__(self):
         if hasattr(self, "cap") and self.cap.isOpened():

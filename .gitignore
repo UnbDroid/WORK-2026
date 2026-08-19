@@ -32,6 +32,12 @@ Thumbs.db
 *.bak
 
 *.json
+*.idea
+
+**build
+**install
+**log
+**.pio
 
 # PlatformIO
 .pio
