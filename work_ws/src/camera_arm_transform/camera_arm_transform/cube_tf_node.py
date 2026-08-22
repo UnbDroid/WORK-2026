@@ -27,6 +27,11 @@ class CubeTransformNode(Node):
             10
         )
 
+        self.last_x = 0.0
+        self.last_y = 0.0
+        self.last_z = 0.0
+        self.threshold = 0.01
+
         self.get_logger().info("No transformador iniciado, espernado coordenadas da visão.") #debug
 
     def point_callback(self, msg: PointStamped):
@@ -38,8 +43,26 @@ class CubeTransformNode(Node):
                 target_frame, 
                 source_frame, 
                 rclpy.time.Time())
+            transformed_point = tf2_geometry_msgs.do_transform_point(msg, transform) # cria a mensagem que vai enviar as coordenadas do cubo transformadas para a esp
 
-            transformed_point = tf2_geometry_msgs.do_transform_point(msg, transform) # utiliza a matriz de transformada para converter as coordenadas do cubo recebidas da visao (msg) em relacao ao braco
+            # to mudando essa parte aqui pra tirar ruidos na movimentacao do braco, pra esp nao ficar confusa recebendo muitas coordenadas muito proximas, mas ainda diferentes na precisao do double
+            # verifica a diferenca entre as coordenadas atuais e as anteriores
+            novo_x = transformed_point.point.x
+            novo_y = transformed_point.point.y
+            novo_z = transformed_point.point.z
+            diff_x = abs(novo_x - self.last_x)
+            diff_y = abs(novo_y - self.last_y)
+            diff_z = abs(novo_z - self.last_z)
+
+            # se a diferenca for menor que um centimetro em todos os eixos nao envia pra esp
+            if diff_x < self.threshold and diff_y < self.threshold and diff_z < self.threshold:
+                return 
+
+            # atualiza a coordenadas mais recentes
+            self.last_x = novo_x
+            self.last_y = novo_y
+            self.last_z = novo_z
+
             transformed_point.header.frame_id = target_frame # explicitamos que as coordenadas transformadas estao em relacao ao braco
 
             self.publisher.publish(transformed_point) # publica as coordenadas do cubo em relacao ao braco no topico para a esp receber
