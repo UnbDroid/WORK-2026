@@ -10,10 +10,10 @@
 #include <rclc/rclc.h>
 #include <rclc/executor.h>
 
-#include <std_msgs/msg/float32_multi_array.h>
+#include <geometry_msgs/msg/point_stamped.h> 
 
 rcl_subscription_t subscriber;
-std_msgs__msg__Float32MultiArray msg;
+geometry_msgs__msg__PointStamped point_msg; 
 
 rclc_executor_t executor;
 rclc_support_t support;
@@ -21,31 +21,33 @@ rcl_allocator_t allocator;
 rcl_node_t node;
 rcl_timer_t timer;
 
+// declara as variaveis de controle do braco
 FastAccelStepperEngine engine;
 FastAccelStepper *stepper_base = nullptr;
 FastAccelStepper *stepper_arm = nullptr;
 Servo gripper;
 
+// cria o objeto manipulador
 Manipulator robot_arm;
 
+// define macros para checagem de erros
 #define RCCHECK(fn) { rcl_ret_t temp_rc = fn; if((temp_rc != RCL_RET_OK)){while(1) {delay(100);}}}
 #define RCSOFTCHECK(fn) { rcl_ret_t temp_rc = fn; if((temp_rc != RCL_RET_OK)){}}
 
-volatile double cmd_base = 0.0;
-volatile double cmd_arm = 0.0;
-volatile double cmd_gripper = PI;
-
 void arm_cmd_callback(const void * msgin) {
-    const std_msgs__msg__Float32MultiArray  * msg_cmd = (const std_msgs__msg__Float32MultiArray  *) msgin;
+    const geometry_msgs__msg__PointStamped  * msg_cmd = (const geometry_msgs__msg__PointStamped  *) msgin; // cast da mensagem recebida 
 
-    cmd_base = msg_cmd->data.data[0];
-    cmd_arm = msg_cmd->data.data[1];
-    cmd_gripper = msg_cmd->data.data[2];
+    // pega as coordenadas da mensagem
+    double x = msg_cmd->point.x;
+    double y = msg_cmd->point.y;
+    double z = msg_cmd->point.z;
 
-    robot_arm.drive_angle(cmd_base, cmd_arm, cmd_gripper);
+    // move o manipulador para as coordenadas recebidas
+    robot_arm.drive_position(x, y, z);
 }
 
 void setup() { 
+  // configuracoes do micro-ROS
   Serial.begin(115200);
 
   set_microros_serial_transports(Serial);
@@ -55,37 +57,33 @@ void setup() {
   allocator = rcl_get_default_allocator();
 
   RCCHECK(rclc_support_init(&support, 0, NULL, &allocator));
-  RCCHECK(rclc_node_init_default(&node, "arm_controller_node", "", &support));
+  RCCHECK(rclc_node_init_default(&node, "arm_controller_node", "", &support)); // arm_controler_node e o topico em que a esp vai receber as coordenadas 
 
-  std_msgs__msg__Float32MultiArray__init(&msg);
-  static float memory_buffer[3];
-  msg.data.capacity = 3;
-  msg.data.size = 0;
-  msg.data.data = memory_buffer;
+  geometry_msgs__msg__PointStamped__init(&point_msg); // inicializa a mensagem que vai receber as coordenadas
 
+  // aloca memoria para o frame_id (height_link) da mensagem, que e uma string, o frame identifica o frame de referencia do ponto, nesse caso o frame do cubo
+  point_msg.header.frame_id.capacity = 30; 
+  point_msg.header.frame_id.data = (char*) malloc(30 * sizeof(char));
+  point_msg.header.frame_id.size = 0;
+
+  // inicializa o subscriber que vai receber as coordenadas do braco em relacao ao cubo
   RCCHECK(rclc_subscription_init_default(
     &subscriber,
     &node,
-    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Float32MultiArray),
-    "cube_coordinates"
+    ROSIDL_GET_MSG_TYPE_SUPPORT(geometry_msgs, msg, PointStamped),
+    "cube_arm_coordinates"
   ));
 
   // Initialize an executor that will manage the execution of all the ROS2 entities (publishers, subscribers, services, timers).
-  // RCCHECK(rclc_executor_init(&executor, &support.context, 1, &allocator));
+  RCCHECK(rclc_executor_init(&executor, &support.context, 1, &allocator));
   
   RCCHECK(rclc_executor_add_subscription(
     &executor,
     &subscriber,
-    &msg,
+    &point_msg,
     &arm_cmd_callback,
     ON_NEW_DATA
   ));
-
-  std_msgs__msg__Float32MultiArray__init(&msg);
-
-  msg.data.data = (float*) malloc(3 * sizeof(float));
-  msg.data.size = 3;
-  msg.data.capacity = 3;
 
   pinMode(MS1_M1_PIN, OUTPUT);
   pinMode(MS2_M1_PIN, OUTPUT);

@@ -7,7 +7,7 @@ from rclpy.node import Node
 import apriltag
 import numpy as np
 
-from std_msgs.msg import Float32MultiArray
+from geometry_msgs.msg import PointStamped
 from std_msgs.msg import MultiArrayLayout
 from cube_msgs.msg import Cube
 from cube_msgs.msg import CubeArray
@@ -22,7 +22,7 @@ class VisionNode(Node):
         options = apriltag.DetectorOptions(families="tag36h11")
         self.detector = apriltag.Detector(options)
 
-        self.coord_pub = self.create_publisher(Float32MultiArray, "cube_coordinates", 10)
+        self.coord_pub = self.create_publisher(PointStamped, "cube_coordinates", 10)
         self.cube_data_pub = self.create_publisher(CubeArray, "cube_data", 10)
 
         self.get_logger().info("Publishers 'cube_coordinates' e 'cube_data' inicializados!")
@@ -56,10 +56,13 @@ class VisionNode(Node):
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         detections = self.detector.detect(gray)
 
-        coordinates_msg = Float32MultiArray()
+        coord_msg = PointStamped()
+        coord_msg.header.stamp = self.get_clock().now().to_msg()
+        coord_msg.header.frame_id = "webcam_link"
+        
         array_msg = CubeArray()
         array_msg.header.stamp = self.get_clock().now().to_msg()
-        array_msg.header.frame_id = "camera_link"
+        array_msg.header.frame_id = "webcam_link" 
 
         for det in detections:
             tag_id = det.tag_id
@@ -73,8 +76,9 @@ class VisionNode(Node):
             y_m = pose[1][3] / 100.0
             z_m = pose[2][3] / 100.0
 
-            coord_msg = Float32MultiArray()
-            coord_msg.data = [float(x_m), float(y_m), float(z_m)]
+            coord_msg.point.x = float(x_m)
+            coord_msg.point.y = float(y_m)
+            coord_msg.point.z = float(z_m)
             self.coord_pub.publish(coord_msg)
 
             center_x = int(det.center[0])
