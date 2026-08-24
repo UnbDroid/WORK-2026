@@ -36,6 +36,16 @@ def generate_launch_description():
 
     # Lista de nós gerenciados que pertencem à etapa de Localização do robô
     localization_nodes = ['map_server', 'amcl']
+
+    odom_launch_path = os.path.join(salamander_dir, 'launch', 'odomLidar.launch.py')
+    run_navigation_stack = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(odom_launch_path),
+        launch_arguments={
+            'use_sim_time': use_sim_time,
+            'params_file': params_file,
+            'autostart': 'true'
+        }.items()
+    )
     
     #Cria o nó do Map Server: responsável por ler o arquivo YAML e publicar o mapa no tópico /map
     run_map_server = Node(
@@ -62,20 +72,9 @@ def generate_launch_description():
         executable='lifecycle_manager',
         name='lifecycle_manager_localization',
         output='screen',
-        parameters=[{'autostart': True},
+        parameters=[{use_sim_time: 'use_sim_time'}, 
+                    {'autostart': True},
                     {'node_names': localization_nodes}]
-    )
-
-    # Inclui o seu arquivo de navegação existente (o que carrega o MPPI, Planner, etc.)
-    # e repassa os parâmetros lidos por este script para dentro dele
-    navigation_launch_path = os.path.join(salamander_dir, 'launch', 'navigation_launch.py')
-    run_navigation_stack = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(navigation_launch_path),
-        launch_arguments={
-            'use_sim_time': use_sim_time,
-            'params_file': params_file,
-            'autostart': 'true'
-        }.items()
     )
 
     # Cria a descrição de lançamento mestre que agrupa todas as ações criadas acima
