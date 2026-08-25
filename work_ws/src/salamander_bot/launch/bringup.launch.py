@@ -37,9 +37,9 @@ def generate_launch_description():
     # Lista de nós gerenciados que pertencem à etapa de Localização do robô
     localization_nodes = ['map_server', 'amcl']
 
-    odom_launch_path = os.path.join(salamander_dir, 'launch', 'odomLidar.launch.py')
+    nav_launch_path = os.path.join(salamander_dir, 'launch', 'navigation_launch.py')
     run_navigation_stack = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(odom_launch_path),
+        PythonLaunchDescriptionSource(nav_launch_path),
         launch_arguments={
             'use_sim_time': use_sim_time,
             'params_file': params_file,
@@ -72,7 +72,7 @@ def generate_launch_description():
         executable='lifecycle_manager',
         name='lifecycle_manager_localization',
         output='screen',
-        parameters=[{use_sim_time: 'use_sim_time'}, 
+        parameters=[{'use_sim_time': use_sim_time}, 
                     {'autostart': True},
                     {'node_names': localization_nodes}]
     )
