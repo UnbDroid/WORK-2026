@@ -2,7 +2,9 @@ slam_toolbox:
   ros__parameters:
     use_sim_time: false
 
-    mode: mapping
+    mode: localization
+    map_file_name: ~/WORK-2026/work_ws/src/salamander_bot/maps/sala   # sem extensão! espera sala.posegraph + sala.data
+    map_start_pose: [0.0, 0.0, 0.0]
     map_frame: map
     odom_frame: odom
     base_frame: base_link
@@ -14,5 +16,4 @@ slam_toolbox:
     max_laser_range: 12.0
 
     use_scan_matching: true
-    do_loop_closing: true
-
+    do_loop_closing: false

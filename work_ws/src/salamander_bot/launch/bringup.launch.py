@@ -26,16 +26,10 @@ def generate_launch_description():
         'use_sim_time', default_value='false',
         description='Use simulation (Gazebo) clock if true')
 
-    declare_map_yaml_cmd = DeclareLaunchArgument(
-        'map', default_value=default_map_path,
-        description='Full path to map yaml file to load')
 
     declare_params_file_cmd = DeclareLaunchArgument(
         'params_file', default_value=default_params_path,
         description='Full path to the ROS2 parameters file to use')
-
-    # Lista de nós gerenciados que pertencem à etapa de Localização do robô
-    localization_nodes = ['map_server', 'amcl']
 
     nav_launch_path = os.path.join(salamander_dir, 'launch', 'navigation_launch.py')
     run_navigation_stack = IncludeLaunchDescription(
@@ -46,51 +40,30 @@ def generate_launch_description():
             'autostart': 'true'
         }.items()
     )
-    
-    #Cria o nó do Map Server: responsável por ler o arquivo YAML e publicar o mapa no tópico /map
-    run_map_server = Node(
-        package='nav2_map_server',
-        executable='map_server',
-        name='map_server',
-        output='screen',
-        parameters=[{'use_sim_time': use_sim_time},
-                    {'yaml_filename': map_yaml_file}]
-    )
 
-    # Cria o nó do AMCL: lê o sensor laser e estima onde o robô está no mapa global
-    run_amcl = Node(
-        package='nav2_amcl',
-        executable='amcl',
-        name='amcl',
-        output='screen',
-        parameters=[params_file, {'use_sim_time': use_sim_time}]
-    )
-
-    # Gerenciador de ciclo de vida dedicado para carregar a localização primeiro
-    run_lifecycle_manager_localization = Node(
-        package='nav2_lifecycle_manager',
-        executable='lifecycle_manager',
-        name='lifecycle_manager_localization',
-        output='screen',
-        parameters=[{'use_sim_time': use_sim_time}, 
-                    {'autostart': True},
-                    {'node_names': localization_nodes}]
-    )
+    slam_toolbox_share = get_package_share_directory('slam_toolbox')
+    slam_toolbox_launch_path = os.path.join(
+            slam_toolbox_share,
+            'launch',
+            'localization_launch.py'
+        )
+    slam_localization = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(slam_toolbox_launch_path),
+                launch_arguments={
+                    'slam_params_file': os.path.join(salamander_dir, 'config', 'slam_toolbox_localization.yaml'),
+                    'use_sim_time': use_sim_time,
+                }.items()
+            )
 
     # Cria a descrição de lançamento mestre que agrupa todas as ações criadas acima
     ld = LaunchDescription()
 
 
     ld.add_action(declare_use_sim_time_cmd)
-    ld.add_action(declare_map_yaml_cmd)
     ld.add_action(declare_params_file_cmd)
     
-    # Inicializa a infraestrutura de localização (Servidor de mapa, AMCL e seu Gerenciador)
-    ld.add_action(run_map_server)
-    ld.add_action(run_amcl)
-    ld.add_action(run_lifecycle_manager_localization)
     
     # Inicializa todos os servidores de navegação (MPPI Controller, Planner, Behaviors, etc.)
     ld.add_action(run_navigation_stack)
-
+    ld.add_action(slam_localization)
     return ld
