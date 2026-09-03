@@ -53,6 +53,8 @@ class VisionNode(Node):
 
         display_frame = frame.copy()
 
+        contour = self.color_detection(frame)
+
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         detections = self.detector.detect(gray)
 
@@ -98,10 +100,10 @@ class VisionNode(Node):
             cube_msg = Cube()
             cube_msg.id = int(tag_id)
             cube_msg.waypoint = "default"  
-            cube_msg.color = self.color_detection(roi)    
+            cube_msg.color = 'unknown'   
             array_msg.cubes.append(cube_msg)
 
-            self.render_preview(display_frame, det, tag_id, pose[0][3], pose[1][3], pose[2][3], cube_msg.color, roi)
+            self.render_preview(display_frame, det, tag_id, pose[0][3], pose[1][3], pose[2][3], 'red', contour)
 
         if len(array_msg.cubes) > 0:
             self.cube_data_pub.publish(array_msg)
@@ -112,24 +114,37 @@ class VisionNode(Node):
     def color_detection(self, roi):
         hsv_frame = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
 
-        #edge = cv2.Canny(hsv_frame, 100, 200)
-
         red_mask = cv2.inRange(hsv_frame, self.red_lower, self.red_upper)
         blue_mask = cv2.inRange(hsv_frame, self.blue_lower, self.blue_upper)
+
+        contours, _ = cv2.findContours(red_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        contour = max(contours, key=cv2.contourArea)
+
+        x, y, w, h = cv2.boundingRect(contour)
+
+        cx = x + w // 2 
+        cy = y + h // 2
 
         red_count = cv2.countNonZero(red_mask)
         blue_count = cv2.countNonZero(blue_mask)
 
-        if red_count > blue_count:
-            return "red"
-        elif blue_count > red_count:
+        '''if red_count > blue_count:'''
+        cor = "red"
+        self.get_logger().info(f"Container {cor} detectado em ({cx}, {cy})")
+
+        return x, y, w, h, cx, cy
+
+        '''elif blue_count > red_count:
             return "blue"
         else:
             self.get_logger().error("Nenhuma cor detectada.")
-            return "unknown"
+            return "unknown"'''
 
-    def render_preview(self, image, detection, tag_id, x, y, z, color, roi):
+    def render_preview(self, image, detection, tag_id, x, y, z, color, contour):
         """Função dedicada para desenhar os elementos gráficos na tela usando OpenCV."""
+
+        a, b, w, h, cx, cy = contour
 
         corners = detection.corners.astype(int)
         for i in range(4):
@@ -147,7 +162,7 @@ class VisionNode(Node):
 
         pos_id = (center[0] - 40, center[1] - 25)
         pos_coords = (center[0] - 75, center[1] - 10)
-        pos_color = (center[0] - 40, center[1] + 15)
+        pos_color = (cx, cy)
 
         cv2.putText(image, texto_id, pos_id, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 3)
         cv2.putText(image, texto_coords, pos_coords, cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 3)
@@ -156,6 +171,8 @@ class VisionNode(Node):
         cv2.putText(image, texto_id, pos_id, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 1)
         cv2.putText(image, texto_coords, pos_coords, cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 255), 1)
         cv2.putText(image, texto_color, pos_color, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+
+
 
     def __del__(self):
         if hasattr(self, "cap") and self.cap.isOpened():
