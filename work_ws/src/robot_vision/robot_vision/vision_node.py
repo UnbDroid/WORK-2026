@@ -2,6 +2,7 @@
 
 import os
 import cv2
+from django.conf.locale import cy
 import rclpy
 from rclpy.node import Node
 import apriltag
@@ -103,7 +104,7 @@ class VisionNode(Node):
             cube_msg.color = 'unknown'   
             array_msg.cubes.append(cube_msg)
 
-            self.render_preview(display_frame, det, tag_id, pose[0][3], pose[1][3], pose[2][3], 'red', contour)
+            self.render_preview(display_frame, det, tag_id, pose[0][3], pose[1][3], pose[2][3])
 
         if len(array_msg.cubes) > 0:
             self.cube_data_pub.publish(array_msg)
@@ -111,13 +112,19 @@ class VisionNode(Node):
         cv2.imshow("Deteccao de Cubos - UnbDroid", display_frame)
         cv2.waitKey(1)
 
-    def color_detection(self, roi):
+    def color_detection(self, roi, cor= "red"):
         hsv_frame = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
 
+        # Ver como vai ser decidido -> info do cubo?
         red_mask = cv2.inRange(hsv_frame, self.red_lower, self.red_upper)
         blue_mask = cv2.inRange(hsv_frame, self.blue_lower, self.blue_upper)
 
-        contours, _ = cv2.findContours(red_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        if cor == "red":
+            mask = red_mask
+        else:
+            mask = blue_mask
+
+        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
         contour = max(contours, key=cv2.contourArea)
 
@@ -126,25 +133,22 @@ class VisionNode(Node):
         cx = x + w // 2 
         cy = y + h // 2
 
+        centro = (cx, cy)
+
         red_count = cv2.countNonZero(red_mask)
         blue_count = cv2.countNonZero(blue_mask)
 
-        '''if red_count > blue_count:'''
-        cor = "red"
         self.get_logger().info(f"Container {cor} detectado em ({cx}, {cy})")
+    
+
+        self.render_container_preview(roi, contour, cor, centro)
 
         return x, y, w, h, cx, cy
 
-        '''elif blue_count > red_count:
-            return "blue"
-        else:
-            self.get_logger().error("Nenhuma cor detectada.")
-            return "unknown"'''
 
-    def render_preview(self, image, detection, tag_id, x, y, z, color, contour):
+    def render_preview(self, image, detection, tag_id, x, y, z):
         """Função dedicada para desenhar os elementos gráficos na tela usando OpenCV."""
 
-        a, b, w, h, cx, cy = contour
 
         corners = detection.corners.astype(int)
         for i in range(4):
@@ -158,19 +162,34 @@ class VisionNode(Node):
 
         texto_id = f"ID: {tag_id}"
         texto_coords = f"X:{x:.1f} Y:{y:.1f} Z:{z:.1f} cm"
-        texto_color = f"Cor: {color}"
 
         pos_id = (center[0] - 40, center[1] - 25)
         pos_coords = (center[0] - 75, center[1] - 10)
-        pos_color = (cx, cy)
 
         cv2.putText(image, texto_id, pos_id, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 3)
         cv2.putText(image, texto_coords, pos_coords, cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 3)
-        cv2.putText(image, texto_color, pos_color, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 3)
 
         cv2.putText(image, texto_id, pos_id, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 1)
         cv2.putText(image, texto_coords, pos_coords, cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 255), 1)
-        cv2.putText(image, texto_color, pos_color, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+
+    def render_container_preview(self, image, contorno, cor, x, y, w, h, centro):
+        """Função dedicada para desenhar os elementos gráficos na tela usando OpenCV."""
+
+        cv2.circle(image, centro, 5, (0, 0, 255), -1)
+        
+        texto_coords = f"X:{x:.1f} Y:{y:.1f} W:{w:.1f} cm H:{h:.1f} cm"
+        texto_color = f"Cor: {cor}"
+    
+        pos_id = (center[0] - 40, center[1] - 25)
+        pos_coords = (center[0] - 75, center[1] - 10)
+
+        cv2.putText(image, texto_coords, pos_coords, cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 3)
+        cv2.putText(image, texto_color, pos_color, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 3)
+
+        cv2.putText(image, texto_coords, pos_coords, cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 255), 1)
+        cv2.putText(image, texto_color, centro, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+    
+
 
 
 
