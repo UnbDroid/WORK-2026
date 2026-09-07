@@ -87,6 +87,8 @@ class VisionNode(Node):
             cube_msg.color = "cor"  
             array_msg.cubes.append(cube_msg)
 
+            self.get_logger().info(f"Tag ID: {tag_id}")
+
             self.render_preview(display_frame, det, tag_id, pose[0][3], pose[1][3], pose[2][3])
 
         if len(array_msg.cubes) > 0:
@@ -141,7 +143,7 @@ class VisionNode(Node):
         cv2.putText(image, texto_color, pos_color, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
 
         self.get_logger().info(f"Tag ID: {tag_id}, Coords: X={x:.1f} Y={y:.1f} Z={z:.1f} cm")
-        
+
 
     def __del__(self):
         if hasattr(self, "cap") and self.cap.isOpened():
