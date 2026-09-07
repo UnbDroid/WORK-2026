@@ -43,9 +43,9 @@ void Manipulator::init(FastAccelStepper* base, FastAccelStepper* arm, Servo* gri
     if (stepper_arm) {
         stepper_arm->setDirectionPin(DIR_M2_PIN);
         stepper_arm->setEnablePin(ENABLE_M2_PIN);
-        stepper_arm->setAutoEnable(false);
+        stepper_arm->setAutoEnable(true);
 
-        stepper_arm->enableOutputs();
+        //stepper_arm->enableOutputs();
 
         stepper_arm->setSpeedInHz(0.6f * ARM_STEPS_PER_RAD);
         stepper_arm->setAcceleration(0.3f * ARM_STEPS_PER_RAD);
@@ -105,7 +105,7 @@ void Manipulator::drive_position(double drive_x, double drive_y, double drive_z)
 
     double reachability_error = pow(test_radial_distance - ARM_LATERAL_OFFSET, 2) + pow(drive_z - ARM_HEIGHT, 2) - pow(ARM_LENGTH, 2);
 
-    if (fabs(reachability_error) > 1.0E-6) {
+    if (fabs(reachability_error) > 1.0E-2) {
         return;
     }
 
