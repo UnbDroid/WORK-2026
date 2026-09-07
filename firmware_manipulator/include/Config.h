@@ -12,18 +12,18 @@
 
 #define DIR_M1_PIN 26
 #define STEP_M1_PIN 25
-#define ENABLE_M1_PIN 21
+#define ENABLE_M1_PIN 27
 
-#define MS1_M1_PIN 16
-#define MS2_M1_PIN 17
-#define MS3_M1_PIN 18
+#define MS1_M1_PIN 18
+#define MS2_M1_PIN 19
+#define MS3_M1_PIN 21
 
-#define DIR_M2_PIN 32
-#define STEP_M2_PIN 33
-#define ENABLE_M2_PIN 27
+#define DIR_M2_PIN 22
+#define STEP_M2_PIN 23
+#define ENABLE_M2_PIN 33
 
-#define MS1_M2_PIN 22
-#define MS2_M2_PIN 23
-#define MS3_M2_PIN 19
+#define MS1_M2_PIN 4
+#define MS2_M2_PIN 16
+#define MS3_M2_PIN 17
 
 #define GRIPPER_PIN 13
