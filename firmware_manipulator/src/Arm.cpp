@@ -106,6 +106,7 @@ void Manipulator::drive_position(double drive_x, double drive_y, double drive_z)
     double reachability_error = pow(test_radial_distance - ARM_LATERAL_OFFSET, 2) + pow(drive_z - ARM_HEIGHT, 2) - pow(ARM_LENGTH, 2);
 
     if (fabs(reachability_error) > 1.0E-2) {
+        printf("Reachability Error");
         return;
     }
 
