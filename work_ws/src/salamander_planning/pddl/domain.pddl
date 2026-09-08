@@ -6,6 +6,7 @@
   (:predicates
     (at-robot ?r - robot ?loc - location)
     (at-object ?o - object ?loc - location)
+    (arm-empty)
     (holding ?r - robot ?o - object)
   )
 
@@ -17,13 +18,13 @@
 
   (:action pick_up
     :parameters (?r - robot ?o - object ?loc - location)
-    :precondition (and (at-robot ?r ?loc) (at-object ?o ?loc))
-    :effect (and (not (at-object ?o ?loc)) (holding ?r ?o))
+    :precondition (and (at-robot ?r ?loc) (at-object ?o ?loc) (arm-empty))
+    :effect (and (not (at-object ?o ?loc)) (holding ?r ?o) not(arm-empty))
   )
 
   (:action put_down
     :parameters (?r - robot ?o - object ?loc - location)
-    :precondition (and (holding ?r ?o) (at-robot ?r ?loc))
-    :effect (and (not (holding ?r ?o)) (at-object ?o ?loc))
+    :precondition (and (holding ?r ?o) (at-robot ?r ?loc) not(arm-empty))
+    :effect (and (not (holding ?r ?o)) (at-object ?o ?loc) (arm-empty))
   )
 )

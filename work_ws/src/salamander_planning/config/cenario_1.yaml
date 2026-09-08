@@ -1,0 +1,6 @@
+move_action_node:
+  ros__parameters:
+    waypoints: ["start", "w1", "finish"]
+    start_coords: [0.0, 0.0, 0.0]
+    w1_coords: [2.5, 1.0, 1.57]
+    finish_coords: [5.0, 0.0, 0.0]
