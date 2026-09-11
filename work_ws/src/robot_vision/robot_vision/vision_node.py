@@ -72,9 +72,9 @@ class VisionNode(Node):
                 det, camera_params, tag_size=self.tag_size_cm
             )
 
-            x_m = pose[0][3] / 100.0
-            y_m = pose[1][3] / 100.0
-            z_m = pose[2][3] / 100.0
+            x_m = pose[0][3] 
+            y_m = pose[1][3] 
+            z_m = pose[2][3] 
 
             coord_msg.point.x = float(x_m)
             coord_msg.point.y = float(y_m)
