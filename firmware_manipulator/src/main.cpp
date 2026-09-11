@@ -61,7 +61,7 @@ void setup() {
 
   geometry_msgs__msg__PointStamped__init(&point_msg); // inicializa a mensagem que vai receber as coordenadas
 
-  // aloca memoria para o frame_id (height_link) da mensagem, que e uma string, o frame identifica o frame de referencia do ponto, nesse caso o frame do cubo
+  // aloca memoria para o frame_id (platform_link) da mensagem, que e uma string, o frame identifica o frame de referencia do ponto, nesse caso o frame do cubo
   point_msg.header.frame_id.capacity = 30; 
   point_msg.header.frame_id.data = (char*) malloc(30 * sizeof(char));
   point_msg.header.frame_id.size = 0;
