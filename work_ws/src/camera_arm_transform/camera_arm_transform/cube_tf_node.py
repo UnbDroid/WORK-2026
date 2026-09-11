@@ -36,7 +36,7 @@ class CubeTransformNode(Node):
 
     def point_callback(self, msg: PointStamped):
         source_frame = msg.header.frame_id # frame de origem das coordenadas (visao), puxamos da mensagem recebida da visao
-        target_frame = 'platform_link' # frame de destino (braco)
+        target_frame = 'arm_base_static' # frame de destino (braco)
 
         try:
             transform = self.tf_buffer.lookup_transform( # pede ao tf2 a trasnformada entre a visao e o braco mais recente
