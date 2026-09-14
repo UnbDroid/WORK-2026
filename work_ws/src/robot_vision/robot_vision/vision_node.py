@@ -17,7 +17,7 @@ class VisionNode(Node):
     def __init__(self):
         super().__init__("vision_node")
 
-        self.tag_size_cm = 5.0  
+        self.tag_size = 0.06  
 
         options = apriltag.DetectorOptions(families="tag36h11")
         self.detector = apriltag.Detector(options)
@@ -69,7 +69,7 @@ class VisionNode(Node):
 
             camera_params = [500.0, 500.0, 320.0, 240.0] 
             pose, _, _ = self.detector.detection_pose(
-                det, camera_params, tag_size=self.tag_size_cm
+                det, camera_params, tag_size=self.tag_size
             )
 
             x_m = pose[0][3] 
@@ -87,7 +87,7 @@ class VisionNode(Node):
             cube_msg.color = "cor"  
             array_msg.cubes.append(cube_msg)
 
-            self.get_logger().info(f"Tag ID: {tag_id}: Coords: X={x_m:.2f} Y={y_m:.2f} Z={z_m:.2f} m")
+            self.get_logger().info(f"Tag ID: {tag_id}: Coords: X={x_m:.5f} Y={y_m:.5f} Z={z_m:.5f} m")
 
             self.render_preview(display_frame, det, tag_id, pose[0][3], pose[1][3], pose[2][3])
 
@@ -127,7 +127,7 @@ class VisionNode(Node):
         cv2.circle(image, center, 5, (0, 0, 255), -1)
         
         texto_id = f"ID: {tag_id}"
-        texto_coords = f"X:{x:.1f} Y:{y:.1f} Z:{z:.1f} cm"
+        texto_coords = f"X:{x:.1f} Y:{y:.1f} Z:{z:.1f} m"
         texto_color = f"Cor: {"Cor"}"
 
         pos_id = (center[0] - 40, center[1] - 25)
@@ -142,7 +142,7 @@ class VisionNode(Node):
         cv2.putText(image, texto_coords, pos_coords, cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 255), 1)
         cv2.putText(image, texto_color, pos_color, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
 
-        self.get_logger().info(f"Tag ID: {tag_id}, Coords: X={x:.1f} Y={y:.1f} Z={z:.1f} cm")
+        # self.get_logger().info(f"Tag ID: {tag_id}, Coords: X={x:.1f} Y={y:.1f} Z={z:.1f} m")
 
 
     def __del__(self):
