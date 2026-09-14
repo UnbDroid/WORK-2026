@@ -2,7 +2,6 @@
 
 import os
 import cv2
-from django.conf.locale import cy
 import rclpy
 from rclpy.node import Node
 import apriltag
@@ -10,6 +9,7 @@ import numpy as np
 
 from geometry_msgs.msg import PointStamped
 from std_msgs.msg import MultiArrayLayout
+from std_msgs.msg import Bool
 from cube_msgs.msg import Cube
 from cube_msgs.msg import CubeArray
 
@@ -25,10 +25,13 @@ class VisionNode(Node):
 
         self.coord_pub = self.create_publisher(PointStamped, "cube_coordinates", 10)
         self.cube_data_pub = self.create_publisher(CubeArray, "cube_data", 10)
+        self.container_detection_enabled = False
+        self.create_subscription(Bool, "container_detection_enabled", self.container_enabled_callback, 10)
+        self.container_coord_pub = self.create_publisher(PointStamped, 'container_coordinates', 10)
 
         self.get_logger().info("Publishers 'cube_coordinates' e 'cube_data' inicializados!")
 
-        self.indice_camera = 0 # Índice na raspberry pi (diferente no notebook)
+        self.indice_camera = 2 # Índice na raspberry pi (diferente no notebook)
         self.cap = cv2.VideoCapture(self.indice_camera, cv2.CAP_V4L2)
 
         self.red_lower = np.array([136, 87, 111], np.uint8)
@@ -46,6 +49,15 @@ class VisionNode(Node):
 
         self.timer = self.create_timer(0.033, self.process_frame_callback)
 
+    def container_enabled_callback(self, msg):
+        
+        self.container_detection_enabled = msg.data
+
+        if msg.data:
+            self.get_logger().info('Detecção de contêiner habilitada.')
+        else:
+            self.get_logger().info('Detecção de contêiner desabilitada.')
+
     def process_frame_callback(self):
         ret, frame = self.cap.read()
         if not ret or frame is None:
@@ -53,8 +65,6 @@ class VisionNode(Node):
             return
 
         display_frame = frame.copy()
-
-        contour = self.color_detection(frame)
 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         detections = self.detector.detect(gray)
@@ -97,8 +107,25 @@ class VisionNode(Node):
         if len(array_msg.cubes) > 0:
             self.cube_data_pub.publish(array_msg)
 
-        #cv2.imshow("Deteccao de Cubos - UnbDroid", display_frame)
-        #cv2.waitKey(1)
+        if self.container_detection_enabled:
+            container = self.color_detection(display_frame, cor='red')
+
+            if container is not None:
+                x, y, w, h, cx, cy = container
+
+                container_msg = PointStamped()
+                container_msg.header.stamp = self.get_clock().now().to_msg()
+                container_msg.header.frame_id = 'webcam_link'
+
+                # Por enquanto: pixels, apenas para testar a comunicação.
+                container_msg.point.x = float(cx)
+                container_msg.point.y = float(cy)
+                container_msg.point.z = 0.0
+
+                self.container_coord_pub.publish(container_msg)
+
+        cv2.imshow("Deteccao de Cubos - UnbDroid", display_frame)
+        cv2.waitKey(1)
 
     def color_detection(self, roi, cor= "red"):
         hsv_frame = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
@@ -113,6 +140,10 @@ class VisionNode(Node):
 
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
+        if not contours:
+            self.get_logger().info(f"Nenhum contorno {cor} detectado.")
+            return None
+
         contour = max(contours, key=cv2.contourArea)
 
         x, y, w, h = cv2.boundingRect(contour)
@@ -122,13 +153,15 @@ class VisionNode(Node):
 
         centro = (cx, cy)
 
+        contorno = x, y, w, h
+
         red_count = cv2.countNonZero(red_mask)
         blue_count = cv2.countNonZero(blue_mask)
 
         self.get_logger().info(f"Container {cor} detectado em ({cx}, {cy})")
     
 
-        self.render_container_preview(roi, contour, cor, centro)
+        self.render_container_preview(roi, contorno, cor, centro)
 
         return x, y, w, h, cx, cy
 
@@ -158,9 +191,23 @@ class VisionNode(Node):
 
         cv2.putText(image, texto_id, pos_id, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 1)
         cv2.putText(image, texto_coords, pos_coords, cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 255), 1)
-        cv2.putText(image, texto_color, pos_color, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
 
         self.get_logger().info(f"Tag ID: {tag_id}, Coords: X={x:.1f} Y={y:.1f} Z={z:.1f} cm")
+
+    def render_container_preview(self, image, contorno, cor, centro):
+        """Função dedicada para desenhar os elementos gráficos na tela usando OpenCV."""
+
+        x, y, w, h = contorno
+        cx, cy = centro
+
+        cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        cv2.circle(image, centro, 5, (0, 0, 255), -1)
+        cv2.putText(
+            image, f"Centro: ({cx}, {cy}) px", (x, max(20, y - 10)),
+            cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 3)
+        cv2.putText(
+            image, f"Centro: ({cx}, {cy}) px", (x, max(20, y - 10)),
+            cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 255), 1)
 
 
     def __del__(self):

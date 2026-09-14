@@ -27,6 +27,19 @@ class CubeTransformNode(Node):
             10
         )
 
+        self.container_subscription = self.create_subscription(
+            PointStamped,
+            "container_coordinates",
+            self.container_callback,
+            10
+        )
+
+        self.container_publisher = self.create_publisher(
+            PointStamped,
+            "container_arm_coordinates",
+            10
+        )
+
         self.last_x = 0.0
         self.last_y = 0.0
         self.last_z = 0.0
@@ -70,6 +83,28 @@ class CubeTransformNode(Node):
 
         except TransformException as ex:
             self.get_logger().error(f'Could not transform point from {source_frame} to {target_frame}: {ex}') #debug
+
+    def container_callback(self, msg):
+        source_frame = msg.header.frame_id
+        target_frame = 'height_link'
+
+        try:
+            transform = self.tf_buffer.lookup_transform(
+                target_frame,
+                source_frame,
+                rclpy.time.Time()
+            )
+
+            transformed_point = tf2_geometry_msgs.do_transform_point(msg, transform)
+            transformed_point.header.frame_id = target_frame
+
+            self.container_publisher.publish(transformed_point)
+
+        except TransformException as ex:
+            self.get_logger().error(
+                f'Erro ao transformar contêiner: {ex}'
+            )
+        
 
 def main(args=None):
     rclpy.init(args=args)
