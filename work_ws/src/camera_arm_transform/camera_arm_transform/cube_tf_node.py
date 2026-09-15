@@ -45,11 +45,11 @@ class CubeTransformNode(Node):
         self.last_z = 0.0
         self.threshold = 0.01
 
-        self.get_logger().info("No transformador iniciado, espernado coordenadas da visão.") #debug
+        self.get_logger().info("No transformador iniciado, esperando coordenadas da visão.") #debug
 
     def point_callback(self, msg: PointStamped):
         source_frame = msg.header.frame_id # frame de origem das coordenadas (visao), puxamos da mensagem recebida da visao
-        target_frame = 'height_link' # frame de destino (braco)
+        target_frame = 'arm_base_static' # frame de destino (braco)
 
         try:
             transform = self.tf_buffer.lookup_transform( # pede ao tf2 a trasnformada entre a visao e o braco mais recente

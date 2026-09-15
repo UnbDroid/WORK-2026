@@ -25,6 +25,16 @@
   
 </link>
 
+<link name="arm_base_static">
+</link>
+
+<joint name="arm_base_static_joint" type="fixed">
+  <!-- Mesma origem do height_joint -->
+  <origin xyz="-106.224243e-03 -4.427118e-03 21.00e-03" rpy="0 0 0"/>
+  <parent link="platform_link"/>
+  <child link="arm_base_static"/>
+</joint>
+
 <link name="height_link">
   <inertial>
     <origin xyz="0.000482e-03 15.812434e-03 100.010944e-03" rpy="0 0 0"/>

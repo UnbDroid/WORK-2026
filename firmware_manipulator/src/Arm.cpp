@@ -101,6 +101,7 @@ void Manipulator::drive_angle(double drive_theta_base, double drive_theta_arm, d
 
 void Manipulator::drive_position(double drive_x, double drive_y, double drive_z){
 
+    /*
     double test_radial_distance = sqrt((drive_x * drive_x) + (drive_y * drive_y));
 
     double reachability_error = pow(test_radial_distance - ARM_LATERAL_OFFSET, 2) + pow(drive_z - ARM_HEIGHT, 2) - pow(ARM_LENGTH, 2);
@@ -108,6 +109,7 @@ void Manipulator::drive_position(double drive_x, double drive_y, double drive_z)
     if (fabs(reachability_error) > 1.0E-6) {
         return;
     }
+    */
 
     ik_angle output_angle = inverse_kinematics(drive_x, drive_y, drive_z);
 
