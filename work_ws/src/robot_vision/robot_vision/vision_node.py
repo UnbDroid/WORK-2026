@@ -123,8 +123,8 @@ class VisionNode(Node):
         tol_z = 0.03           
 
         # pra evitar que o robo fique dando trancos na hora de se mover
-        k_x = 0.6              
-        k_z = 0.6              
+        k_x = 0.4              
+        k_z = 0.3              
         max_speed = 0.2        
 
         erro_x = -x
@@ -148,7 +148,8 @@ class VisionNode(Node):
 
         # ajuste no eixo z
         if not aligned_z:
-            cmd.linear.x = float(np.clip(k_z * erro_z, -max_speed, max_speed))
+            #cmd.linear.x = float(np.clip(k_z * erro_z, -max_speed, max_speed))
+            cmd.linear.x = max_speed if erro_z > 0 else -max_speed # testar com diferentes valores de vel menores
 
         self.get_logger().info(
                     f"Alinhando Tag {tag_id} -> CmdVel: vx={cmd.linear.x:.2f}, vy={cmd.linear.y:.2f}"
