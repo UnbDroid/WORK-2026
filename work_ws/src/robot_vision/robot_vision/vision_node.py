@@ -7,7 +7,7 @@ from rclpy.node import Node
 import apriltag
 import numpy as np
 
-from geometry_msgs.msg import PointStamped
+from geometry_msgs.msg import PointStamped, Twist
 from std_msgs.msg import MultiArrayLayout
 from cube_msgs.msg import Cube
 from cube_msgs.msg import CubeArray
@@ -23,6 +23,7 @@ class VisionNode(Node):
         self.detector = apriltag.Detector(options)
 
         self.coord_pub = self.create_publisher(PointStamped, "cube_coordinates", 10)
+        self.cmd_vel_pub = self.create_publisher(Twist, "/cmd_vel", 10)
         self.cube_data_pub = self.create_publisher(CubeArray, "cube_data", 10)
 
         self.get_logger().info("Publishers 'cube_coordinates' e 'cube_data' inicializados!")
@@ -114,6 +115,44 @@ class VisionNode(Node):
             self.get_logger().error("Nenhuma cor detectada.")
             return "unknown"
 
+    def cube_alignment(self, tag_id, x, y, z):
+        target_z = 0.27      
+        tol_x = 0.03           
+        tol_z = 0.03           
+
+        # pra evitar que o robo fique dando trancos na hora de se mover
+        k_x = 0.6              
+        k_z = 0.6              
+        max_speed = 0.2        
+
+        erro_x = -x
+        erro_z = z - target_z
+
+        cmd = Twist()
+
+        aligned_x = abs(x) <= tol_x
+        aligned_z = abs(erro_z) <= tol_z
+
+        if aligned_x and aligned_z: # se esta alinhado para
+            cmd.linear.x = 0.0
+            cmd.linear.y = 0.0
+            self.cmd_vel_pub.publish(cmd)
+            self.get_logger().info(f"Tag ID {tag_id} ALINHADA! Robô parado.")
+            return
+
+        # ajuste no eixo x
+        if not aligned_x:
+            cmd.linear.y = float(np.clip(k_x * erro_x, -max_speed, max_speed))
+
+        # ajuste no eixo z
+        if not aligned_z:
+            cmd.linear.x = float(np.clip(k_z * erro_z, -max_speed, max_speed))
+
+        self.cmd_vel_pub.publish(cmd)
+        self.get_logger().info(
+            f"Alinhando Tag {tag_id} -> CmdVel: vx={cmd.linear.x:.2f}, vy={cmd.linear.y:.2f}"
+        )
+    
     def render_preview(self, image, detection, tag_id, x, y, z):
         """Função dedicada para desenhar os elementos gráficos na tela usando OpenCV."""
 
