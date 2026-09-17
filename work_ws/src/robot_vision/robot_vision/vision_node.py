@@ -80,6 +80,12 @@ class VisionNode(Node):
             coord_msg.point.x = float(x_m)
             coord_msg.point.y = float(y_m)
             coord_msg.point.z = float(z_m)
+
+            if target_coords is None: # pega a primeira tag detectada 
+                target_coords = (tag_id, x_m, y_m, z_m)
+
+            self.render_preview(display_frame, det, tag_id, x_m, y_m, z_m) 
+
             self.coord_pub.publish(coord_msg)
 
             cube_msg = Cube()
@@ -90,12 +96,16 @@ class VisionNode(Node):
 
             self.get_logger().info(f"Tag ID: {tag_id}: Coords: X={x_m:.5f} Y={y_m:.5f} Z={z_m:.5f} m")
 
-            self.cube_alignment(tag_id, x_m, y_m, z_m)
-
             self.render_preview(display_frame, det, tag_id, pose[0][3], pose[1][3], pose[2][3])
 
-        if len(array_msg.cubes) > 0:
-            self.cube_data_pub.publish(array_msg)
+            if target_coords is not None:
+                self.cube_alignment(*target_coords)
+            else:
+                stop_cmd = Twist()
+                self.cmd_vel_pub.publish(stop_cmd)
+
+            if len(array_msg.cubes) > 0:
+                self.cube_data_pub.publish(array_msg)
 
         #cv2.imshow("Deteccao de Cubos - UnbDroid", display_frame)
         #cv2.waitKey(1)
