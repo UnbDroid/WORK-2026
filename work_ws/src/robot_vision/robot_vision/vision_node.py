@@ -148,10 +148,11 @@ class VisionNode(Node):
         if not aligned_z:
             cmd.linear.x = float(np.clip(k_z * erro_z, -max_speed, max_speed))
 
-        self.cmd_vel_pub.publish(cmd)
         self.get_logger().info(
-            f"Alinhando Tag {tag_id} -> CmdVel: vx={cmd.linear.x:.2f}, vy={cmd.linear.y:.2f}"
-        )
+                    f"Alinhando Tag {tag_id} -> CmdVel: vx={cmd.linear.x:.2f}, vy={cmd.linear.y:.2f}"
+                )
+        
+        self.cmd_vel_pub.publish(cmd)
     
     def render_preview(self, image, detection, tag_id, x, y, z):
         """Função dedicada para desenhar os elementos gráficos na tela usando OpenCV."""
