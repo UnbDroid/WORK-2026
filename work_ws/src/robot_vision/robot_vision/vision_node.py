@@ -90,6 +90,8 @@ class VisionNode(Node):
 
             self.get_logger().info(f"Tag ID: {tag_id}: Coords: X={x_m:.5f} Y={y_m:.5f} Z={z_m:.5f} m")
 
+            self.cube_alignment(tag_id, x_m, y_m, z_m)
+
             self.render_preview(display_frame, det, tag_id, pose[0][3], pose[1][3], pose[2][3])
 
         if len(array_msg.cubes) > 0:
