@@ -99,7 +99,7 @@ class VisionNode(Node):
             self.render_preview(display_frame, det, tag_id, pose[0][3], pose[1][3], pose[2][3])
 
             if target_coords is not None:
-                self.cube_alignment(*target_coords)
+                self.cube_alignment(tag_id, x_m, y_m, z_m)
             else:
                 stop_cmd = Twist()
                 self.cmd_vel_pub.publish(stop_cmd)
