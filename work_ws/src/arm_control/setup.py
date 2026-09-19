@@ -1,8 +1,6 @@
 from setuptools import find_packages, setup
-import os
-from glob import glob
 
-package_name = 'camera_arm_transform'
+package_name = 'arm_control'
 
 setup(
     name=package_name,
@@ -15,14 +13,17 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='Lucca',
-    maintainer_email='lucca.santos.aguilar@gmail.com',
-    description='Nó de transformação geométrica entre câmera e braço',
+    maintainer='lucca',
+    maintainer_email='lucca@todo.todo',
+    description='TODO: Package description',
     license='TODO: License declaration',
-    tests_require=['pytest'],
+    extras_require={
+        'test': [
+            'pytest',
+        ],
+    },
     entry_points={
         'console_scripts': [
-            'cube_tf_node = camera_arm_transform.cube_tf_node:main'
         ],
     },
 )
