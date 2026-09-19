@@ -119,7 +119,7 @@ void loop() {
 
     RobotWS.moveRobot(cmd_vx, cmd_vy, cmd_wz);
 
-    wheel_msg.data.data[0] = motor1.getRPMAtual() * ((2.f * PI) / 60.f);
+    wheel_msg.data.data[0] = motor1.getRPMAtual() * ((2.f * PI) / 60.f); 
     wheel_msg.data.data[1] = motor2.getRPMAtual() * ((2.f * PI) / 60.f);
     wheel_msg.data.data[2] = motor3.getRPMAtual() * ((2.f * PI) / 60.f);
     wheel_msg.data.data[3] = motor4.getRPMAtual() * ((2.f * PI) / 60.f);
