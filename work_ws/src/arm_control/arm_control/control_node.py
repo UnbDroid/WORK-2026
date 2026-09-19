@@ -12,15 +12,23 @@ class ControlNode(Node):
 
         self.arm_coord_pub = self.create_publisher(PointStamped, "arm_coordinates", 10)
         self.target_position = 'initial'
-
         self.targets = {
-            'initial':   [0.0, -0.3, -0.35],
-            'get_cube':  [0.0, 0.0, 0.27],
-            'slot1':     [-0.10, -0.20, -0.30],
-            'slot2':     [0.0, -0.20, -0.30],
-            'slot3':     [0.10, -0.20, -0.30],
-            'shelf':     [0.0, 0.5, 0.2],
-            'drop_cube': [0.0, 0.0, 0.27],
+            # 1. Em pé a 90° (x = L_offset, y = 0, z = H + L)
+            'initial':   [0.05,  0.00,  0.40],
+
+            # 2. Pegar o cubo no chão/esteira à frente
+            'get_cube':  [0.26,  0.00,  0.03],
+
+            # 3. Soltar nos 3 slots da plataforma de transporte
+            'slot1':     [0.18,  0.10,  0.08],
+            'slot2':     [0.21,  0.00,  0.08],
+            'slot3':     [0.18, -0.10,  0.08],
+
+            # 4. Prateleira (shelf) alta à frente
+            'shelf':     [0.27,  0.00,  0.27],
+
+            # 5. Descarte
+            'drop_cube': [0.26,  0.00,  0.03],
         }
 
         # Publica periodicamente no tópico
