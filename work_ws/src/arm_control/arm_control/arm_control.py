@@ -30,13 +30,13 @@ class ControlNode(Node):
 
     def publish_target_coordinates(self):
         targets = {
-            'initial': [0.0, 0.0, 0.0],
-            'get_cube': [0.1, 0.2, 0.3],
-            'slot1': [0.4, 0.5, 0.6],
-            'slot2': [0.7, 0.8, 0.9],
-            'slot3': [1.0, 1.1, 1.2],
-            'shelf': [1.3, 1.4, 1.5],
-            'drop_cube': [1.6, 1.7, 1.8]
+            'initial': [0.0, -0.3, -0.35],
+            'get_cube': [0.0, 0.0, 0.27],
+            'slot1': [-0.10, -0.20, -0.30],
+            'slot2': [0.0, -0.20, -0.30],
+            'slot3': [0.10, -0.20, -0.30],
+            'shelf': [0, 0.5, 0.2],
+            'drop_cube': [0.0, 0.0, 0.27],
         }
 
         coordinates = targets.get(self.target_position, [0.0, 0.0, 0.0])
