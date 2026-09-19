@@ -57,7 +57,7 @@ void setup() {
   allocator = rcl_get_default_allocator();
 
   RCCHECK(rclc_support_init(&support, 0, NULL, &allocator));
-  RCCHECK(rclc_node_init_default(&node, "arm_controller_node", "", &support)); // arm_controler_node e o topico em que a esp vai receber as coordenadas 
+  RCCHECK(rclc_node_init_default(&node, "arm_coordinates", "", &support)); // arm_controler_node e o topico em que a esp vai receber as coordenadas 
 
   geometry_msgs__msg__PointStamped__init(&point_msg); // inicializa a mensagem que vai receber as coordenadas
 
@@ -71,7 +71,7 @@ void setup() {
     &subscriber,
     &node,
     ROSIDL_GET_MSG_TYPE_SUPPORT(geometry_msgs, msg, PointStamped),
-    "cube_arm_coordinates"
+    "arm_coordinates"
   ));
 
   // Initialize an executor that will manage the execution of all the ROS2 entities (publishers, subscribers, services, timers).
