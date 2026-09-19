@@ -4,7 +4,7 @@
   <name>arm_control</name>
   <version>0.0.0</version>
   <description>TODO: Package description</description>
-  <maintainer email="lucca@todo.todo">lucca</maintainer>
+  <maintainer email="lucca.santos.aguilar@gmail.com">lucca</maintainer>
   <license>TODO: License declaration</license>
 
   <depend>rclpy</depend>

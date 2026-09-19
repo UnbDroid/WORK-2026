@@ -17,9 +17,6 @@ class ControlNode(Node):
 
         self.arm_coord_pub = self.create_publisher(PointStamped, "arm_coordinates", 10)
 
-        self.get_logger().info("Subscriber 'cube_coordinates' inicializado!")
-        self.get_logger().info("Publisher 'arm_coordinates' inicializado!")
-
         self.declare_parameter(
             'target_position', 
             'home',
@@ -27,38 +24,30 @@ class ControlNode(Node):
         )
 
         target = self.get_parameter('target_position').get_parameter_value().string_value
-
         self.get_logger().info(f'Posição alvo selecionada: {target}')
-        self.target_position = target
 
-    def coordinates_callback(self, msg):
-        if self.target_position == 'initial':
-            coordinates = [0.0, 0.0, 0.0]
+        self.timer = self.create_timer(1.0, self.publish_target_coordinates)
 
-        if self.target_position == 'get_cube':
-            coordinates = [0.1, 0.2, 0.3]
+    def publish_target_coordinates(self):
+        targets = {
+            'initial': [0.0, 0.0, 0.0],
+            'get_cube': [0.1, 0.2, 0.3],
+            'slot1': [0.4, 0.5, 0.6],
+            'slot2': [0.7, 0.8, 0.9],
+            'slot3': [1.0, 1.1, 1.2],
+            'shelf': [1.3, 1.4, 1.5],
+            'drop_cube': [1.6, 1.7, 1.8]
+        }
 
-        if self.target_position == 'slot1': 
-            coordinates = [0.4, 0.5, 0.6]
-
-        if self.target_position == 'slot2':
-            coordinates = [0.7, 0.8, 0.9]
-
-        if self.target_position == 'slot3':
-            coordinates = [1.0, 1.1, 1.2]
-
-        if self.target_position == 'shelf':
-            coordinates = [1.3, 1.4, 1.5]
-
-        if self.target_position == 'drop_cube':
-            coordinates = [1.6, 1.7, 1.8]
+        coordinates = targets.get(self.target_position, [0.0, 0.0, 0.0])
 
         coordinates_msg = PointStamped()
         coordinates_msg.header.stamp = self.get_clock().now().to_msg()
-        coordinates_msg.point.x = coordinates[0]
-        coordinates_msg.point.y = coordinates[1]
-        coordinates_msg.point.z = coordinates[2]
-        
+        coordinates_msg.header.frame_id = "arm_base"
+        coordinates_msg.point.x = float(coordinates[0])
+        coordinates_msg.point.y = float(coordinates[1])
+        coordinates_msg.point.z = float(coordinates[2])
+
         self.arm_coord_pub.publish(coordinates_msg)
 
 def main(args=None):
