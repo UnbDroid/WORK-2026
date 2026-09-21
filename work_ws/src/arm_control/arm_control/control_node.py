@@ -21,9 +21,9 @@ class ControlNode(Node):
             'get_cube':  [0.26,  0.00,  0.03],
 
             # 3. Soltar nos 3 slots da plataforma de transporte
-            'slot1':     [-0.25,  0.10,  0.12],
-            'slot2':     [-0.25,  0.00,  0.12],
-            'slot3':     [-0.25, -0.10,  0.12],
+            'slot1':     [-0.25,  0.05,  0.15],
+            'slot2':     [-0.25,  0.00,  0.15],
+            'slot3':     [-0.25, -0.05,  0.15],
 
             # 4. Prateleira (shelf) alta à frente
             'shelf':     [0.27,  0.00,  0.27],
