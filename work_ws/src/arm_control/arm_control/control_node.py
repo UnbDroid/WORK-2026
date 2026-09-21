@@ -16,13 +16,14 @@ class ControlNode(Node):
             # 1. Em pé a 90° (x = L_offset, y = 0, z = H + L)
             'initial':   [0.05,  0.00,  0.40],
 
+            # z, x, -y     
             # 2. Pegar o cubo no chão/esteira à frente
             'get_cube':  [0.26,  0.00,  0.03],
 
             # 3. Soltar nos 3 slots da plataforma de transporte
-            'slot1':     [0.18,  0.10,  0.08],
-            'slot2':     [0.21,  0.00,  0.08],
-            'slot3':     [0.18, -0.10,  0.08],
+            'slot1':     [-0.25,  0.10,  0.12],
+            'slot2':     [-0.25,  0.00,  0.12],
+            'slot3':     [-0.25, -0.10,  0.12],
 
             # 4. Prateleira (shelf) alta à frente
             'shelf':     [0.27,  0.00,  0.27],
