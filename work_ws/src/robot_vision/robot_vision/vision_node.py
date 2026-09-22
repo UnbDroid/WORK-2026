@@ -180,16 +180,16 @@ class VisionNode(Node):
 
 
     def cube_alignment(self, tag_id, x, y, z):
-        target_z = 0.32
+        target_z = 0.27
         tol_x = 0.02
         tol_z = 0.03    
 
         # pra evitar que o robo fique dando trancos na hora de se mover
-        k_x = 0.6              
-        k_z = 0.6              
+        k_x = 0.4              
+        k_z = 0.3              
         max_speed = 0.05     
 
-        erro_x = -x + 0.05
+        erro_x = -x + 0.1
         erro_z = z - target_z
 
         cmd = Twist()
