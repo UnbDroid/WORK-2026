@@ -34,7 +34,7 @@ class VisionNode(Node):
 
         self.cube_priority = [1, 2, 3] # Editar na ordem de prioridade e quantidae de ids
 
-        self.indice_camera = 0 # Índice na raspberry pi (diferente no notebook)
+        self.indice_camera = 2 # Índice na raspberry pi (diferente no notebook)
         self.cap = cv2.VideoCapture(self.indice_camera, cv2.CAP_V4L2)
 
         self.red_lower = np.array([136, 87, 111], np.uint8)
@@ -85,38 +85,40 @@ class VisionNode(Node):
         for det in detections:
             tag_id = det.tag_id
 
-            if tag_id != self.cube_priority[0]:
-                cmd.linear.x = 0.1
+            if tag_id == self.cube_priority[0]:
+
+                camera_params = [500.0, 500.0, 320.0, 240.0] 
+                pose, _, _ = self.detector.detection_pose(
+                    det, camera_params, tag_size=self.tag_size
+                )
+
+                x_m = pose[0][3] 
+                y_m = pose[1][3] 
+                z_m = pose[2][3] 
+
+                coord_msg.point.x = float(x_m)
+                coord_msg.point.y = float(y_m)
+                coord_msg.point.z = float(z_m)
+
+                self.render_preview(display_frame, det, tag_id, x_m, y_m, z_m) 
+
+                self.coord_pub.publish(coord_msg)
+
+                cube_msg = Cube()
+                cube_msg.id = int(tag_id)
+                cube_msg.waypoint = "default"  
+                cube_msg.color = "cor"  
+                array_msg.cubes.append(cube_msg)
+
+                self.get_logger().info(f"Tag ID: {tag_id}: Coords: X={x_m:.5f} Y={y_m:.5f} Z={z_m:.5f} m")
+
+                self.render_preview(display_frame, det, tag_id, pose[0][3], pose[1][3], pose[2][3])
+
+                self.cube_alignment(tag_id, x_m, y_m, z_m)
+            else:
+                cmd.linear.x = 0.05
+                cmd.linear.y = 0.05
                 self.cmd_vel_pub.publish(cmd)
-
-            camera_params = [500.0, 500.0, 320.0, 240.0] 
-            pose, _, _ = self.detector.detection_pose(
-                det, camera_params, tag_size=self.tag_size
-            )
-
-            x_m = pose[0][3] 
-            y_m = pose[1][3] 
-            z_m = pose[2][3] 
-
-            coord_msg.point.x = float(x_m)
-            coord_msg.point.y = float(y_m)
-            coord_msg.point.z = float(z_m)
-
-            self.render_preview(display_frame, det, tag_id, x_m, y_m, z_m) 
-
-            self.coord_pub.publish(coord_msg)
-
-            cube_msg = Cube()
-            cube_msg.id = int(tag_id)
-            cube_msg.waypoint = "default"  
-            cube_msg.color = "cor"  
-            array_msg.cubes.append(cube_msg)
-
-            self.get_logger().info(f"Tag ID: {tag_id}: Coords: X={x_m:.5f} Y={y_m:.5f} Z={z_m:.5f} m")
-
-            self.render_preview(display_frame, det, tag_id, pose[0][3], pose[1][3], pose[2][3])
-
-            self.cube_alignment(tag_id, x_m, y_m, z_m)
 
         if self.container_detection_enabled:
             container = self.color_detection(display_frame, cor='red')
@@ -178,21 +180,21 @@ class VisionNode(Node):
 
 
     def cube_alignment(self, tag_id, x, y, z):
-        target_z = 0.27      
-        tol_x = 0.03           
-        tol_z = 0.03           
+        target_z = 0.32
+        tol_x = 0.02
+        tol_z = 0.03    
 
         # pra evitar que o robo fique dando trancos na hora de se mover
-        k_x = 0.4              
-        k_z = 0.3              
-        max_speed = 0.2        
+        k_x = 0.6              
+        k_z = 0.6              
+        max_speed = 0.05     
 
-        erro_x = -x
+        erro_x = -x + 0.05
         erro_z = z - target_z
 
         cmd = Twist()
 
-        aligned_x = abs(x) <= tol_x
+        aligned_x = abs(erro_x) <= tol_x
         aligned_z = abs(erro_z) <= tol_z
 
         if aligned_x and aligned_z: # se esta alinhado para
@@ -208,8 +210,8 @@ class VisionNode(Node):
 
         # ajuste no eixo z
         if not aligned_z:
-            #cmd.linear.x = float(np.clip(k_z * erro_z, -max_speed, max_speed))
-            cmd.linear.x = max_speed if erro_z > 0 else -max_speed # testar com diferentes valores de vel menores
+            cmd.linear.x = float(np.clip(k_z * erro_z, -max_speed, max_speed))
+            #cmd.linear.x = max_speed if erro_z > 0 else -max_speed # testar com diferentes valores de vel menores
 
         self.get_logger().info(
                     f"Alinhando Tag {tag_id} -> CmdVel: vx={cmd.linear.x:.2f}, vy={cmd.linear.y:.2f}"
