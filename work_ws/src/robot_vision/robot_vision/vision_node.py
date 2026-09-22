@@ -101,6 +101,9 @@ class VisionNode(Node):
             coord_msg.point.x = float(x_m)
             coord_msg.point.y = float(y_m)
             coord_msg.point.z = float(z_m)
+
+            self.render_preview(display_frame, det, tag_id, x_m, y_m, z_m) 
+
             self.coord_pub.publish(coord_msg)
 
             cube_msg = Cube()
@@ -113,8 +116,7 @@ class VisionNode(Node):
 
             self.render_preview(display_frame, det, tag_id, pose[0][3], pose[1][3], pose[2][3])
 
-        if len(array_msg.cubes) > 0:
-            self.cube_data_pub.publish(array_msg)
+            self.cube_alignment(tag_id, x_m, y_m, z_m)
 
         if self.container_detection_enabled:
             container = self.color_detection(display_frame, cor='red')
@@ -181,8 +183,8 @@ class VisionNode(Node):
         tol_z = 0.03           
 
         # pra evitar que o robo fique dando trancos na hora de se mover
-        k_x = 0.6              
-        k_z = 0.6              
+        k_x = 0.4              
+        k_z = 0.3              
         max_speed = 0.2        
 
         erro_x = -x
@@ -206,7 +208,8 @@ class VisionNode(Node):
 
         # ajuste no eixo z
         if not aligned_z:
-            cmd.linear.x = float(np.clip(k_z * erro_z, -max_speed, max_speed))
+            #cmd.linear.x = float(np.clip(k_z * erro_z, -max_speed, max_speed))
+            cmd.linear.x = max_speed if erro_z > 0 else -max_speed # testar com diferentes valores de vel menores
 
         self.get_logger().info(
                     f"Alinhando Tag {tag_id} -> CmdVel: vx={cmd.linear.x:.2f}, vy={cmd.linear.y:.2f}"
