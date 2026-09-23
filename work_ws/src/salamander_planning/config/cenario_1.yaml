@@ -1,6 +1,8 @@
-move_action_node:
+/**:
   ros__parameters:
     waypoints: ["start", "w1", "finish"]
-    start_coords: [0.0, 0.0, 0.0]
-    w1_coords: [2.5, 1.0, 1.57]
-    finish_coords: [5.0, 0.0, 0.0]
+    
+    # [X, Y, Yaw_em_radianos]
+    start_coords: [0.0, 0.0, 0.0]    # Posição inicial (antigo wp0)
+    w1_coords: [0.86, -0.37, 0.0]       # Posição alvo (antigo wp1)
+    finish_coords: [1.72, 0.24, 3.14]      # Posição final provisória

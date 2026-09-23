@@ -16,7 +16,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(os.path.join(
             get_package_share_directory('plansys2_bringup'),
             'launch',
-            'plansys2_bringup_launch.py'
+            'plansys2_bringup_launch_monolithic.py'
         )),
         launch_arguments={
             'model_file': domain_file
