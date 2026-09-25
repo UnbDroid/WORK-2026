@@ -27,8 +27,8 @@
 #define M3_ENA          GPIO_NUM_33           // ENA
 #define M3_ENB          GPIO_NUM_32           // ENB
 #define M3_PWM          GPIO_NUM_25
-#define M3_ENC_A        GPIO_NUM_35
-#define M3_ENC_B        GPIO_NUM_34         
+#define M3_ENC_A        GPIO_NUM_34
+#define M3_ENC_B        GPIO_NUM_35         
 #define M3_CANAL_PWM    LEDC_CHANNEL_1
 #define M3_KP           1.5
 #define M3_KI           0.75
@@ -36,8 +36,8 @@
 #define M2_ENA          GPIO_NUM_22
 #define M2_ENB          GPIO_NUM_23
 #define M2_PWM          GPIO_NUM_4
-#define M2_ENC_A        GPIO_NUM_14
-#define M2_ENC_B        GPIO_NUM_15 
+#define M2_ENC_A        GPIO_NUM_15
+#define M2_ENC_B        GPIO_NUM_14 
 #define M2_CANAL_PWM    LEDC_CHANNEL_2
 #define M2_KP           1.75
 #define M2_KI           0.75
@@ -45,8 +45,8 @@
 #define M4_ENA          GPIO_NUM_19
 #define M4_ENB          GPIO_NUM_18
 #define M4_PWM          GPIO_NUM_21
-#define M4_ENC_A        GPIO_NUM_36 //VN
-#define M4_ENC_B        GPIO_NUM_39 //VP
+#define M4_ENC_A        GPIO_NUM_36         // VN
+#define M4_ENC_B        GPIO_NUM_39         // VP
 #define M4_CANAL_PWM    LEDC_CHANNEL_3
 #define M4_KP           1.5
 #define M4_KI           0.75
