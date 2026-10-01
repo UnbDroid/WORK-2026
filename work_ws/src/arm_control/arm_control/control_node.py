@@ -1,51 +1,40 @@
 #!/usr/bin/env python3
 
 import threading
+
 import rclpy
 from rclpy.node import Node
-from geometry_msgs.msg import PointStamped
+from geometry_msgs.msg import Point
 
 class ControlNode(Node):
 
     def __init__(self):
         super().__init__("control_node")
 
-        self.arm_coord_pub = self.create_publisher(PointStamped, "arm_coordinates", 10)
-        self.target_position = 'initial'
+        self.arm_coord_pub = self.create_publisher(Point, "arm_coordinates", 10)
         self.targets = {
-            # 1. Em pé a 90° (x = L_offset, y = 0, z = H + L)
-            'initial':   [0.05,  0.00,  0.40],
-
-            # z, x, -y     
-            # 2. Pegar o cubo no chão/esteira à frente
-            'get_cube':  [0.26,  0.00,  0.03],
-
-            # 3. Soltar nos 3 slots da plataforma de transporte
+            'initial':   [-0.378666, 0.00, 0.2075],
+            'zero_position': [0.378666, 0.00, 0.2075],
+            'get_cube':  [0.3324,    0.00, 0.0497],
             'slot1':     [-0.25,  0.05,  0.15],
             'slot2':     [-0.25,  0.00,  0.15],
             'slot3':     [-0.25, -0.05,  0.15],
-
-            # 4. Prateleira (shelf) alta à frente
             'shelf':     [0.27,  0.00,  0.27],
-
-            # 5. Descarte
             'drop_cube': [0.26,  0.00,  0.03],
         }
 
-        # Publica periodicamente no tópico
-        self.timer = self.create_timer(0.5, self.publish_target_coordinates)
+    def publish_target_coordinates(self, target_name):
+        coords = self.targets[target_name]
 
-    def publish_target_coordinates(self):
-        coords = self.targets.get(self.target_position, [0.0, 0.0, 0.0])
+        msg = Point()
 
-        msg = PointStamped()
-        msg.header.stamp = self.get_clock().now().to_msg()
-        msg.header.frame_id = "arm_base"
-        msg.point.x = float(coords[0])
-        msg.point.y = float(coords[1])
-        msg.point.z = float(coords[2])
+        msg.x = float(coords[0])
+        msg.y = float(coords[1])
+        msg.z = float(coords[2])
 
         self.arm_coord_pub.publish(msg)
+
+        self.get_logger().info( f"Target atualizado: {target_name} -> " f"x={msg.x:.4f}, " f"y={msg.y:.4f}, " f"z={msg.z:.4f}" )
 
     def input_loop(self):
         """Roda em uma thread separada para não travar o loop de eventos do ROS."""
@@ -57,8 +46,7 @@ class ControlNode(Node):
                     rclpy.shutdown()
                     break
                 if choice in self.targets:
-                    self.target_position = choice
-                    self.get_logger().info(f"Target atualizado para: {choice} -> {self.targets[choice]}")
+                    self.publish_target_coordinates(choice)
                 else:
                     print(f"Posição '{choice}' inválida!")
             except (EOFError, KeyboardInterrupt):

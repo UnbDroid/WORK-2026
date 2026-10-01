@@ -1,6 +1,7 @@
 #include <Arduino.h>
 
-// Gripper Limits = Fully Open: 180 Degrees, Fully Closed: 100 Degrees.
+constexpr double GRIPPER_OPEN_ANGLE = PI;
+constexpr double GRIPPER_CLOSE_ANGLE  = (7 * PI) / 12;
 
 #define STEPS_PER_REV_ARM 872           // 200 Steps per Rotation (Full Step Mode) * 4.36:1 Gearbox.
 #define STEPS_PER_REV_BASE 1400         // 200 Steps per Rotation (Full Step Mode) * 7:1 Gearbox.

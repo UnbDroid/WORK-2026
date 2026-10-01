@@ -43,9 +43,9 @@ void Manipulator::init(FastAccelStepper* base, FastAccelStepper* arm, Servo* gri
     if (stepper_arm) {
         stepper_arm->setDirectionPin(DIR_M2_PIN);
         stepper_arm->setEnablePin(ENABLE_M2_PIN);
-        stepper_arm->setAutoEnable(true);
+        stepper_arm->setAutoEnable(false);
 
-        //stepper_arm->enableOutputs();
+        stepper_arm->enableOutputs();
 
         stepper_arm->setSpeedInHz(0.6f * ARM_STEPS_PER_RAD);
         stepper_arm->setAcceleration(0.3f * ARM_STEPS_PER_RAD);
@@ -77,26 +77,31 @@ ik_angle Manipulator::inverse_kinematics(double ik_x, double ik_y, double ik_z){
     return end_factor_angle;
 }
 
-void Manipulator::drive_angle(double drive_theta_base, double drive_theta_arm, double drive_theta_gripper){
+void Manipulator::drive_angle(double drive_theta_base, double drive_theta_arm){
     if (stepper_base) {
         stepper_base->moveTo(base_rad_to_steps(drive_theta_base));
     };
     if (stepper_arm) {
         stepper_arm->moveTo(arm_rad_to_steps(drive_theta_arm));
     };
-    if (servo_gripper) {
-        servo_gripper->write(drive_theta_gripper * 180.0 / PI);
-    };
 
     this->theta_base = drive_theta_base;
     this->theta_arm = drive_theta_arm;
-    this->theta_gripper = drive_theta_gripper;
 
     fk_position output_position = forward_kinematics(drive_theta_base, drive_theta_arm);
 
     this->x = output_position.fk_x;
     this->y = output_position.fk_y;
     this->z = output_position.fk_z;
+};
+
+void Manipulator::drive_gripper(double drive_theta_gripper){
+
+    if (servo_gripper) {
+        servo_gripper->write(drive_theta_gripper * 180.0 / PI);
+    };
+
+    this->theta_gripper = drive_theta_gripper;
 };
 
 void Manipulator::drive_position(double drive_x, double drive_y, double drive_z){
@@ -113,5 +118,5 @@ void Manipulator::drive_position(double drive_x, double drive_y, double drive_z)
 
     ik_angle output_angle = inverse_kinematics(drive_x, drive_y, drive_z);
 
-    drive_angle(output_angle.ik_theta_base, output_angle.ik_theta_arm, PI);
+    drive_angle(output_angle.ik_theta_base, output_angle.ik_theta_arm);
 };
