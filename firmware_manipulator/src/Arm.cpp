@@ -70,8 +70,19 @@ ik_angle Manipulator::inverse_kinematics(double ik_x, double ik_y, double ik_z){
     ik_angle end_factor_angle;
 
     double radial_distance = sqrt((ik_x * ik_x) + (ik_y * ik_y));
+
+    double target_base = atan2(ik_y, ik_x);
+
+    double current_base = stepper_base->getCurrentPosition() / BASE_STEPS_PER_RAD;
+
+    double delta_base = target_base - current_base;
+
+    while (delta_base > PI) delta_base -= 2.0 * PI;
+
+    while (delta_base < -PI) delta_base += 2.0 * PI;
+
+    end_factor_angle.ik_theta_base = current_base + delta_base;
     
-    end_factor_angle.ik_theta_base = atan2(ik_y, ik_x);
     end_factor_angle.ik_theta_arm = atan2(ik_z - ARM_HEIGHT, radial_distance - ARM_LATERAL_OFFSET);
 
     return end_factor_angle;
