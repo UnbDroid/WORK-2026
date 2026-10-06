@@ -9,7 +9,7 @@ def generate_launch_description():
     salamander_pkg_dir = get_package_share_directory('salamander_planning')
 
     # Aponta para o arquivo de domínio (escalável para o futuro)
-    domain_file = os.path.join(salamander_pkg_dir, 'pddl', 'domain.pddl')
+    domain_file = os.path.join(salamander_pkg_dir, 'pddl', 'pasta_teste', 'domain.pddl')
 
     # Aciona o motor do PlanSys2 subindo os 4 nós centrais
     plansys2_cmd = IncludeLaunchDescription(

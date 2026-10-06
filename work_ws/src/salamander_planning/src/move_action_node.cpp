@@ -44,7 +44,7 @@ protected:
   {
     if (!goal_sent_) {
       goal_sent_ = true;
-      std::string dest = get_arguments()[2];
+      std::string dest = get_arguments()[1];
       
       // Trava de segurança: se o PDDL mandar para um ponto que não está no YAML
       if (waypoints_.find(dest) == waypoints_.end()) {

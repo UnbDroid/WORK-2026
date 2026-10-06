@@ -1,33 +1,26 @@
 (define (problem basic-manipulation-test)
-  (:domain exercise0)
+  (:domain salamander-domain)
 
   (:objects
-    robot1 - robot
-    start finish w1 - location
-
-    ; w1 e w2 tirados por enquanto
-    ; attc1 attc2 attc3 - object
+    start w1 - workspace
+    cubo1 - cube
+    tag1 - tag
   )
 
   (:init
-    (at-robot robot1 start)
-    ; (arm-empty)
-    ; (at-object attc1 w1)
-    ; (at-object attc2 w1)
-    ; (at-object attc3 w1)
-
+    ; Onde o robô está e as rotas
+    (robot-at start)
     (connected start w1)
-    (connected w1 finish)
+
+    ; O conhecimento prévio do mundo (O cubo 1 está na mesa w1 e tem a tag1)
+    (cube-at cubo1 w1)
+    (cube-tag cubo1 tag1)
   )
 
   (:goal
     (and 
-    ; (at-object attc1 w2)
-    ; (at-object attc2 w2)
-    ; (at-object attc3 w2)
-
-    (visited w1) ;o robo deve passar por aq
-    (at-robot robot1 finish) ;robo tem q terminar aq    
+      ; A única exigência para o teste ter sucesso é o robô estar alinhado com a tag!
+      (aligned-tag tag1 w1) 
     )
   )
 )
