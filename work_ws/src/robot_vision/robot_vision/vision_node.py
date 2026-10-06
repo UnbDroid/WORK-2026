@@ -31,6 +31,7 @@ class VisionNode(Node):
         self.vision_active = False 
         self.create_subscription(Bool, "/vision_trigger", self.trigger_callback, 10)
         self.status_pub = self.create_publisher(Bool, "/vision_status", 10)
+        #self.aligned_pub = self.create_publisher(Bool, "/cube_aligned", 10)
 
         self.container_detection_enabled = False
         self.create_subscription(Bool, "container_detection_enabled", self.container_enabled_callback, 10)
@@ -145,6 +146,9 @@ class VisionNode(Node):
                 self.cube_alignment(tag_id, x_m, y_m, z_m)
 
                 cmd = Twist()  # Se está vendo o alvo, não precisa mover o robô para varrer
+                #aligned_msg.data = self.cube_aligned
+                #self.aligned_pub.publish(aligned_msg)
+
 
             else:
                 if not self.cube_aligned:
