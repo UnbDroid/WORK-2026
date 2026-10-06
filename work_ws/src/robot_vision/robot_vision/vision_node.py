@@ -27,7 +27,10 @@ class VisionNode(Node):
         self.cmd_vel_pub = self.create_publisher(Twist, "/cmd_vel", 10)
         self.cube_data_pub = self.create_publisher(CubeArray, "cube_data", 10)
 
-        self.aligned_pub = self.create_publisher(Bool, "/cube_aligned", 10)
+        # PONTE COM O ACTION_NODE (Interruptor)
+        self.vision_active = False 
+        self.create_subscription(Bool, "/vision_trigger", self.trigger_callback, 10)
+        self.status_pub = self.create_publisher(Bool, "/vision_status", 10)
 
         self.container_detection_enabled = False
         self.create_subscription(Bool, "container_detection_enabled", self.container_enabled_callback, 10)
@@ -35,7 +38,7 @@ class VisionNode(Node):
 
         self.get_logger().info("Publishers 'cube_coordinates' e 'cube_data' inicializados!")
 
-        self.cube_priority = [2, 3, 4] # Editar na ordem de prioridade e quantidade de ids
+        self.cube_priority = [2, 3, 4]
         self.cube_aligned = False
         self.counter = 0
 
@@ -45,7 +48,6 @@ class VisionNode(Node):
         self.duration_start = None
         self.duration = 1.0
         self.duration_max = 6.0
-
 
         self.indice_camera = 2 # Índice na raspberry pi (diferente no notebook)
         self.cap = cv2.VideoCapture(self.indice_camera, cv2.CAP_V4L2)
@@ -65,18 +67,26 @@ class VisionNode(Node):
 
         self.timer = self.create_timer(0.033, self.process_frame_callback)
 
+    def trigger_callback(self, msg):
+        self.vision_active = msg.data
+        if self.vision_active:
+            self.cube_aligned = False
+            self.duration_start = None
+            self.get_logger().info('Visão ACORDADA pelo PDDL! Procurando cubo...')
+        else:
+            self.get_logger().info('Visão PAUSADA. Aguardando nova ordem.')
+
     def container_enabled_callback(self, msg):
-        
         self.container_detection_enabled = msg.data
-        
         if msg.data:
             self.get_logger().info('Detecção de contêiner habilitada.')
         else:
             self.get_logger().info('Detecção de contêiner desabilitada.')
 
     def process_frame_callback(self):
+        # Trava para não consumir CPU enquanto viaja
         if not self.vision_active:
-            self.cap.grab() # Mantém o buffer de vídeo limpo e atualizado
+            self.cap.grab()
             return
 
         ret, frame = self.cap.read()
@@ -85,7 +95,6 @@ class VisionNode(Node):
             return
 
         display_frame = frame.copy()
-
         agora = self.get_clock().now().nanoseconds / 1e9
  
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -95,7 +104,6 @@ class VisionNode(Node):
         self.get_logger().info(
             f"Tags no frame: {ids_vistos} | alvo: {self.cube_priority[0]}",
             throttle_duration_sec=0.5)
-
         
         coord_msg = PointStamped()
         coord_msg.header.stamp = self.get_clock().now().to_msg()
@@ -109,7 +117,6 @@ class VisionNode(Node):
             tag_id = det.tag_id
 
             if tag_id == self.cube_priority[0]:
-    
                 camera_params = [500.0, 500.0, 320.0, 240.0] 
                 pose, _, _ = self.detector.detection_pose(
                     det, camera_params, tag_size=self.tag_size
@@ -131,19 +138,13 @@ class VisionNode(Node):
                 cube_msg.waypoint = "default"  
                 cube_msg.color = "cor"  
                 array_msg.cubes.append(cube_msg)
-                aligned_msg = Bool()
-        
 
                 self.get_logger().info(f"Tag ID: {tag_id}: Coords: X={x_m:.5f} Y={y_m:.5f} Z={z_m:.5f} m")
                 self.render_preview(display_frame, det, tag_id, x_m, y_m, z_m)
     
                 self.cube_alignment(tag_id, x_m, y_m, z_m)
 
-                aligned_msg.data = self.cube_aligned
-                self.aligned_pub.publish(aligned_msg)
-
-                cmd = Twist()  # Se está vendo o alvo, não precisa mover o robô
-
+                cmd = Twist()  # Se está vendo o alvo, não precisa mover o robô para varrer
 
             else:
                 if not self.cube_aligned:
@@ -157,7 +158,6 @@ class VisionNode(Node):
             self.get_logger().info("Nenhum cubo alvo detectado, varrendo", throttle_duration_sec=1.0)
             self.cmd_vel_pub.publish(cmd)
         
-    
         container = None
         if self.container_detection_enabled:
             container = self.color_detection(display_frame, cor='red')
@@ -169,17 +169,14 @@ class VisionNode(Node):
             container_msg.header.stamp = self.get_clock().now().to_msg()
             container_msg.header.frame_id = 'webcam_link'
 
-            # Por enquanto: pixels, apenas para testar a comunicação.
             container_msg.point.x = float(cx)
             container_msg.point.y = float(cy)
             container_msg.point.z = 0.0
 
             self.container_coord_pub.publish(container_msg)
-
  
         cv2.imshow("Deteccao de Cubos - UnbDroid", display_frame)
         cv2.waitKey(1)
- 
  
     def varredura(self, agora):
         cmd = Twist()
@@ -199,14 +196,10 @@ class VisionNode(Node):
 
     def color_detection(self, roi, cor= "red"):
         hsv_frame = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
-
         red_mask = cv2.inRange(hsv_frame, self.red_lower, self.red_upper)
         blue_mask = cv2.inRange(hsv_frame, self.blue_lower, self.blue_upper)
 
-        if cor == "red":
-            mask = red_mask
-        else:
-            mask = blue_mask
+        mask = red_mask if cor == "red" else blue_mask
 
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
@@ -215,33 +208,22 @@ class VisionNode(Node):
             return None
 
         contour = max(contours, key=cv2.contourArea)
-
         x, y, w, h = cv2.boundingRect(contour)
-
         cx = x + w // 2 
         cy = y + h // 2
-
         centro = (cx, cy)
-
         contorno = x, y, w, h
 
-        red_count = cv2.countNonZero(red_mask)
-        blue_count = cv2.countNonZero(blue_mask)
-
         self.get_logger().info(f"Container {cor} detectado em ({cx}, {cy})")
-    
-
         self.render_container_preview(roi, contorno, cor, centro)
 
         return x, y, w, h, cx, cy
-
 
     def cube_alignment(self, tag_id, x, y, z):
         target_z = 0.40
         tol_x = 0.02
         tol_z = 0.03    
 
-        # pra evitar que o robo fique dando trancos na hora de se mover
         k_x = 0.4
         k_z = 0.4            
         max_speed = 0.05     
@@ -254,34 +236,31 @@ class VisionNode(Node):
         aligned_x = abs(erro_x) <= tol_x
         aligned_z = abs(erro_z) <= tol_z
 
-        if aligned_x and aligned_z: # se esta alinhado para
+        if aligned_x and aligned_z: 
             self.cube_aligned = True
             cmd.linear.x = 0.0
-            cmd.linear.y = 0.04
+            cmd.linear.y = 0.0
             self.cmd_vel_pub.publish(cmd)
             self.get_logger().info(f"Tag ID {tag_id} ALINHADA! Robô parado.")
-            # Comanda garra para pegar cubo e para de alinha ate ser recolhido
+            
+            # AVISA O ACTION_NODE QUE TERMINOU
+            status_msg = Bool()
+            status_msg.data = True
+            self.status_pub.publish(status_msg)
+            self.vision_active = False 
+            
             return True
 
-        # ajuste no eixo x
         if not aligned_x:
             cmd.linear.y = float(np.clip(k_x * erro_x, -max_speed, max_speed))
 
-        # ajuste no eixo z
         if not aligned_z:
             cmd.linear.x = float(np.clip(k_z * erro_z, -max_speed, max_speed))
-            #cmd.linear.x = max_speed if erro_z > 0 else -max_speed # testar com diferentes valores de vel menores
 
-        self.get_logger().info(
-                    f"Alinhando Tag {tag_id} -> CmdVel: vx={cmd.linear.x:.2f}, vy={cmd.linear.y:.2f}"
-                )
-        
+        self.get_logger().info(f"Alinhando Tag {tag_id} -> CmdVel: vx={cmd.linear.x:.2f}, vy={cmd.linear.y:.2f}")
         self.cmd_vel_pub.publish(cmd)
         
-    
     def render_preview(self, image, detection, tag_id, x, y, z):
-        """Função dedicada para desenhar os elementos gráficos na tela usando OpenCV."""
-
         corners = detection.corners.astype(int)
         for i in range(4):
             p1 = tuple(corners[i])
@@ -293,34 +272,23 @@ class VisionNode(Node):
         
         texto_id = f"ID: {tag_id}"
         texto_coords = f"X:{x:.1f} Y:{y:.1f} Z:{z:.1f} m"
-        texto_color = f"Cor: {"Cor"}"
 
         pos_id = (center[0] - 40, center[1] - 25)
         pos_coords = (center[0] - 75, center[1] - 10)
 
         cv2.putText(image, texto_id, pos_id, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 3)
         cv2.putText(image, texto_coords, pos_coords, cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 3)
-
         cv2.putText(image, texto_id, pos_id, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 1)
         cv2.putText(image, texto_coords, pos_coords, cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 255), 1)
 
-        # self.get_logger().info(f"Tag ID: {tag_id}, Coords: X={x:.1f} Y={y:.1f} Z={z:.1f} m")
-
     def render_container_preview(self, image, contorno, cor, centro):
-        """Função dedicada para desenhar os elementos gráficos na tela usando OpenCV."""
-
         x, y, w, h = contorno
         cx, cy = centro
 
         cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
         cv2.circle(image, centro, 5, (0, 0, 255), -1)
-        cv2.putText(
-            image, f"Centro: ({cx}, {cy}) px", (x, max(20, y - 10)),
-            cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 3)
-        cv2.putText(
-            image, f"Centro: ({cx}, {cy}) px", (x, max(20, y - 10)),
-            cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 255), 1)
-
+        cv2.putText(image, f"Centro: ({cx}, {cy}) px", (x, max(20, y - 10)), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 3)
+        cv2.putText(image, f"Centro: ({cx}, {cy}) px", (x, max(20, y - 10)), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 255), 1)
 
     def __del__(self):
         if hasattr(self, "cap") and self.cap.isOpened():
