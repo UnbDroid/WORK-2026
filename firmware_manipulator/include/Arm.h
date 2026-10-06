@@ -31,14 +31,15 @@ class Manipulator {
         void init(FastAccelStepper* base, FastAccelStepper* arm, Servo* gripper);
         fk_position forward_kinematics(double fk_theta_base, double fk_theta_arm);
         ik_angle inverse_kinematics(double ik_x, double ik_y, double ik_z);
-        void drive_angle(double drive_theta_base, double drive_theta_arm, double drive_theta_gripper);
+        void drive_angle(double drive_theta_base, double drive_theta_arm);
+        void drive_gripper(double drive_theta_gripper);
         void drive_position(double drive_x, double drive_y, double drive_z);
 
-        double get_x_position() {return this->x;}
-        double get_y_position() {return this->y;}
-        double get_z_position() {return this->z;}
-        double get_base_angle() {return this->theta_base;}
-        double get_arm_angle() {return this->theta_arm;}
+        double get_x_position()    {return this->x;}
+        double get_y_position()    {return this->y;}
+        double get_z_position()    {return this->z;}
+        double get_base_angle()    {return this->theta_base;}
+        double get_arm_angle()     {return this->theta_arm;}
         double get_gripper_angle() {return this->theta_gripper;}
 };
 

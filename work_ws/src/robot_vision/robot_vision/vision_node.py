@@ -27,19 +27,17 @@ class VisionNode(Node):
         self.cmd_vel_pub = self.create_publisher(Twist, "/cmd_vel", 10)
         self.cube_data_pub = self.create_publisher(CubeArray, "cube_data", 10)
 
+        self.aligned_pub = self.create_publisher(Bool, "/cube_aligned", 10)
+
         self.container_detection_enabled = False
         self.create_subscription(Bool, "container_detection_enabled", self.container_enabled_callback, 10)
         self.container_coord_pub = self.create_publisher(PointStamped, 'container_coordinates', 10)
 
         self.get_logger().info("Publishers 'cube_coordinates' e 'cube_data' inicializados!")
-        self.cube_priority = [1, 2, 3, 4] 
+
+        self.cube_priority = [2, 3, 4] # Editar na ordem de prioridade e quantidade de ids
         self.cube_aligned = False
         self.counter = 0
-
-        # Variável para controlar se a visão está ativa ou não
-        self.vision_active = False 
-        self.create_subscription(Bool, "/vision_trigger", self.trigger_callback, 10)
-        self.status_pub = self.create_publisher(Bool, "/vision_status", 10)
 
         self.v_busca = 0.05      # m/s
 
@@ -75,15 +73,6 @@ class VisionNode(Node):
             self.get_logger().info('Detecção de contêiner habilitada.')
         else:
             self.get_logger().info('Detecção de contêiner desabilitada.')
-
-    def trigger_callback(self, msg):
-        self.vision_active = msg.data
-        if self.vision_active:
-            self.cube_aligned = False # Reseta a trava do cubo anterior
-            self.duration_start = None # Reseta o timer de varredura
-            self.get_logger().info('Visão ACORDADA pelo PDDL! Procurando cubo...')
-        else:
-            self.get_logger().info('Visão PAUSADA. Aguardando nova ordem.')
 
     def process_frame_callback(self):
         if not self.vision_active:
@@ -142,21 +131,19 @@ class VisionNode(Node):
                 cube_msg.waypoint = "default"  
                 cube_msg.color = "cor"  
                 array_msg.cubes.append(cube_msg)
-    
+                aligned_msg = Bool()
+        
+
                 self.get_logger().info(f"Tag ID: {tag_id}: Coords: X={x_m:.5f} Y={y_m:.5f} Z={z_m:.5f} m")
                 self.render_preview(display_frame, det, tag_id, x_m, y_m, z_m)
     
                 self.cube_alignment(tag_id, x_m, y_m, z_m)
 
+                aligned_msg.data = self.cube_aligned
+                self.aligned_pub.publish(aligned_msg)
+
                 cmd = Twist()  # Se está vendo o alvo, não precisa mover o robô
 
-            coord_msg.point.x = float(x_m)
-            coord_msg.point.y = float(y_m)
-            coord_msg.point.z = float(z_m)
-
-            self.render_preview(display_frame, det, tag_id, x_m, y_m, z_m) 
-
-            self.coord_pub.publish(coord_msg)
 
             else:
                 if not self.cube_aligned:
@@ -165,7 +152,7 @@ class VisionNode(Node):
             
             self.cmd_vel_pub.publish(cmd)
 
-        if detections == []:
+        if detections == [] and not self.cube_aligned:
             cmd = self.varredura(agora)
             self.get_logger().info("Nenhum cubo alvo detectado, varrendo", throttle_duration_sec=1.0)
             self.cmd_vel_pub.publish(cmd)
@@ -178,7 +165,9 @@ class VisionNode(Node):
         if container is not None:
             x, y, w, h, cx, cy = container
 
-            self.cube_alignment(tag_id, x_m, y_m, z_m)
+            container_msg = PointStamped()
+            container_msg.header.stamp = self.get_clock().now().to_msg()
+            container_msg.header.frame_id = 'webcam_link'
 
             # Por enquanto: pixels, apenas para testar a comunicação.
             container_msg.point.x = float(cx)
@@ -268,14 +257,10 @@ class VisionNode(Node):
         if aligned_x and aligned_z: # se esta alinhado para
             self.cube_aligned = True
             cmd.linear.x = 0.0
-            cmd.linear.y = 0.0
+            cmd.linear.y = 0.04
             self.cmd_vel_pub.publish(cmd)
             self.get_logger().info(f"Tag ID {tag_id} ALINHADA! Robô parado.")
-            
-            status_msg = Bool()
-            status_msg.data = True
-            self.status_pub.publish(status_msg)
-            self.vision_active = False
+            # Comanda garra para pegar cubo e para de alinha ate ser recolhido
             return True
 
         # ajuste no eixo x
@@ -292,6 +277,7 @@ class VisionNode(Node):
                 )
         
         self.cmd_vel_pub.publish(cmd)
+        
     
     def render_preview(self, image, detection, tag_id, x, y, z):
         """Função dedicada para desenhar os elementos gráficos na tela usando OpenCV."""
