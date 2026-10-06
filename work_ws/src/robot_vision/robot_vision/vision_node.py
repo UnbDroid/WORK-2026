@@ -150,6 +150,13 @@ class VisionNode(Node):
 
                 cmd = Twist()  # Se está vendo o alvo, não precisa mover o robô
 
+            coord_msg.point.x = float(x_m)
+            coord_msg.point.y = float(y_m)
+            coord_msg.point.z = float(z_m)
+
+            self.render_preview(display_frame, det, tag_id, x_m, y_m, z_m) 
+
+            self.coord_pub.publish(coord_msg)
 
             else:
                 if not self.cube_aligned:
@@ -171,9 +178,7 @@ class VisionNode(Node):
         if container is not None:
             x, y, w, h, cx, cy = container
 
-            container_msg = PointStamped()
-            container_msg.header.stamp = self.get_clock().now().to_msg()
-            container_msg.header.frame_id = 'webcam_link'
+            self.cube_alignment(tag_id, x_m, y_m, z_m)
 
             # Por enquanto: pixels, apenas para testar a comunicação.
             container_msg.point.x = float(cx)

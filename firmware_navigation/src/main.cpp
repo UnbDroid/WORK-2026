@@ -9,9 +9,7 @@
 #include <rclc/rclc.h>
 #include <rclc/executor.h>
 
-#include <std_msgs/msg/int32.h>
 #include <geometry_msgs/msg/twist.h>
-#include <std_msgs/msg/float32_multi_array.h>
 
 #define RCCHECK(fn) { rcl_ret_t temp_rc = fn; if((temp_rc != RCL_RET_OK)){while(1){}}}
 
@@ -22,9 +20,6 @@ rclc_executor_t executor;
 rclc_support_t support;
 rcl_allocator_t allocator;
 rcl_node_t node;
-
-rcl_publisher_t wheel_pub;
-std_msgs__msg__Float32MultiArray wheel_msg;
 
 MotorDC motor1(M1_ENA, M1_ENB, M1_PWM, M1_CANAL_PWM, M1_ENC_A, M1_ENC_B, M1_KP, M1_KI);
 MotorDC motor2(M2_ENA, M2_ENB, M2_PWM, M2_CANAL_PWM, M2_ENC_A, M2_ENC_B, M2_KP, M2_KI);
@@ -91,19 +86,6 @@ void setup() {
         &cmd_vel_callback,
         ON_NEW_DATA
     ));
-
-    RCCHECK(rclc_publisher_init_default(
-        &wheel_pub,
-        &node,
-        ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Float32MultiArray),
-        "/wheel_speeds"
-    ));
-
-    std_msgs__msg__Float32MultiArray__init(&wheel_msg);
-
-    wheel_msg.data.data = (float*) malloc(4 * sizeof(float));
-    wheel_msg.data.size = 4;
-    wheel_msg.data.capacity = 4;
 }
 
 void loop() {
@@ -119,14 +101,6 @@ void loop() {
 
     RobotWS.moveRobot(cmd_vx, cmd_vy, cmd_wz);
 
-    wheel_msg.data.data[0] = motor1.getRPMAtual() * ((2.f * PI) / 60.f);
-    wheel_msg.data.data[1] = motor2.getRPMAtual() * ((2.f * PI) / 60.f);
-    wheel_msg.data.data[2] = motor3.getRPMAtual() * ((2.f * PI) / 60.f);
-    wheel_msg.data.data[3] = motor4.getRPMAtual() * ((2.f * PI) / 60.f);
-
-    RCCHECK(rcl_publish(&wheel_pub, &wheel_msg, NULL));
-
     // Delay to Stabilize Loop Timing.
     delay(10);  // ~100 Hz
 }
-
