@@ -1,4 +1,4 @@
-(define (problem basic-manipulation-test)
+(define (problem basic-transportation-test1)
   (:domain exercise0)
 
   (:objects
@@ -10,15 +10,15 @@
   (:init
     (at-robot robot1 start)
     (at-object attc1 w1)
-    (at-object attc2 w1)
-    (at-object attc3 w1)
+    (at-object attc2 w2)
+    (at-object attc3 w3)
   )
 
   (:goal
     (and
       (at-object attc1 w2)
-      (at-object attc2 w2)
-      (at-object attc3 w2)
+      (at-object attc2 w3)
+      (at-object attc3 w1)
       (at-robot robot1 finish)
     )
   )
