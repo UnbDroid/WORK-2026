@@ -15,8 +15,8 @@ class ControlNode(Node):
 
         self.arm_coord_pub = self.create_publisher(Point, "arm_coordinates", 10)
         self.gripper_pub = self.create_publisher(Bool, "gripper_command", 10)
-        self.aligned_sub = self.create_subscription(
-            Bool, "/cube_aligned", self.aligned_callback, 10)
+        #self.aligned_sub = self.create_subscription(
+        #    Bool, "/cube_aligned", self.aligned_callback, 10)
 
         self.sequence_running = False
         
@@ -53,7 +53,7 @@ class ControlNode(Node):
         msg.data = open_gripper   # True = abre, False = fecha (como no firmware)
         self.gripper_pub.publish(msg)
 
-    def aligned_callback(self, msg):
+    '''def aligned_callback(self, msg):
         if not msg.data or self.sequence_running:
             return
         self.sequence_running = True
@@ -69,7 +69,7 @@ class ControlNode(Node):
         time.sleep(4.0)
         
         self.get_logger().info("Sequência concluída.")
-        self.sequence_running = False    
+        self.sequence_running = False  '''  
 
     def input_loop(self): # meio q não precisa
         """Roda em uma thread separada para não travar o loop de eventos do ROS."""

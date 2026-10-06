@@ -27,7 +27,7 @@ class VisionNode(Node):
         self.cmd_vel_pub = self.create_publisher(Twist, "/cmd_vel", 10)
         self.cube_data_pub = self.create_publisher(CubeArray, "cube_data", 10)
 
-        self.aligned_pub = self.create_publisher(Bool, "/cube_aligned", 10)
+        #self.aligned_pub = self.create_publisher(Bool, "/cube_aligned", 10)
 
         self.container_detection_enabled = False
         self.create_subscription(Bool, "container_detection_enabled", self.container_enabled_callback, 10)
@@ -75,10 +75,6 @@ class VisionNode(Node):
             self.get_logger().info('Detecção de contêiner desabilitada.')
 
     def process_frame_callback(self):
-        if not self.vision_active:
-            self.cap.grab() # Mantém o buffer de vídeo limpo e atualizado
-            return
-
         ret, frame = self.cap.read()
         if not ret or frame is None:
             self.cap.grab()
@@ -139,8 +135,8 @@ class VisionNode(Node):
     
                 self.cube_alignment(tag_id, x_m, y_m, z_m)
 
-                aligned_msg.data = self.cube_aligned
-                self.aligned_pub.publish(aligned_msg)
+                #aligned_msg.data = self.cube_aligned
+                #self.aligned_pub.publish(aligned_msg)
 
                 cmd = Twist()  # Se está vendo o alvo, não precisa mover o robô
 
