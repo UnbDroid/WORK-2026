@@ -103,26 +103,11 @@
     )
   )
 
-  (:action reset-arm
-    :parameters (?current-pos - arm-position)
-    :precondition (and
-        (arm-at ?current-pos)
-        (not (arm-at initial-position))
-    )
-    :effect (and
-        (not (arm-at ?current-pos))
-        (arm-at initial-position)
-        (increase (total-cost) 1)
-    )
-  )
-
   (:action get-cube-table
-    :parameters (?w - workspace ?c - cube ?t - tag)
+    :parameters (?w - workspace ?c - cube)
     :precondition (and
       (robot-at ?w)
       (arm-empty)
-      (aligned-tag ?t ?w)
-      (cube-tag ?c ?t)
       (cube-at ?c ?w)
       (free ?c)
       (arm-at initial-position)
