@@ -3,27 +3,29 @@
 import threading
 import time
 import rclpy
-
 from rclpy.node import Node
 from geometry_msgs.msg import Point
-from std_msgs.msg import Bool
+from std_msgs.msg import Bool, String
 
 class ControlNode(Node):
 
     def __init__(self):
         super().__init__("control_node")
 
+        # Publicadores para o hardware
         self.arm_coord_pub = self.create_publisher(Point, "arm_coordinates", 10)
         self.gripper_pub = self.create_publisher(Bool, "gripper_command", 10)
-        #self.aligned_sub = self.create_subscription(
-        #    Bool, "/cube_aligned", self.aligned_callback, 10)
+        
+        # Comunicação com o PlanSys2 (C++)
+        self.status_pub = self.create_publisher(Bool, "/arm_status", 10)
+        self.create_subscription(String, "/arm_command", self.command_callback, 10)
 
         self.sequence_running = False
         
         self.targets = {
             'initial': [-0.291334, 0.0, 0.2075],
             'zero_position': [0.378666, 0.00, 0.2075],
-            'get_cube':  [0.3324, 0.00, 0.0497], # n muda muita coisa, deveria descer
+            'get_cube':  [0.3324, 0.00, 0.0497],
             'teste_cube':  [0.3324, 0.00, 0.0497],
             'pre_slot1': [-0.3530,  0.062108, 0.32207],
             'pre_slot2': [-0.3570, -0.032892, 0.32207],
@@ -34,67 +36,76 @@ class ControlNode(Node):
             'drop_cube_10': [0.3324, 0.00, 0.0497],
             'shelf': [0.3003, 0.00, 0.4228],
         }
+        
+        self.get_logger().info("Control Node do Braço aguardando comandos do PlanSys2...")
 
     def publish_target_coordinates(self, target_name):
         coords = self.targets[target_name]
-
         msg = Point()
-
-        msg.x = float(coords[0])
-        msg.y = float(coords[1])
-        msg.z = float(coords[2])
-
+        msg.x, msg.y, msg.z = float(coords[0]), float(coords[1]), float(coords[2])
         self.arm_coord_pub.publish(msg)
-
-        self.get_logger().info( f"Target atualizado: {target_name} -> " f"x={msg.x:.4f}, " f"y={msg.y:.4f}, " f"z={msg.z:.4f}" )
+        self.get_logger().info(f"Target: {target_name} -> x={msg.x:.4f}, y={msg.y:.4f}, z={msg.z:.4f}")
 
     def publish_gripper(self, open_gripper: bool):
         msg = Bool()
-        msg.data = open_gripper   # True = abre, False = fecha (como no firmware)
+        msg.data = open_gripper 
         self.gripper_pub.publish(msg)
 
-    '''def aligned_callback(self, msg):
-        if not msg.data or self.sequence_running:
+    def command_callback(self, msg):
+        if self.sequence_running:
+            self.get_logger().warn("Aviso: Braço já está em movimento. Comando ignorado.")
             return
+            
+        command = msg.data
         self.sequence_running = True
-        threading.Thread(target=self.pick_sequence, daemon=True).start()
-
-    def pick_sequence(self):
-        self.get_logger().info("Alinhado! Iniciando sequência.") # 
-        self.publish_target_coordinates('initial')      # levanta / recolhe
-        time.sleep(4.0)
-        self.publish_gripper(True)                    # abre a garra
-        time.sleep(1.0)
-        self.publish_target_coordinates('pre_slot1')     # vai até o cubo
-        time.sleep(4.0)
         
-        self.get_logger().info("Sequência concluída.")
-        self.sequence_running = False  '''  
+        # Dispara a coreografia em segundo plano
+        threading.Thread(target=self.execute_sequence, args=(command,), daemon=True).start()
 
-    def input_loop(self): # meio q não precisa
-        """Roda em uma thread separada para não travar o loop de eventos do ROS."""
-        print(f"\nPosições disponíveis: {list(self.targets.keys())}")
-        while rclpy.ok():
-            try:
-                choice = input("\nDigite a pose desejada (ou 'q' para sair): ").strip()
-                if choice == 'q':
-                    rclpy.shutdown()
-                    break
-                if choice in self.targets:
-                    self.publish_target_coordinates(choice)
-                else:
-                    print(f"Posição '{choice}' inválida!")
-            except (EOFError, KeyboardInterrupt):
-                break
+    def execute_sequence(self, command):
+        self.get_logger().info(f"Iniciando coreografia: {command}")
+        
+        if command == "get_cube_table":
+            self.publish_gripper(True) # Abre garra
+            time.sleep(1.0)
+            self.publish_target_coordinates('get_cube') # Desce na mesa
+            time.sleep(4.0)
+            self.publish_gripper(False) # Fecha garra
+            time.sleep(1.0)
+            self.publish_target_coordinates('initial') # Recolhe
+            time.sleep(4.0)
+
+        elif command.startswith("put_slot"):
+            # O comando será algo como "put_slot1", "put_slot2"...
+            slot_name = command.split("_")[1] # Extrai 'slot1'
+            pre_slot_name = "pre_" + slot_name # Monta 'pre_slot1'
+            
+            self.publish_target_coordinates(pre_slot_name) # Fica acima do buraco
+            time.sleep(4.0)
+            self.publish_target_coordinates(slot_name) # Desce no buraco
+            time.sleep(2.0)
+            self.publish_gripper(True) # Solta
+            time.sleep(1.0)
+            self.publish_target_coordinates('initial') # Recolhe
+            time.sleep(4.0)
+
+        elif command == "reset_arm":
+            self.publish_target_coordinates('initial')
+            time.sleep(4.0)
+
+        else:
+            self.get_logger().error(f"Comando desconhecido: {command}")
+
+        # Avisa o PlanSys2 (C++) que terminou!
+        status_msg = Bool()
+        status_msg.data = True
+        self.status_pub.publish(status_msg)
+        self.sequence_running = False
+        self.get_logger().info(f"Coreografia {command} finalizada com sucesso.")
 
 def main(args=None):
     rclpy.init(args=args)
     node = ControlNode()
-
-    # Dispara a leitura do terminal em segundo plano
-    thread = threading.Thread(target=node.input_loop, daemon=True)
-    thread.start()
-
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:
