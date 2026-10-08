@@ -113,49 +113,50 @@ class VisionNode(Node):
         array_msg = CubeArray()
         array_msg.header.stamp = self.get_clock().now().to_msg()
         array_msg.header.frame_id = "webcam_link"
- 
-        for det in detections:
-            tag_id = det.tag_id
 
-            if tag_id == self.cube_priority[0]:
-                camera_params = [500.0, 500.0, 320.0, 240.0] 
-                pose, _, _ = self.detector.detection_pose(
-                    det, camera_params, tag_size=self.tag_size
-                )
-    
-                x_m = pose[0][3] 
-                y_m = pose[1][3] 
-                z_m = pose[2][3] 
-    
-                self.duration_start = None
-    
-                coord_msg.point.x = float(x_m)
-                coord_msg.point.y = float(y_m)
-                coord_msg.point.z = float(z_m)
-                self.coord_pub.publish(coord_msg)
-    
-                cube_msg = Cube()
-                cube_msg.id = int(tag_id)
-                cube_msg.waypoint = "default"  
-                cube_msg.color = "cor"  
-                array_msg.cubes.append(cube_msg)
+        alvo = next((det for det in detections if det.tag_id == self.cube_priority[0]), None)
 
-                self.get_logger().info(f"Tag ID: {tag_id}: Coords: X={x_m:.5f} Y={y_m:.5f} Z={z_m:.5f} m")
-                self.render_preview(display_frame, det, tag_id, x_m, y_m, z_m)
-    
-                self.cube_alignment(tag_id, x_m, y_m, z_m)
+        if alvo is not None:
+            tag_id = alvo.tag_id
+            camera_params = [500.0, 500.0, 320.0, 240.0] 
+            pose, _, _ = self.detector.detection_pose(
+                alvo, camera_params, tag_size=self.tag_size
+            )
 
-                cmd = Twist()  # Se está vendo o alvo, não precisa mover o robô para varrer
-                #aligned_msg.data = self.cube_aligned
-                #self.aligned_pub.publish(aligned_msg)
+            x_m = pose[0][3] 
+            y_m = pose[1][3] 
+            z_m = pose[2][3] 
 
+            self.duration_start = None
 
-            else:
-                if not self.cube_aligned:
-                    cmd = self.varredura(agora)
-                    self.get_logger().info("Nenhum cubo alvo detectado, varrendo", throttle_duration_sec=1.0)
-            
-            self.cmd_vel_pub.publish(cmd)
+            coord_msg.point.x = float(x_m)
+            coord_msg.point.y = float(y_m)
+            coord_msg.point.z = float(z_m)
+            self.coord_pub.publish(coord_msg)
+
+            cube_msg = Cube()
+            cube_msg.id = int(tag_id)
+            cube_msg.waypoint = "default"  
+            cube_msg.color = "cor"  
+            array_msg.cubes.append(cube_msg)
+            #aligned_msg = Bool()
+
+            self.get_logger().info(f"Tag ID: {tag_id}: Coords: X={x_m:.5f} Y={y_m:.5f} Z={z_m:.5f} m")
+            self.render_preview(display_frame, alvo, tag_id, x_m, y_m, z_m)
+
+            self.cube_alignment(tag_id, x_m, y_m, z_m)
+
+            #cmd = Twist()  # Se está vendo o alvo, não precisa mover o robô para varrer
+            #aligned_msg.data = self.cube_aligned
+            #self.aligned_pub.publish(aligned_msg)
+
+            cmd = Twist()
+
+        '''
+        elif not self.cube_aligned:
+            cmd = self.varredura(agora)
+            self.get_logger().info("Nenhum cubo alvo detectado, varrendo", throttle_duration_sec=1.0)
+            self.cmd_vel_pub.publish(cmd)'''
 
         if detections == [] and not self.cube_aligned:
             cmd = self.varredura(agora)
@@ -225,11 +226,11 @@ class VisionNode(Node):
 
     def cube_alignment(self, tag_id, x, y, z):
         target_z = 0.40
-        tol_x = 0.02
+        tol_x = 0.012
         tol_z = 0.03    
 
         k_x = 0.4
-        k_z = 0.4            
+        k_z = 0.3        
         max_speed = 0.05     
 
         erro_x = -x + 0.1
