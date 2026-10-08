@@ -1,7 +1,5 @@
 #include <memory>
 #include <string>
-#include <map>
-#include <vector>
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/bool.hpp"
 #include "std_msgs/msg/string.hpp"
@@ -11,9 +9,9 @@ using namespace std::chrono_literals;
 
 class PutCubeSlotAction : public plansys2::ActionExecutorClient {
 public:
-  PutCubeSlotAction() : plansys2::ActionExecutorClient("put-cube-slot", 500ms) {
-    cmd_pub_ = this->create_publisher("/arm_command", 10);
-    status_sub_ = this->create_subscription(
+  PutCubeSlotAction() : plansys2::ActionExecutorClient("put_cube_slot", 500ms) {
+    cmd_pub_ = this->create_publisher<std_msgs::msg::String>("/arm_command", 10);
+    status_sub_ = this->create_subscription<std_msgs::msg::Bool>(
       "/arm_status", 10, [this](const std_msgs::msg::Bool::SharedPtr msg) {
         if (msg->data) arm_finished_ = true;
       });
@@ -21,13 +19,11 @@ public:
 protected:
   void do_work() override {
     if (!command_sent_) {
-      // No PDDL: (put-cube-slot ?c ?s ?pos-s)
-      // O argumento [0] é o cubo (ex: cubo1)
-      // O argumento [1] é o slot (ex: slot1)
+      // No PDDL: (put_cube_slot ?c ?s ?pos-s)
       std::string target_slot = get_arguments()[1]; 
       
       std_msgs::msg::String cmd_msg;
-      cmd_msg.data = "put_" + target_slot; // Gera "put_slot1", "put_slot2", etc.
+      cmd_msg.data = "put_" + target_slot; 
       cmd_pub_->publish(cmd_msg);
       
       command_sent_ = true;
@@ -40,16 +36,16 @@ protected:
     }
   }
 private:
-  rclcpp::Publisher::SharedPtr cmd_pub_;
-  rclcpp::Subscription::SharedPtr status_sub_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr cmd_pub_;
+  rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr status_sub_;
   bool command_sent_ = false;
   bool arm_finished_ = false;
 };
 
 int main(int argc, char ** argv) {
   rclcpp::init(argc, argv);
-  auto node = std::make_shared();
-  node->set_parameter(rclcpp::Parameter("action_name", "put-cube-slot"));
+  auto node = std::make_shared<PutCubeSlotAction>();
+  node->set_parameter(rclcpp::Parameter("action_name", "put_cube_slot"));
   node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
   rclcpp::spin(node->get_node_base_interface());
   rclcpp::shutdown();

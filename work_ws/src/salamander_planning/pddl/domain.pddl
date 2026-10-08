@@ -1,5 +1,5 @@
 (define (domain salamander-domain)
-  (:requirements :strips :typing :negative-preconditions :action-costs)
+  (:requirements :strips :typing :negative-preconditions)
 
   (:types
     workspace
@@ -49,10 +49,6 @@
     (next-height ?h1 - height ?h2 - height)
   )
 
-  (:functions
-    (total-cost) - number
-  )
-
   (:action move
     :parameters (?origin - workspace ?destination - workspace)
     :precondition (and
@@ -63,7 +59,6 @@
     :effect (and
       (not (robot-at ?origin))
       (robot-at ?destination)
-      (increase (total-cost) 50)
     )
   )
 
@@ -72,7 +67,6 @@
     :precondition (and (robot-at ?w) (cube-at ?c ?w) (cube-tag ?c ?t))
     :effect (and 
       (tag-found ?t ?w)
-      (increase (total-cost) 1)
     )
   )
 
@@ -81,7 +75,6 @@
     :precondition (robot-at ?w)
     :effect (and 
       (container-found ?w)
-      (increase (total-cost) 1)
     )
   )
 
@@ -90,7 +83,6 @@
     :precondition (and (robot-at ?w) (arm-empty) (tag-found ?t ?w))
     :effect (and 
       (aligned-tag ?t ?w)
-      (increase (total-cost) 1)
     )
   )
 
@@ -99,28 +91,9 @@
     :precondition (and (robot-at ?w) (container-found ?w))
     :effect (and 
       (container-aligned ?w)
-      (increase (total-cost) 1)
     )
   )
 
-  (:action get-cube-table
-    :parameters (?w - workspace ?c - cube)
-    :precondition (and
-      (robot-at ?w)
-      (arm-empty)
-      (cube-at ?c ?w)
-      (free ?c)
-      (arm-at initial-position)
-    )
-    :effect (and
-      (not (arm-empty))
-      (holding ?c)
-      (not (cube-at ?c ?w))
-      (not (arm-at initial-position))
-      (arm-at table-position)
-      (increase (total-cost) 1)
-    )
-  )
 
   (:action get-cube-slot
     :parameters (?c - cube ?s - slot ?pos-s - arm-position)
@@ -137,11 +110,10 @@
       (empty-slot ?s)
       (not (arm-at initial-position))
       (arm-at ?pos-s)
-      (increase (total-cost) 1)
     )
   )
 
-  (:action put-cube-table
+  (:action put_cube_table
     :parameters (?w - workspace ?c - cube)
     :precondition (and (robot-at ?w) (holding ?c) (arm-at initial-position))
     :effect (and
@@ -151,7 +123,6 @@
       (free ?c)
       (not (arm-at initial-position))
       (arm-at table-position)
-      (increase (total-cost) 1)
     )
   )
 
@@ -169,7 +140,6 @@
       (cube-at ?c ?w)
       (not (arm-at initial-position))
       (arm-at container-position)
-      (increase (total-cost) 1)
     )
   )
 
@@ -182,7 +152,6 @@
       (cube-at ?c ?w)
       (not (arm-at initial-position))
       (arm-at shelf-position)
-      (increase (total-cost) 1)
     )
   )
 
@@ -201,7 +170,6 @@
       (cube-at ?c ?w)
       (not (arm-at initial-position))
       (arm-at precision-position)
-      (increase (total-cost) 1)
     )
   )
 
@@ -229,11 +197,28 @@
       (cube-height ?c-held ?alt-new)
       (not (arm-at initial-position))
       (arm-at stacking-position)
-      (increase (total-cost) 1)
     )
   )
 
-  (:action put-cube-slot
+(:action get_cube_table
+    :parameters (?w - workspace ?c - cube)
+    :precondition (and
+      (robot-at ?w)
+      (arm-empty)
+      (cube-at ?c ?w)
+      (free ?c)
+      (arm-at initial-position)
+    )
+    :effect (and
+      (not (arm-empty))
+      (holding ?c)
+      (not (cube-at ?c ?w))
+      ;; APAGAMOS as mudanças de posição do braço! 
+      ;; Matematicamente, ele "nunca sai" da initial-position.
+    )
+  )
+
+  (:action put_cube_slot
     :parameters (?c - cube ?s - slot ?pos-s - arm-position)
     :precondition (and
       (holding ?c)
@@ -246,9 +231,6 @@
       (arm-empty)
       (at-slot ?c ?s)
       (not (empty-slot ?s))
-      (not (arm-at initial-position))
-      (arm-at ?pos-s)
-      (increase (total-cost) 1)
     )
   )
 )
