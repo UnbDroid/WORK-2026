@@ -70,14 +70,14 @@ class ControlNode(Node):
             self.publish_gripper(True) # Abre garra
             time.sleep(1.0)
             self.publish_target_coordinates('shelf') # Fica acima do cubo
-            time.sleep(4.0)
+            time.sleep(7.0)
             self.publish_target_coordinates('get_cube') # Desce na mesa
             time.sleep(4.0)
             self.publish_gripper(False) # Fecha garra
-            time.sleep(1.0)
+            time.sleep(3.0)
+            self.publish_target_coordinates('shelf')
+            time.sleep(7.0)
             self.publish_target_coordinates('pre_initial') # Recolhe
-            time.sleep(4.0)
-            self.publish_target_coordinates('initial') # Volta para posição inicial
             time.sleep(7.0)
 
         elif command.startswith("put_slot"):
@@ -86,11 +86,11 @@ class ControlNode(Node):
             pre_slot_name = "pre_" + slot_name # Monta 'pre_slot1'
             
             self.publish_target_coordinates(pre_slot_name) # Fica acima do buraco
-            time.sleep(4.0)
+            time.sleep(5.0)
             self.publish_target_coordinates(slot_name) # Desce no buraco
-            time.sleep(2.0)
+            time.sleep(4.0)
             self.publish_gripper(True) # Solta
-            time.sleep(1.0)
+            time.sleep(3.0)
             self.publish_target_coordinates('pre_initial') # Recolhe
             time.sleep(4.0)
             self.publish_target_coordinates('initial') # Volta para posição inicial

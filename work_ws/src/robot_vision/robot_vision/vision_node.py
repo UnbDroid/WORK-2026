@@ -39,7 +39,7 @@ class VisionNode(Node):
 
         self.get_logger().info("Publishers 'cube_coordinates' e 'cube_data' inicializados!")
 
-        self.cube_priority = [2, 3, 4]
+        self.cube_priority = [1, 2, 3, 4]
         self.cube_aligned = False
         self.counter = 0
 

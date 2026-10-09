@@ -62,19 +62,31 @@
     )
   )
 
-  (:action find-cube
-    :parameters (?c - cube ?t - tag ?w - workspace)
-    :precondition (and (robot-at ?w) (cube-at ?c ?w) (cube-tag ?c ?t))
-    :effect (and 
-      (tag-found ?t ?w)
-    )
-  )
+  ; (:action find-cube
+  ;  :parameters (?c - cube ?t - tag ?w - workspace)
+  ;  :precondition (and (robot-at ?w) (cube-at ?c ?w) (cube-tag ?c ?t))
+  ;  :effect (and 
+  ;    (tag-found ?t ?w)
+  ;  )
+  ; )
 
   (:action find-container
     :parameters (?w - workspace)
     :precondition (robot-at ?w)
     :effect (and 
       (container-found ?w)
+    )
+  )
+
+  (:action align_to_cube
+    :parameters (?w - workspace ?c - cube ?t - tag)
+    :precondition (and 
+      (robot-at ?w) 
+      (cube-at ?c ?w) 
+      (cube-tag ?c ?t)
+    )
+    :effect (and 
+      (aligned-tag ?t ?w)
     )
   )
 
@@ -95,7 +107,7 @@
   )
 
 
-  (:action get-cube-slot
+  (:action get_cube_slot
     :parameters (?c - cube ?s - slot ?pos-s - arm-position)
     :precondition (and
       (arm-empty)
@@ -200,11 +212,13 @@
     )
   )
 
-(:action get_cube_table
-    :parameters (?w - workspace ?c - cube)
+  (:action get_cube_table
+    :parameters (?w - workspace ?c - cube ?t - tag)
     :precondition (and
       (robot-at ?w)
       (arm-empty)
+      (aligned-tag ?t ?w)   ;; O robô PRECISA estar alinhado com a tag
+      (cube-tag ?c ?t)     ;; Essa tag precisa pertencer a esse cubo
       (cube-at ?c ?w)
       (free ?c)
       (arm-at initial-position)
@@ -213,8 +227,6 @@
       (not (arm-empty))
       (holding ?c)
       (not (cube-at ?c ?w))
-      ;; APAGAMOS as mudanças de posição do braço! 
-      ;; Matematicamente, ele "nunca sai" da initial-position.
     )
   )
 
