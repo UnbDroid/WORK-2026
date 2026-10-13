@@ -127,14 +127,10 @@
 
   (:action put_cube_table
     :parameters (?w - workspace ?c - cube)
-    :precondition (and (robot-at ?w) (holding ?c) (arm-at initial-position))
+    :precondition (and (robot-at ?w) (arm-empty) (arm-at initial-position))
     :effect (and
-      (not (holding ?c))
-      (arm-empty)
       (cube-at ?c ?w)
       (free ?c)
-      (not (arm-at initial-position))
-      (arm-at table-position)
     )
   )
 
