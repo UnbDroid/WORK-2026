@@ -23,22 +23,22 @@
     (cube-at cubo2 w1)
     (cube-tag cubo1 tag1)
     (cube-tag cubo2 tag2)
-    (free cubo1)
     
-    ; (cube-at cubo2 w1) (cube-tag cubo2 tag2) (free cubo2)
-    ; (cube-at cubo3 w1) (cube-tag cubo3 tag3) (free cubo3)
+    ; Ambos os cubos precisam estar livres para a garra pegar!
+    (free cubo1)
+    (free cubo2)
 
     ; Definição dos slots nas costas do robô
     (empty-slot slot1) (slot-position slot1 pos-s1)
     (empty-slot slot2) (slot-position slot2 pos-s2)
     (empty-slot slot3) (slot-position slot3 pos-s3)
-
   )
 
   (:goal
     (and 
-      ; A exigência é preencher o slot com o cubo
+      ; A exigência é preencher os slots 1 e 2 com os respectivos cubos
       (at-slot cubo1 slot1)
+      (at-slot cubo2 slot2)
     )
   )
 )

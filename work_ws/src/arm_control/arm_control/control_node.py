@@ -91,10 +91,38 @@ class ControlNode(Node):
             time.sleep(4.0)
             self.publish_gripper(True) # Solta
             time.sleep(3.0)
+            self.publish_target_coordinates(pre_slot_name) # Sobe
+            time.sleep(4.0)
             self.publish_target_coordinates('pre_initial') # Recolhe
             time.sleep(4.0)
             self.publish_target_coordinates('initial') # Volta para posição inicial
             time.sleep(7.0)
+
+        elif command == "put_cube_table":
+            self.publish_target_coordinates('shelf') # Fica acima do cubo
+            time.sleep(5.0)
+            self.publish_target_coordinates('drop_cube_10') # Usa a mesma pose da mesa
+            time.sleep(4.0)
+            self.publish_gripper(True) # Abre garra para soltar
+            time.sleep(1.0)
+            self.publish_target_coordinates('initial') # Recolhe
+            time.sleep(4.0)
+
+        elif command.startswith("get_slot"):
+            # Ex: recebe "get_slot1"
+            slot_name = command.split("_")[1]
+            pre_slot_name = "pre_" + slot_name
+            
+            self.publish_gripper(True) # Garante que tá aberta
+            time.sleep(1.0)
+            self.publish_target_coordinates(pre_slot_name)
+            time.sleep(4.0)
+            self.publish_target_coordinates(slot_name) # Desce no cubo
+            time.sleep(2.0)
+            self.publish_gripper(False) # Fecha (Pega o cubo)
+            time.sleep(1.0)
+            self.publish_target_coordinates('initial')
+            time.sleep(4.0)
 
         else:
             self.get_logger().error(f"Comando desconhecido: {command}")
