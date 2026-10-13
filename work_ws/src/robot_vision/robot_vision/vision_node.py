@@ -33,6 +33,9 @@ class VisionNode(Node):
         self.status_pub = self.create_publisher(Bool, "/vision_status", 10)
         #self.aligned_pub = self.create_publisher(Bool, "/cube_aligned", 10)
 
+        self.last_seen = None
+        self.lost_timeout = 1.0
+
         self.container_detection_enabled = False
         self.create_subscription(Bool, "container_detection_enabled", self.container_enabled_callback, 10)
         self.container_coord_pub = self.create_publisher(PointStamped, 'container_coordinates', 10)
@@ -117,6 +120,9 @@ class VisionNode(Node):
         alvo = next((det for det in detections if det.tag_id == self.cube_priority[0]), None)
 
         if alvo is not None:
+            self.last_seen = agora
+            self.duration_start = None
+
             tag_id = alvo.tag_id
             camera_params = [500.0, 500.0, 320.0, 240.0] 
             pose, _, _ = self.detector.detection_pose(
@@ -150,19 +156,12 @@ class VisionNode(Node):
             #aligned_msg.data = self.cube_aligned
             #self.aligned_pub.publish(aligned_msg)
 
-            cmd = Twist()
-
-        '''
         elif not self.cube_aligned:
-            cmd = self.varredura(agora)
-            self.get_logger().info("Nenhum cubo alvo detectado, varrendo", throttle_duration_sec=1.0)
-            self.cmd_vel_pub.publish(cmd)'''
+                perdido = self.last_seen is None or (agora - self.last_seen) > self.lost_timeout
+                if perdido:
+                    self.cmd_vel_pub.publish(self.varredura(agora))
+                    self.get_logger().info("Teste de varredura com timer", throttle_duration_sec=1.0)
 
-        if detections == [] and not self.cube_aligned:
-            cmd = self.varredura(agora)
-            self.get_logger().info("Nenhum cubo alvo detectado, varrendo", throttle_duration_sec=1.0)
-            self.cmd_vel_pub.publish(cmd)
-        
         container = None
         if self.container_detection_enabled:
             container = self.color_detection(display_frame, cor='red')
