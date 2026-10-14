@@ -2,7 +2,7 @@
   (:domain salamander-domain)
 
   (:objects
-    start w1 - workspace
+    start w1 finish - workspace
     cubo1 cubo2 cubo3 - cube
     tag1 tag2 tag3 - tag
     slot1 slot2 slot3 - slot
@@ -13,6 +13,7 @@
     ; Onde o robô está
     (robot-at start)
     (connected start w1)
+    (connected w1 finish)
 
     ; Estado inicial do robo
     (arm-empty)
@@ -40,10 +41,9 @@
 
   (:goal
     (and 
-      ; A exigência é preencher os slots 1 e 2 com os respectivos cubos
-      (at-slot cubo1 slot1)
-      (at-slot cubo2 slot2)
-      (at-slot cubo3 slot3)
+      (cube-at cubo1 finish)
+      (cube-at cubo2 finish)
+      (cube-at cubo3 finish)
     )
   )
 )

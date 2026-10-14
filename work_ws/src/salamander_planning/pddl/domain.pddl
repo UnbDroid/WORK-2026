@@ -57,20 +57,13 @@
       (robot-at ?origin)
       (connected ?origin ?destination)
       (arm-at initial-position)
+      (arm-empty)  ;; CORREÇÃO 1: Proibido dirigir segurando cubos
     )
     :effect (and
       (not (robot-at ?origin))
       (robot-at ?destination)
     )
   )
-
-  ; (:action find-cube
-  ;  :parameters (?c - cube ?t - tag ?w - workspace)
-  ;  :precondition (and (robot-at ?w) (cube-at ?c ?w) (cube-tag ?c ?t))
-  ;  :effect (and 
-  ;    (tag-found ?t ?w)
-  ;  )
-  ; )
 
   (:action find-container
     :parameters (?w - workspace)
@@ -111,10 +104,11 @@
     )
   )
 
-
+  ;; CORREÇÃO 2 e 3: Precisa estar estacionado (?w) e NÃO muda a posição do braço!
   (:action get_cube_slot
-    :parameters (?c - cube ?s - slot ?pos-s - arm-position)
+    :parameters (?c - cube ?s - slot ?pos-s - arm-position ?w - workspace)
     :precondition (and
+      (robot-at ?w)
       (arm-empty)
       (at-slot ?c ?s)
       (slot-position ?s ?pos-s)
@@ -125,15 +119,19 @@
       (holding ?c)
       (not (at-slot ?c ?s))
       (empty-slot ?s)
-      (not (arm-at initial-position))
-      (arm-at ?pos-s)
     )
   )
 
   (:action put_cube_table
     :parameters (?w - workspace ?c - cube)
-    :precondition (and (robot-at ?w) (arm-empty) (arm-at initial-position))
+    :precondition (and 
+      (robot-at ?w) 
+      (holding ?c) 
+      (arm-at initial-position)
+    )
     :effect (and
+      (not (holding ?c))
+      (arm-empty)
       (cube-at ?c ?w)
       (free ?c)
     )
@@ -218,8 +216,8 @@
     :precondition (and
       (robot-at ?w)
       (arm-empty)
-      (aligned-tag ?t ?w)   ;; O robô PRECISA estar alinhado com a tag
-      (cube-tag ?c ?t)     ;; Essa tag precisa pertencer a esse cubo
+      (aligned-tag ?t ?w)
+      (cube-tag ?c ?t)
       (cube-at ?c ?w)
       (free ?c)
       (arm-at initial-position)

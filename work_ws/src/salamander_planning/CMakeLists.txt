@@ -24,7 +24,6 @@ ament_target_dependencies(move_action_node
 add_executable(align_action_node src/align_action_node.cpp)
 ament_target_dependencies(align_action_node rclcpp plansys2_executor std_msgs)
 
-# NOVOS NÓS DO BRAÇO MANIPULADOR
 add_executable(get_cube_table_node src/get_cube_table_node.cpp)
 ament_target_dependencies(get_cube_table_node rclcpp plansys2_executor std_msgs)
 
@@ -37,11 +36,15 @@ ament_target_dependencies(put_cube_table_node rclcpp plansys2_executor std_msgs)
 add_executable(get_cube_slot_node src/get_cube_slot_node.cpp)
 ament_target_dependencies(get_cube_slot_node rclcpp plansys2_executor std_msgs)
 
+add_executable(reset_arm_node src/reset_arm_node.cpp)
+ament_target_dependencies(reset_arm_node rclcpp plansys2_executor std_msgs)
+
 install(TARGETS
   move_action_node
   align_action_node
   get_cube_table_node
   put_cube_slot_node
+  reset_arm_node
   put_cube_table_node
   get_cube_slot_node
   DESTINATION lib/${PROJECT_NAME}

@@ -70,15 +70,15 @@ class ControlNode(Node):
             self.publish_gripper(True) # Abre garra
             time.sleep(1.0)
             self.publish_target_coordinates('shelf') # Fica acima do cubo
-            time.sleep(7.0)
+            time.sleep(5.0)
             self.publish_target_coordinates('get_cube') # Desce na mesa
             time.sleep(4.0)
             self.publish_gripper(False) # Fecha garra
             time.sleep(3.0)
             self.publish_target_coordinates('shelf')
-            time.sleep(7.0)
+            time.sleep(5.0)
             self.publish_target_coordinates('pre_initial') # Recolhe
-            time.sleep(7.0)
+            time.sleep(5.0)
 
         elif command.startswith("put_slot"):
             # O comando será algo como "put_slot1", "put_slot2"...
@@ -107,6 +107,8 @@ class ControlNode(Node):
             time.sleep(4.0)
             self.publish_gripper(True) # Abre garra para soltar
             time.sleep(1.0)
+            self.publish_target_coordinates('shelf') # Sobe
+            time.sleep(4.0)
             self.publish_target_coordinates('initial') # Recolhe
             time.sleep(4.0)
 
@@ -123,8 +125,18 @@ class ControlNode(Node):
             time.sleep(2.0)
             self.publish_gripper(False) # Fecha (Pega o cubo)
             time.sleep(1.0)
+            self.publish_target_coordinates(pre_slot_name) # Sobe
+            time.sleep(4.0)
             self.publish_target_coordinates('initial')
             time.sleep(4.0)
+
+        elif command == "reset_arm":
+            self.publish_target_coordinates('pre_initial')
+            time.sleep(4.0)
+            self.publish_target_coordinates('initial')
+            time.sleep(3.0)
+            self.publish_gripper(True) # Abre garra
+            time.sleep(1.0)
 
         else:
             self.get_logger().error(f"Comando desconhecido: {command}")
