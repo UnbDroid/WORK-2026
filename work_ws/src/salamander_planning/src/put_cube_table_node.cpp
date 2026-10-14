@@ -18,20 +18,22 @@ public:
   }
 protected:
   void do_work() override {
+    // Declara a variável no início da função!
+    // PDDL: (?w - workspace ?c - cube) -> O argumento [0] é a mesa (w)
+    std::string target_table = get_arguments()[0]; 
+
     if (!command_sent_) {
-      // No PDDL: (put_cube_table ?c ?t ?pos-t)
-      std::string target_table = get_arguments()[1]; 
-      
       std_msgs::msg::String cmd_msg;
-      cmd_msg.data = "put_" + target_table; 
+      cmd_msg.data = "put_cube_table";
       cmd_pub_->publish(cmd_msg);
-      
       command_sent_ = true;
       arm_finished_ = false;
-      send_feedback(0.0, "Guardando cubo na mesa " + target_table + "...");
+      send_feedback(0.0, "Acionando braço para soltar o cubo na mesa " + target_table + "...");
     }
+    
     if (arm_finished_) {
       command_sent_ = false;
+      // Agora o C++ sabe quem é target_table aqui embaixo!
       finish(true, 1.0, "Cubo guardado com sucesso na mesa " + target_table + ".");
     }
   }

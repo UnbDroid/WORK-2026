@@ -9,7 +9,7 @@ import numpy as np
 
 from geometry_msgs.msg import PointStamped, Twist
 from std_msgs.msg import MultiArrayLayout
-from std_msgs.msg import Bool
+from std_msgs.msg import Bool, String
 from cube_msgs.msg import Cube
 from cube_msgs.msg import CubeArray
 
@@ -27,11 +27,11 @@ class VisionNode(Node):
         self.cmd_vel_pub = self.create_publisher(Twist, "/cmd_vel", 10)
         self.cube_data_pub = self.create_publisher(CubeArray, "cube_data", 10)
 
-        # PONTE COM O ACTION_NODE (Interruptor)
+        # PONTE COM O ACTION_NODE (Agora recebe String com o alvo)
         self.vision_active = False 
-        self.create_subscription(Bool, "/vision_trigger", self.trigger_callback, 10)
+        self.current_target_id = -1
+        self.create_subscription(String, "/vision_target", self.target_callback, 10)
         self.status_pub = self.create_publisher(Bool, "/vision_status", 10)
-        #self.aligned_pub = self.create_publisher(Bool, "/cube_aligned", 10)
 
         self.last_seen = None
         self.lost_timeout = 1.0
@@ -42,7 +42,6 @@ class VisionNode(Node):
 
         self.get_logger().info("Publishers 'cube_coordinates' e 'cube_data' inicializados!")
 
-        self.cube_priority = [1, 2, 3, 4]
         self.cube_aligned = False
         self.counter = 0
 
@@ -71,14 +70,17 @@ class VisionNode(Node):
 
         self.timer = self.create_timer(0.033, self.process_frame_callback)
 
-    def trigger_callback(self, msg):
-        self.vision_active = msg.data
-        if self.vision_active:
+    def target_callback(self, msg):
+        # A mensagem será algo como "tag1", "tag2"
+        tag_str = msg.data.replace("tag", "") # Tira a palavra tag e sobra o número
+        try:
+            self.current_target_id = int(tag_str)
+            self.vision_active = True
             self.cube_aligned = False
             self.duration_start = None
-            self.get_logger().info('Visão ACORDADA pelo PDDL! Procurando cubo...')
-        else:
-            self.get_logger().info('Visão PAUSADA. Aguardando nova ordem.')
+            self.get_logger().info(f'Visão ACORDADA pelo PDDL! Procurando cubo com tag: {self.current_target_id}')
+        except ValueError:
+            self.get_logger().error(f"Falha ao extrair ID da tag enviada: {msg.data}")
 
     def container_enabled_callback(self, msg):
         self.container_detection_enabled = msg.data
@@ -88,7 +90,6 @@ class VisionNode(Node):
             self.get_logger().info('Detecção de contêiner desabilitada.')
 
     def process_frame_callback(self):
-        # Trava para não consumir CPU enquanto viaja
         if not self.vision_active:
             self.cap.grab()
             return
@@ -106,7 +107,7 @@ class VisionNode(Node):
 
         ids_vistos = [d.tag_id for d in detections]
         self.get_logger().info(
-            f"Tags no frame: {ids_vistos} | alvo: {self.cube_priority[0]}",
+            f"Tags no frame: {ids_vistos} | alvo atual: {self.current_target_id}",
             throttle_duration_sec=0.5)
         
         coord_msg = PointStamped()
@@ -117,7 +118,8 @@ class VisionNode(Node):
         array_msg.header.stamp = self.get_clock().now().to_msg()
         array_msg.header.frame_id = "webcam_link"
 
-        alvo = next((det for det in detections if det.tag_id == self.cube_priority[0]), None)
+        # Agora procura especificamente pelo current_target_id
+        alvo = next((det for det in detections if det.tag_id == self.current_target_id), None)
 
         if alvo is not None:
             self.last_seen = agora
@@ -133,8 +135,6 @@ class VisionNode(Node):
             y_m = pose[1][3] 
             z_m = pose[2][3] 
 
-            self.duration_start = None
-
             coord_msg.point.x = float(x_m)
             coord_msg.point.y = float(y_m)
             coord_msg.point.z = float(z_m)
@@ -145,22 +145,17 @@ class VisionNode(Node):
             cube_msg.waypoint = "default"  
             cube_msg.color = "cor"  
             array_msg.cubes.append(cube_msg)
-            #aligned_msg = Bool()
 
             self.get_logger().info(f"Tag ID: {tag_id}: Coords: X={x_m:.5f} Y={y_m:.5f} Z={z_m:.5f} m")
             self.render_preview(display_frame, alvo, tag_id, x_m, y_m, z_m)
 
             self.cube_alignment(tag_id, x_m, y_m, z_m)
 
-            #cmd = Twist()  # Se está vendo o alvo, não precisa mover o robô para varrer
-            #aligned_msg.data = self.cube_aligned
-            #self.aligned_pub.publish(aligned_msg)
-
         elif not self.cube_aligned:
-                perdido = self.last_seen is None or (agora - self.last_seen) > self.lost_timeout
-                if perdido:
-                    self.cmd_vel_pub.publish(self.varredura(agora))
-                    self.get_logger().info("Teste de varredura com timer", throttle_duration_sec=1.0)
+            perdido = self.last_seen is None or (agora - self.last_seen) > self.lost_timeout
+            if perdido:
+                self.cmd_vel_pub.publish(self.varredura(agora))
+                self.get_logger().info("Alvo perdido. Iniciando varredura...", throttle_duration_sec=1.0)
 
         container = None
         if self.container_detection_enabled:
@@ -247,7 +242,6 @@ class VisionNode(Node):
             self.cmd_vel_pub.publish(cmd)
             self.get_logger().info(f"Tag ID {tag_id} ALINHADA! Robô parado.")
             
-            # AVISA O ACTION_NODE QUE TERMINOU
             status_msg = Bool()
             status_msg.data = True
             self.status_pub.publish(status_msg)

@@ -96,7 +96,9 @@ class ControlNode(Node):
             self.publish_target_coordinates('pre_initial') # Recolhe
             time.sleep(4.0)
             self.publish_target_coordinates('initial') # Volta para posição inicial
-            time.sleep(7.0)
+            time.sleep(5.0)
+            self.publish_target_coordinates('zero_position') # Garante que está na posição inicial
+            time.sleep(5.0)
 
         elif command == "put_cube_table":
             self.publish_target_coordinates('shelf') # Fica acima do cubo

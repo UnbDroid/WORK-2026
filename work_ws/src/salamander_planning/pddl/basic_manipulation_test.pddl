@@ -14,19 +14,23 @@
     (robot-at start)
     (connected start w1)
 
-    ; Estado inicial do Braço
+    ; Estado inicial do robo
     (arm-empty)
     (arm-at initial-position)
+    (base-free)
 
     ; O conhecimento prévio do mundo
     (cube-at cubo1 w1)
     (cube-at cubo2 w1)
+    (cube-at cubo3 w1)
     (cube-tag cubo1 tag1)
     (cube-tag cubo2 tag2)
+    (cube-tag cubo3 tag3)
     
     ; Ambos os cubos precisam estar livres para a garra pegar!
     (free cubo1)
     (free cubo2)
+    (free cubo3)
 
     ; Definição dos slots nas costas do robô
     (empty-slot slot1) (slot-position slot1 pos-s1)
@@ -39,6 +43,7 @@
       ; A exigência é preencher os slots 1 e 2 com os respectivos cubos
       (at-slot cubo1 slot1)
       (at-slot cubo2 slot2)
+      (at-slot cubo3 slot3)
     )
   )
 )

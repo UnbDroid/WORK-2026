@@ -47,6 +47,8 @@
     (on-top ?c-top - cube ?c-bottom - cube)
     (cube-height ?c - cube ?h - height)
     (next-height ?h1 - height ?h2 - height)
+
+    (base-free)
   )
 
   (:action move
@@ -84,9 +86,12 @@
       (robot-at ?w) 
       (cube-at ?c ?w) 
       (cube-tag ?c ?t)
+      (base-free)
+      (arm-empty)
     )
     :effect (and 
       (aligned-tag ?t ?w)
+      (not(base-free))
     )
   )
 
@@ -223,6 +228,8 @@
       (not (arm-empty))
       (holding ?c)
       (not (cube-at ?c ?w))
+      (not (aligned-tag ?t ?w))
+      (base-free)
     )
   )
 

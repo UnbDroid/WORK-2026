@@ -2,66 +2,47 @@
 #include <string>
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/bool.hpp"
+#include "std_msgs/msg/string.hpp"
 #include "plansys2_executor/ActionExecutorClient.hpp"
 
 using namespace std::chrono_literals;
 
-class AlignAction : public plansys2::ActionExecutorClient
-{
+class AlignAction : public plansys2::ActionExecutorClient {
 public:
-  AlignAction()
-  : plansys2::ActionExecutorClient("align_to_cube", 500ms)
-  {
-    //Cria o Publisher (quem acorda o launch do alinhamento)
-    trigger_pub_ = this->create_publisher<std_msgs::msg::Bool>("/vision_trigger", 10);
-    
-    //Cria o Subscriber (Quem espera a confirmação do Python)
+  AlignAction() : plansys2::ActionExecutorClient("align_to_cube", 500ms) {
+    target_pub_ = this->create_publisher<std_msgs::msg::String>("/vision_target", 10);
     status_sub_ = this->create_subscription<std_msgs::msg::Bool>(
-      "/vision_status", 10,
-      [this](const std_msgs::msg::Bool::SharedPtr msg) {
-        if (msg->data == true) {
-          vision_finished_ = true;
-        }
+      "/vision_status", 10, [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        if (msg->data) vision_finished_ = true;
       });
   }
-
 protected:
-  void do_work() override
-  {
-    // Acordar o Python (Roda só na primeira vez)
+  void do_work() override {
+    // PDDL: align_to_cube ?w - workspace ?c - cube ?t - tag
+    std::string target_tag = get_arguments()[2]; 
+
     if (!command_sent_) {
-      std_msgs::msg::Bool trigger_msg;
-      trigger_msg.data = true;
-      trigger_pub_->publish(trigger_msg);
-      
+      std_msgs::msg::String cmd_msg;
+      cmd_msg.data = target_tag; // Envia "tag1", "tag2", etc.
+      target_pub_->publish(cmd_msg);
       command_sent_ = true;
       vision_finished_ = false;
-      
-      send_feedback(0.0, "Acordando a visão computacional...");
+      send_feedback(0.0, "Acordando visão para procurar o cubo da " + target_tag + "...");
     }
-
-    //Monitorar o trabalho
+    
     if (vision_finished_) {
-      // o launch terminou
       command_sent_ = false;
-      vision_finished_ = false;
-      
-      finish(true, 1.0, "Alinhamento concluído com sucesso!");
-    } else {
-      // O launch ainda está trabalhando
-      send_feedback(0.5, "Aguardando robô centralizar no cubo...");
+      finish(true, 1.0, "Robô centralizado com a " + target_tag);
     }
   }
-
 private:
-  rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr trigger_pub_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr target_pub_;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr status_sub_;
   bool command_sent_ = false;
   bool vision_finished_ = false;
 };
 
-int main(int argc, char ** argv)
-{
+int main(int argc, char ** argv) {
   rclcpp::init(argc, argv);
   auto node = std::make_shared<AlignAction>();
   node->set_parameter(rclcpp::Parameter("action_name", "align_to_cube"));
