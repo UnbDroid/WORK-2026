@@ -45,7 +45,7 @@ class VisionNode(Node):
         self.cube_aligned = False
         self.counter = 0
 
-        self.v_busca = 0.05      # m/s
+        self.max_speed = 0.1      # m/s
 
         self.direction = -1
         self.duration_start = None
@@ -190,7 +190,7 @@ class VisionNode(Node):
             self.duration = min(self.duration + 1.0, self.duration_max)
             self.duration_start = agora
  
-        cmd.linear.y = self.v_busca * self.direction
+        cmd.linear.y = self.max_speed * self.direction
         return cmd
 
     def color_detection(self, roi, cor= "red"):
@@ -225,7 +225,7 @@ class VisionNode(Node):
 
         k_x = 0.4
         k_z = 0.3        
-        max_speed = 0.05     
+        max_speed = self.max_speed   
 
         erro_x = -x + 0.1
         erro_z = z - target_z
