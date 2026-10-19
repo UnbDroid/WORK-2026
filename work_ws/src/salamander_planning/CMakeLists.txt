@@ -39,6 +39,9 @@ ament_target_dependencies(get_cube_slot_node rclcpp plansys2_executor std_msgs)
 add_executable(reset_arm_node src/reset_arm_node.cpp)
 ament_target_dependencies(reset_arm_node rclcpp plansys2_executor std_msgs)
 
+add_executable(zero_position_node src/zero_position_node.cpp)
+ament_target_dependencies(zero_position_node rclcpp plansys2_executor std_msgs)
+
 install(TARGETS
   move_action_node
   align_action_node
@@ -47,6 +50,7 @@ install(TARGETS
   reset_arm_node
   put_cube_table_node
   get_cube_slot_node
+  zero_position_node
   DESTINATION lib/${PROJECT_NAME}
 )
 

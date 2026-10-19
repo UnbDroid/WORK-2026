@@ -6,6 +6,7 @@ import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Point
 from std_msgs.msg import Bool, String
+from geometry_msgs.msg import Twist
 
 class ControlNode(Node):
 
@@ -20,12 +21,15 @@ class ControlNode(Node):
         self.status_pub = self.create_publisher(Bool, "/arm_status", 10)
         self.create_subscription(String, "/arm_command", self.command_callback, 10)
 
+        self.cmd_vel_pub = self.create_publisher(Twist, "/cmd_vel", 10)
+        self.drop_counter = 0
+
         self.sequence_running = False
         
         self.targets = {
             'initial': [-0.291334, 0.0, 0.2075],
             'pre_initial': [-0.291334, 0.0, 0.32207],
-            'zero_position': [0.378666, 0.00, 0.2075],
+            'zero': [0.378666, 0.00, 0.2075],
             'get_cube':  [0.3324, 0.00, 0.0097],
             'teste_cube':  [0.3324, 0.00, 0.0497],
             'pre_slot1': [-0.3530,  0.062108, 0.32207],
@@ -34,7 +38,12 @@ class ControlNode(Node):
             'slot1': [-0.370988,  0.062215, 0.066674],
             'slot2': [-0.374738, -0.032785, 0.066674],
             'slot3': [-0.353799, -0.127785, 0.066674],
-            'drop_cube_10': [0.3324, 0.00, 0.0497],
+            'drop_cube_1': [0.3324,  0.15, 0.0497],
+            'drop_cube_2': [0.3324,  0.00, 0.0497],
+            'drop_cube_3': [0.3324, -0.15, 0.0497],
+            'pre_drop_cube_1': [0.3324,  0.15, 0.4228],
+            'pre_drop_cube_2': [0.3324,  0.00, 0.4228],
+            'pre_drop_cube_3': [0.3324, -0.15, 0.4228],
             'shelf': [0.3003, 0.00, 0.4228],
         }
         
@@ -97,20 +106,39 @@ class ControlNode(Node):
             time.sleep(4.0)
             self.publish_target_coordinates('initial') # Volta para posição inicial
             time.sleep(5.0)
-            self.publish_target_coordinates('zero_position') # Garante que está na posição inicial
+            self.publish_target_coordinates('zero') # Garante que está na posição inicial
             time.sleep(5.0)
 
+            # --- DAR RÉ PARA RECUPERAR A VISÃO ---
+            self.get_logger().info("Dando ré de 20cm...")
+            cmd = Twist()
+            cmd.linear.x = -0.10  # Velocidade de 10 cm/s para trás
+            self.cmd_vel_pub.publish(cmd)
+            time.sleep(2.0)
+            cmd.linear.x = 0.0
+            self.cmd_vel_pub.publish(cmd)
+
         elif command == "put_cube_table":
-            self.publish_target_coordinates('shelf') # Fica acima do cubo
+            self.drop_counter += 1
+            if self.drop_counter > 3:
+                self.drop_counter = 1 # Prevenção
+                    
+            target_name = f'drop_cube_{self.drop_counter}'
+            self.get_logger().info(f"Soltando no alvo: {target_name}")
+            pre_target_name = f'pre_drop_cube_{self.drop_counter}'
+            
+            self.publish_target_coordinates('shelf') 
             time.sleep(5.0)
-            self.publish_target_coordinates('drop_cube_10') # Usa a mesma pose da mesa
+            self.publish_target_coordinates(target_name) # Desce no local espaçado
             time.sleep(4.0)
-            self.publish_gripper(True) # Abre garra para soltar
-            time.sleep(1.0)
-            self.publish_target_coordinates('shelf') # Sobe
+            self.publish_gripper(True) # Solta
+            time.sleep(2.0)
+            self.publish_target_coordinates(pre_target_name) # Sobe
             time.sleep(4.0)
-            self.publish_target_coordinates('initial') # Recolhe
+            self.publish_target_coordinates('pre_initial') # Recolhe
             time.sleep(4.0)
+            self.publish_target_coordinates('initial') # Volta para posição inicial
+            time.sleep(5.0)
 
         elif command.startswith("get_slot"):
             # Ex: recebe "get_slot1"
@@ -122,12 +150,12 @@ class ControlNode(Node):
             self.publish_target_coordinates(pre_slot_name)
             time.sleep(4.0)
             self.publish_target_coordinates(slot_name) # Desce no cubo
-            time.sleep(2.0)
+            time.sleep(4.0)
             self.publish_gripper(False) # Fecha (Pega o cubo)
-            time.sleep(1.0)
+            time.sleep(2.0)
             self.publish_target_coordinates(pre_slot_name) # Sobe
             time.sleep(4.0)
-            self.publish_target_coordinates('initial')
+            self.publish_target_coordinates('pre_initial')
             time.sleep(4.0)
 
         elif command == "reset_arm":
@@ -137,6 +165,13 @@ class ControlNode(Node):
             time.sleep(3.0)
             self.publish_gripper(True) # Abre garra
             time.sleep(1.0)
+
+        elif command == "zero_position":
+            time.sleep(1.0)
+            self.publish_target_coordinates('pre_initial')
+            time.sleep(4.0)
+            self.publish_target_coordinates('zero')
+            time.sleep(4.0)
 
         else:
             self.get_logger().error(f"Comando desconhecido: {command}")
