@@ -6,27 +6,18 @@
     cube
     tag
     slot
-    arm-position
     height
-  )
-
-  (:constants
-    initial-position
-    table-position
-    shelf-position
-    precision-position
-    stacking-position
-    container-position
-    - arm-position
   )
 
   (:predicates
     (robot-at ?w - workspace)
     (connected ?w1 - workspace ?w2 - workspace)
-
-    (arm-at ?p - arm-position)
+    
+    ;; Estados Funcionais e de Segurança do Braço
     (arm-empty)
     (holding ?c - cube)
+    (arm-folded)    ;; Braço recolhido (Seguro para mover a base)
+    (vision-ready)  ;; Braço em zero_position (Câmera consegue enxergar)
 
     (cube-at ?c - cube ?w - workspace)
     (cube-tag ?c - cube ?t - tag)
@@ -34,7 +25,6 @@
 
     (empty-slot ?s - slot)
     (at-slot ?c - cube ?s - slot)
-    (slot-position ?s - slot ?p - arm-position)
 
     (tag-found ?t - tag ?w - workspace)
     (container-found ?w - workspace)
@@ -56,8 +46,8 @@
     :precondition (and
       (robot-at ?origin)
       (connected ?origin ?destination)
-      (arm-at initial-position)
-      (arm-empty)  ;; CORREÇÃO 1: Proibido dirigir segurando cubos
+      (arm-folded) 
+      (arm-empty)  
     )
     :effect (and
       (not (robot-at ?origin))
@@ -65,12 +55,24 @@
     )
   )
 
+  ;; CORREÇÃO: Adicionado ?w para o solver não ignorar a ação
+  (:action zero_position
+    :parameters (?w - workspace)
+    :precondition (and (robot-at ?w) (arm-folded) (arm-empty))
+    :effect (and (not (arm-folded)) (vision-ready))
+  )
+
+  ;; CORREÇÃO: Adicionado ?w para o solver não ignorar a ação
+  (:action reset_arm
+    :parameters (?w - workspace)
+    :precondition (and (robot-at ?w) (vision-ready) (arm-empty))
+    :effect (and (not (vision-ready)) (arm-folded))
+  )
+
   (:action find-container
     :parameters (?w - workspace)
     :precondition (robot-at ?w)
-    :effect (and 
-      (container-found ?w)
-    )
+    :effect (and (container-found ?w))
   )
 
   (:action align_to_cube
@@ -81,44 +83,41 @@
       (cube-tag ?c ?t)
       (base-free)
       (arm-empty)
+      (vision-ready)
     )
     :effect (and 
       (aligned-tag ?t ?w)
-      (not(base-free))
+      (not (base-free))
     )
   )
 
   (:action align-tag
     :parameters (?w - workspace ?t - tag)
     :precondition (and (robot-at ?w) (arm-empty) (tag-found ?t ?w))
-    :effect (and 
-      (aligned-tag ?t ?w)
-    )
+    :effect (and (aligned-tag ?t ?w))
   )
 
   (:action align-container
     :parameters (?w - workspace)
     :precondition (and (robot-at ?w) (container-found ?w))
-    :effect (and 
-      (container-aligned ?w)
-    )
+    :effect (and (container-aligned ?w))
   )
 
-  ;; CORREÇÃO 2 e 3: Precisa estar estacionado (?w) e NÃO muda a posição do braço!
   (:action get_cube_slot
-    :parameters (?c - cube ?s - slot ?pos-s - arm-position ?w - workspace)
+    :parameters (?c - cube ?s - slot ?w - workspace)
     :precondition (and
       (robot-at ?w)
       (arm-empty)
       (at-slot ?c ?s)
-      (slot-position ?s ?pos-s)
-      (arm-at initial-position)
+      (arm-folded)
     )
     :effect (and
       (not (arm-empty))
       (holding ?c)
       (not (at-slot ?c ?s))
       (empty-slot ?s)
+      (not (arm-folded))
+      (vision-ready)
     )
   )
 
@@ -127,13 +126,15 @@
     :precondition (and 
       (robot-at ?w) 
       (holding ?c) 
-      (arm-at initial-position)
+      (vision-ready)
     )
     :effect (and
       (not (holding ?c))
       (arm-empty)
       (cube-at ?c ?w)
       (free ?c)
+      (not (vision-ready))
+      (arm-folded)
     )
   )
 
@@ -143,26 +144,26 @@
       (robot-at ?w)
       (holding ?c)
       (container-aligned ?w)
-      (arm-at initial-position)
+      (vision-ready)
     )
     :effect (and
       (not (holding ?c))
       (arm-empty)
       (cube-at ?c ?w)
-      (not (arm-at initial-position))
-      (arm-at container-position)
+      (not (vision-ready))
+      (arm-folded)
     )
   )
 
   (:action put-cube-shelf
     :parameters (?w - workspace ?c - cube)
-    :precondition (and (robot-at ?w) (holding ?c) (arm-at initial-position))
+    :precondition (and (robot-at ?w) (holding ?c) (vision-ready))
     :effect (and
       (not (holding ?c))
       (arm-empty)
       (cube-at ?c ?w)
-      (not (arm-at initial-position))
-      (arm-at shelf-position)
+      (not (vision-ready))
+      (arm-folded)
     )
   )
 
@@ -173,14 +174,14 @@
       (holding ?c)
       (aligned-tag ?t-hole ?w)
       (precision-slot ?t-hole ?w)
-      (arm-at initial-position)
+      (vision-ready)
     )
     :effect (and
       (not (holding ?c))
       (arm-empty)
       (cube-at ?c ?w)
-      (not (arm-at initial-position))
-      (arm-at precision-position)
+      (not (vision-ready))
+      (arm-folded)
     )
   )
 
@@ -196,7 +197,7 @@
       (free ?c-base)
       (cube-height ?c-base ?alt-base)
       (next-height ?alt-base ?alt-new)
-      (arm-at initial-position)
+      (vision-ready)
     )
     :effect (and
       (not (holding ?c-held))
@@ -206,8 +207,8 @@
       (not (free ?c-base))
       (free ?c-held)
       (cube-height ?c-held ?alt-new)
-      (not (arm-at initial-position))
-      (arm-at stacking-position)
+      (not (vision-ready))
+      (arm-folded)
     )
   )
 
@@ -220,7 +221,7 @@
       (cube-tag ?c ?t)
       (cube-at ?c ?w)
       (free ?c)
-      (arm-at initial-position)
+      (vision-ready)
     )
     :effect (and
       (not (arm-empty))
@@ -228,22 +229,27 @@
       (not (cube-at ?c ?w))
       (not (aligned-tag ?t ?w))
       (base-free)
+      (not (vision-ready))
+      (arm-folded)
     )
   )
 
+  ;; CORREÇÃO: Adicionado ?w para garantir grounding perfeito e segurança
   (:action put_cube_slot
-    :parameters (?c - cube ?s - slot ?pos-s - arm-position)
+    :parameters (?c - cube ?s - slot ?w - workspace)
     :precondition (and
+      (robot-at ?w)
       (holding ?c)
       (empty-slot ?s)
-      (slot-position ?s ?pos-s)
-      (arm-at initial-position)
+      (arm-folded)
     )
     :effect (and
       (not (holding ?c))
       (arm-empty)
       (at-slot ?c ?s)
       (not (empty-slot ?s))
+      (not (arm-folded))
+      (vision-ready)
     )
   )
 )
