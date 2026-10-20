@@ -1,8 +1,9 @@
 /**:
   ros__parameters:
-    waypoints: ["start", "w1", "finish"]
+    waypoints: ["start", "w1", "w2", "finish"]
     
     # [X, Y, Yaw_em_radianos]
     start_coords: [0.0, 0.0, 0.0]            # Posição inicial onde o robô liga
     w1_coords: [1.9604, -0.1316, -0.0142]    # Mesa 1 (Pega os cubos)
-    finish_coords: [1.4423, -1.5864, -1.5215] # Mesa 2 (Solta os cubos)
+    w2_coords: [1.4423, -1.5864, -1.5215]     # Mesa 2 (Solta os cubos)
+    finish_coords: [0.0, 0.0, 0.0]
