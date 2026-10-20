@@ -3,7 +3,7 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
+from launch.actions import IncludeLaunchDescription, TimerAction, ExecuteProcess
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 
@@ -77,6 +77,34 @@ def generate_launch_description():
         name='put_cube_slot_node',
     )
 
+    reset = Node(
+        package='salamander_planning',
+        executable='reset_arm_node',
+        name='reset_arm_node',
+    )
+
+    zero_position = Node(
+        package='salamander_planning',
+        executable='zero_position_node',
+        name='zero_position_node',
+    )
+
+    publish_arm_target = TimerAction(
+        period=3.0,
+        actions=[
+            ExecuteProcess(
+                cmd=[
+                    'ros2', 'topic', 'pub',
+                    '--once',
+                    '/arm_target',
+                    'geometry_msgs/msg/Point',
+                    '{x: -0.291334, y: 0.0, z: 0.2075}'
+                ],
+                output='screen'
+            )
+        ]
+    )
+
     return LaunchDescription([
         plansys2_launch,
         move_action_node,
@@ -86,5 +114,8 @@ def generate_launch_description():
         get_cube_table,
         get_cube_slot,
         put_cube_table,
-        put_cube_slot
+        put_cube_slot,
+        reset,
+        zero_position,
+        publish_arm_target
     ])
