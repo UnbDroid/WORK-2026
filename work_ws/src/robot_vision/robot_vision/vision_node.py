@@ -137,6 +137,8 @@ class VisionNode(Node):
             x_m = pose[0][3] 
             y_m = pose[1][3] 
             z_m = pose[2][3] 
+            R = pose[:3, :3]
+            yaw = np.arctan2(R[1, 0], R[0, 0])
 
             coord_msg.point.x = float(x_m)
             coord_msg.point.y = float(y_m)
@@ -152,7 +154,7 @@ class VisionNode(Node):
             self.get_logger().info(f"Tag ID: {tag_id}: Coords: X={x_m:.5f} Y={y_m:.5f} Z={z_m:.5f} m")
             self.render_preview(display_frame, alvo, tag_id, x_m, y_m, z_m)
 
-            self.cube_alignment(tag_id, x_m, y_m, z_m)
+            self.cube_alignment(tag_id, x_m, y_m, z_m, yaw)
 
         elif not self.cube_aligned:
             perdido = self.last_seen is None or (agora - self.last_seen) > self.lost_timeout
@@ -221,10 +223,11 @@ class VisionNode(Node):
 
         return x, y, w, h, cx, cy
 
-    def cube_alignment(self, tag_id, x, y, z):
+    def cube_alignment(self, tag_id, x, y, z, yaw):
         target_z = 0.40
         tol_x = 0.012
         tol_z = 0.03    
+        tol_yaw = 0.03
 
         k_x = 0.4
         k_z = 0.3        
@@ -232,13 +235,15 @@ class VisionNode(Node):
 
         erro_x = -x + 0.1
         erro_z = z - target_z
+        erro_yaw = yaw
 
         cmd = Twist()
 
         aligned_x = abs(erro_x) <= tol_x
         aligned_z = abs(erro_z) <= tol_z
+        aligned_yaw = abs(erro_yaw) <= tol_yaw
 
-        if aligned_x and aligned_z: 
+        if aligned_x and aligned_z and aligned_yaw: 
             self.cube_aligned = True
             cmd.linear.x = 0.0
             cmd.linear.y = 0.0
@@ -257,6 +262,9 @@ class VisionNode(Node):
 
         if not aligned_z:
             cmd.linear.x = float(np.clip(k_z * erro_z, -max_speed, max_speed))
+
+        if not aligned_yaw:
+            cmd.angular.z = float(np.clip(erro_yaw, -max_speed, max_speed))
 
         self.get_logger().info(f"Alinhando Tag {tag_id} -> CmdVel: vx={cmd.linear.x:.2f}, vy={cmd.linear.y:.2f}")
         self.cmd_vel_pub.publish(cmd)
