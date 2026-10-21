@@ -3,7 +3,8 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, TimerAction, ExecuteProcess
+from launch.actions import IncludeLaunchDescription, TimerAction, ExecuteProcess, RegisterEventHandler
+from launch.event_handlers import OnProcessStart
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 
@@ -15,9 +16,9 @@ def generate_launch_description():
         salamander_share, 'config', 'cenario_1.yaml'
     )
 
-    manipulation_file = os.path.join(
+    '''manipulation_file = os.path.join(
         salamander_share, 'pddl', 'basic_manipulation_test.yaml'
-    )
+    )'''
 
     plansys2_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -26,6 +27,7 @@ def generate_launch_description():
             )
         )
     )
+
 
     move_action_node = Node(
         package='salamander_planning',
@@ -51,6 +53,13 @@ def generate_launch_description():
         package='arm_control',
         executable='control_node',
         name='control_node',
+    )
+
+    publish_arm_target = ExecuteProcess(
+        cmd=['ros2', 'topic', 'pub', '--once', '-w', '1',
+            '/arm_coordinates', 'geometry_msgs/msg/Point',
+            '{x: -0.291334, y: 0.0, z: 0.2075}'],
+        output='screen',
     )
 
     get_cube_table = Node(
@@ -87,22 +96,6 @@ def generate_launch_description():
         package='salamander_planning',
         executable='zero_position_node',
         name='zero_position_node',
-    )
-
-    publish_arm_target = TimerAction(
-        period=3.0,
-        actions=[
-            ExecuteProcess(
-                cmd=[
-                    'ros2', 'topic', 'pub',
-                    '--once',
-                    '/arm_target',
-                    'geometry_msgs/msg/Point',
-                    '{x: -0.291334, y: 0.0, z: 0.2075}'
-                ],
-                output='screen'
-            )
-        ]
     )
 
     return LaunchDescription([
