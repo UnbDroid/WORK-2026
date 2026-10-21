@@ -45,7 +45,7 @@ class VisionNode(Node):
         self.cube_aligned = False
         self.counter = 0
 
-        self.max_speed = 0.1      # m/s
+        self.max_speed = 0.07     # m/s
 
         self.direction = -1
         self.duration_start = None
@@ -227,10 +227,11 @@ class VisionNode(Node):
         target_z = 0.40
         tol_x = 0.012
         tol_z = 0.03    
-        tol_yaw = 0.03
+        tol_yaw = 0.07
 
         k_x = 0.4
-        k_z = 0.3        
+        k_z = 0.3 
+        k_yaw = 0.3       
         max_speed = self.max_speed   
 
         erro_x = -x + 0.1
@@ -243,10 +244,18 @@ class VisionNode(Node):
         aligned_z = abs(erro_z) <= tol_z
         aligned_yaw = abs(erro_yaw) <= tol_yaw
 
-        if aligned_x and aligned_z and aligned_yaw: 
-            self.cube_aligned = True
+        if aligned_x and aligned_z: 
+            if not aligned_yaw:
+                cmd.angular.z = float(np.clip(k_yaw * erro_yaw, -max_speed, max_speed))
+                self.get_logger().info(f"Alinhando Yaw da Tag {tag_id} -> CmdVel: angular.z={cmd.angular.z:.2f}")
+                
+            else:
+                cmd.angular.z = 0.0
+                self.cube_aligned = True
+
             cmd.linear.x = 0.0
             cmd.linear.y = 0.0
+            #cmd.angular.z = 0.0
             self.cmd_vel_pub.publish(cmd)
             self.get_logger().info(f"Tag ID {tag_id} ALINHADA! Robô parado.")
             
@@ -262,9 +271,6 @@ class VisionNode(Node):
 
         if not aligned_z:
             cmd.linear.x = float(np.clip(k_z * erro_z, -max_speed, max_speed))
-
-        if not aligned_yaw:
-            cmd.angular.z = float(np.clip(erro_yaw, -max_speed, max_speed))
 
         self.get_logger().info(f"Alinhando Tag {tag_id} -> CmdVel: vx={cmd.linear.x:.2f}, vy={cmd.linear.y:.2f}")
         self.cmd_vel_pub.publish(cmd)
