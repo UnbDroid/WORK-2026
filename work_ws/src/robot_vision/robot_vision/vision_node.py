@@ -34,7 +34,7 @@ class VisionNode(Node):
         self.status_pub = self.create_publisher(Bool, "/vision_status", 10)
 
         self.last_seen = None
-        self.lost_timeout = 1.0
+        self.lost_timeout = 2.0
 
         self.container_detection_enabled = False
         self.create_subscription(Bool, "container_detection_enabled", self.container_enabled_callback, 10)
@@ -78,6 +78,9 @@ class VisionNode(Node):
             self.vision_active = True
             self.cube_aligned = False
             self.duration_start = None
+            # O robô ficará parado por 1 segundo 
+            # esperando a câmera estabilizar antes de tentar fazer a varredura, para evitar trancos.
+            self.last_seen = self.get_clock().now().nanoseconds / 1e9
             self.get_logger().info(f'Visão ACORDADA pelo PDDL! Procurando cubo com tag: {self.current_target_id}')
         except ValueError:
             self.get_logger().error(f"Falha ao extrair ID da tag enviada: {msg.data}")

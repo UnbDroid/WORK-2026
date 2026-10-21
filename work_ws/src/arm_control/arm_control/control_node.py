@@ -30,21 +30,34 @@ class ControlNode(Node):
             'initial': [-0.291334, 0.0, 0.2075],
             'pre_initial': [-0.291334, 0.0, 0.32207],
             'zero': [0.378666, 0.00, 0.2075],
+            'get_cube_15':  [0.348748, 0.0, 0.120718],
+            'get_cube_10':  [0.3324, 0.0, 0.0497],
+            'get_cube_5': [0.307641, 0.0, 0.001291],            
             'get_cube':  [0.3324, 0.00, 0.0097],
             'teste_cube':  [0.3324, 0.00, 0.0497],
             'pre_slot1': [-0.3530,  0.062108, 0.32207],
             'pre_slot2': [-0.3570, -0.032892, 0.32207],
             'pre_slot3': [-0.3350, -0.127892, 0.32207],
-            'slot1': [-0.370988,  0.062215, 0.066674],
-            'slot2': [-0.374738, -0.032785, 0.066674],
-            'slot3': [-0.353799, -0.127785, 0.066674],
+            'slot1': [-0.370988,  0.062215, 0.096674],
+            'slot2': [-0.374738, -0.032785, 0.096674],
+            'slot3': [-0.353799, -0.127785, 0.096674],
             'drop_cube_1': [0.3324,  0.15, 0.0497],
             'drop_cube_2': [0.3324,  0.00, 0.0497],
             'drop_cube_3': [0.3324, -0.15, 0.0497],
             'pre_drop_cube_1': [0.3324,  0.15, 0.4228],
             'pre_drop_cube_2': [0.3324,  0.00, 0.4228],
             'pre_drop_cube_3': [0.3324, -0.15, 0.4228],
-            'shelf': [0.3003, 0.00, 0.4228],
+            'drop_cube_15': [0.358370, 0.0, 0.120718],
+            'drop_cube_10': [0.3425, 0.0, 0.0604],
+            'drop_cube_5': [0.318082, 0.0, 0.015352],    
+            'shelf': [0.3003, 0.00, 0.4228]
+        }
+        
+        # Mapeia qual mesa do PDDL representa qual altura no mundo real
+        self.height_map = {
+            'w1': '5',
+            'w2': '10',
+            'w3': '15'
         }
         
         self.get_logger().info("Control Node do Braço aguardando comandos do PlanSys2...")
@@ -69,93 +82,95 @@ class ControlNode(Node):
         command = msg.data
         self.sequence_running = True
         
-        # Dispara a coreografia em segundo plano
         threading.Thread(target=self.execute_sequence, args=(command,), daemon=True).start()
 
     def execute_sequence(self, command):
         self.get_logger().info(f"Iniciando coreografia: {command}")
         
-        if command == "get_cube_table":
-            self.publish_gripper(True) # Abre garra
+        # Agora é startswith porque a string chega como "get_cube_table_w1"
+        if command.startswith("get_cube_table"):
+            workspace = command.split("_")[-1] # Extrai 'w1'
+            h = self.height_map.get(workspace, '10') # Pega a altura. Se não achar, usa 10cm por segurança
+            target_name = f'get_cube_{h}'
+            
+            self.get_logger().info(f"Pegando cubo na mesa {workspace} (Altura: {h}cm)")
+            self.publish_gripper(True) 
             time.sleep(1.0)
-            self.publish_target_coordinates('shelf') # Fica acima do cubo
+            self.publish_target_coordinates('shelf') 
             time.sleep(5.0)
-            self.publish_target_coordinates('get_cube') # Desce na mesa
+            self.publish_target_coordinates(target_name)
             time.sleep(4.0)
-            self.publish_gripper(False) # Fecha garra
+            self.publish_gripper(False) 
             time.sleep(3.0)
             self.publish_target_coordinates('shelf')
             time.sleep(5.0)
-            self.publish_target_coordinates('pre_initial') # Recolhe
+            self.publish_target_coordinates('pre_initial') 
             time.sleep(5.0)
 
         elif command.startswith("put_slot"):
-            # O comando será algo como "put_slot1", "put_slot2"...
-            slot_name = command.split("_")[1] # Extrai 'slot1'
-            pre_slot_name = "pre_" + slot_name # Monta 'pre_slot1'
+            slot_name = command.split("_")[1] 
+            pre_slot_name = "pre_" + slot_name 
             
-            self.publish_target_coordinates(pre_slot_name) # Fica acima do buraco
+            self.publish_target_coordinates(pre_slot_name) 
             time.sleep(5.0)
-            self.publish_target_coordinates(slot_name) # Desce no buraco
+            self.publish_target_coordinates(slot_name) 
             time.sleep(4.0)
-            self.publish_gripper(True) # Solta
+            self.publish_gripper(True) 
             time.sleep(3.0)
-            self.publish_target_coordinates(pre_slot_name) # Sobe
+            self.publish_target_coordinates(pre_slot_name) 
             time.sleep(4.0)
-            self.publish_target_coordinates('pre_initial') # Recolhe
+            self.publish_target_coordinates('pre_initial') 
             time.sleep(4.0)
-            self.publish_target_coordinates('initial') # Volta para posição inicial
+            self.publish_target_coordinates('initial') 
             time.sleep(5.0)
-            self.publish_target_coordinates('zero') # Garante que está na posição inicial
+            self.publish_target_coordinates('zero') 
             time.sleep(5.0)
 
             # --- DAR RÉ PARA RECUPERAR A VISÃO ---
-            self.get_logger().info("Dando ré de 20cm...")
+            self.get_logger().info("Dando ré de 45cm...")
             cmd = Twist()
-            cmd.linear.x = -0.10  # Velocidade de 10 cm/s para trás
+            cmd.linear.x = -0.15 
             self.cmd_vel_pub.publish(cmd)
-            time.sleep(2.0)
+            time.sleep(5.0)
             cmd.linear.x = 0.0
             self.cmd_vel_pub.publish(cmd)
 
-        elif command == "put_cube_table":
-            self.drop_counter += 1
-            if self.drop_counter > 3:
-                self.drop_counter = 1 # Prevenção
+        elif command.startswith("put_cube_table"):
+            workspace = command.split("_")[-1] # Extrai 'w1', 'w2' ou 'w3'
+            h = self.height_map.get(workspace, '10') # Busca se é 5, 10 ou 15cm
                     
-            target_name = f'drop_cube_{self.drop_counter}'
-            self.get_logger().info(f"Soltando no alvo: {target_name}")
-            pre_target_name = f'pre_drop_cube_{self.drop_counter}'
-            
+            target_name = f'drop_cube_{h}'
+            self.get_logger().info(f"Soltando cubo na mesa {workspace} (Altura: {h}cm)")
+                    
             self.publish_target_coordinates('shelf') 
             time.sleep(5.0)
-            self.publish_target_coordinates(target_name) # Desce no local espaçado
+            self.publish_target_coordinates(target_name) # Desce na altura certa
             time.sleep(4.0)
-            self.publish_gripper(True) # Solta
+            self.publish_gripper(True) # Solta o cubo
             time.sleep(2.0)
-            self.publish_target_coordinates(pre_target_name) # Sobe
+            self.publish_target_coordinates('shelf') # Sobe para a altura de segurança
             time.sleep(4.0)
             self.publish_target_coordinates('pre_initial') # Recolhe
             time.sleep(4.0)
             self.publish_target_coordinates('initial') # Volta para posição inicial
             time.sleep(5.0)
-
         elif command.startswith("get_slot"):
-            # Ex: recebe "get_slot1"
             slot_name = command.split("_")[1]
             pre_slot_name = "pre_" + slot_name
             
-            self.publish_gripper(True) # Garante que tá aberta
+            self.publish_gripper(True) 
             time.sleep(1.0)
             self.publish_target_coordinates(pre_slot_name)
             time.sleep(4.0)
-            self.publish_target_coordinates(slot_name) # Desce no cubo
+            self.publish_target_coordinates(slot_name) 
             time.sleep(4.0)
-            self.publish_gripper(False) # Fecha (Pega o cubo)
+            self.publish_gripper(False) 
             time.sleep(2.0)
-            self.publish_target_coordinates(pre_slot_name) # Sobe
+            self.publish_target_coordinates(pre_slot_name) 
             time.sleep(4.0)
             self.publish_target_coordinates('pre_initial')
+            time.sleep(4.0)
+            self.publish_target_coordinates('zero') # <-- AGORA SIM! Termina com a câmera ativa
             time.sleep(4.0)
 
         elif command == "reset_arm":
@@ -163,7 +178,7 @@ class ControlNode(Node):
             time.sleep(4.0)
             self.publish_target_coordinates('initial')
             time.sleep(3.0)
-            self.publish_gripper(True) # Abre garra
+            self.publish_gripper(True) 
             time.sleep(1.0)
 
         elif command == "zero_position":
@@ -175,8 +190,9 @@ class ControlNode(Node):
 
         else:
             self.get_logger().error(f"Comando desconhecido: {command}")
+            self.sequence_running = False
+            return # Aborta se der erro
 
-        # Avisa o PlanSys2 (C++) que terminou!
         status_msg = Bool()
         status_msg.data = True
         self.status_pub.publish(status_msg)

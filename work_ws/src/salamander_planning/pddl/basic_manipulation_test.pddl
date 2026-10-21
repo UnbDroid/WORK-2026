@@ -2,8 +2,8 @@
   (:domain salamander-domain)
 
   (:objects
-    start w1 finish - workspace
-    cubo1 cubo2 cubo3 - cube
+    start w1 w2 finish - workspace
+    cubo1 cubo2 cubo3 cubo4 - cube
     tag1 tag2 tag3 - tag
     slot1 slot2 slot3 - slot
   )
@@ -11,10 +11,12 @@
   (:init
     (robot-at start)
     (connected start w1)
+    (connected w1 w2)
     (connected w1 finish)
+    (connected w2 finish)
 
     (arm-empty)
-    (arm-folded)
+    (vision-ready)
     (base-free)
 
     (cube-at cubo1 w1)
@@ -34,9 +36,11 @@
 
   (:goal
     (and 
-      (cube-at cubo1 finish)
-      (cube-at cubo2 finish)
-      (cube-at cubo3 finish)
+      (cube-at cubo1 w2)
+      (cube-at cubo2 w2)
+      (cube-at cubo3 w2)
+
+      (robot-at finish)
     )
   )
 )
