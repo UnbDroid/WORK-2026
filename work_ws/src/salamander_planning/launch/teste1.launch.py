@@ -55,12 +55,12 @@ def generate_launch_description():
         name='control_node',
     )
 
-    publish_arm_target = ExecuteProcess(
+    '''publish_arm_target = ExecuteProcess(
         cmd=['ros2', 'topic', 'pub', '--once', '-w', '1',
             '/arm_coordinates', 'geometry_msgs/msg/Point',
             '{x: -0.291334, y: 0.0, z: 0.2075}'],
         output='screen',
-    )
+    )'''
 
     get_cube_table = Node(
         package='salamander_planning',
@@ -109,6 +109,6 @@ def generate_launch_description():
         put_cube_table,
         put_cube_slot,
         reset,
-        zero_position,
-        publish_arm_target
+        zero_position
+        #publish_arm_target
     ])
