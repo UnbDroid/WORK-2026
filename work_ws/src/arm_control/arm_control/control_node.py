@@ -129,7 +129,7 @@ class ControlNode(Node):
             # --- DAR RÉ PARA RECUPERAR A VISÃO ---
             self.get_logger().info("Dando ré de 45cm...")
             cmd = Twist()
-            cmd.linear.x = -0.15 
+            cmd.linear.x = -0.20
             self.cmd_vel_pub.publish(cmd)
             time.sleep(5.0)
             cmd.linear.x = 0.0

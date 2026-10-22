@@ -136,7 +136,7 @@ double MotorDC::updatePI(float rpm_alvo) {
     double dt = (tempo_atual - this->tempo_anterior_pi) * 0.001;
     this->tempo_anterior_pi = tempo_atual;
 
-    if (dt < 0.001 || dt > 0.1) dt = 0.001;
+    if (dt < 0.001 || dt > 0.08) dt = 0.001;
 
     double integral = this->erro_acumulado + erro_atual * dt;
     double pwm_integral = this->Ki * integral;
