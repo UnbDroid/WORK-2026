@@ -31,25 +31,38 @@ class ControlNode(Node):
             'pre_initial': [-0.291334, 0.0, 0.32207],
             'zero': [0.378666, 0.00, 0.2075],
             'get_cube_15':  [0.348748, 0.0, 0.120718],
-            'get_cube_10':  [0.3324, 0.0, 0.0497],
+            'get_cube_10':  [0.3324, 0.0, 0.0197],
             'get_cube_5': [0.307641, 0.0, 0.001291],
             'get_cube':  [0.3324, 0.00, 0.0097],
             'teste_cube':  [0.3324, 0.00, 0.0497],
-            'pre_slot1': [-0.3530,  0.062108, 0.32207],
-            'pre_slot2': [-0.3570, -0.032892, 0.32207],
-            'pre_slot3': [-0.3350, -0.127892, 0.32207],
-            'slot1': [-0.370988,  0.062215, 0.166674],
-            'slot2': [-0.373852, -0.022785, 0.166674],
-            'slot3': [-0.356977, -0.117785, 0.166674],
-            'drop_cube_1': [0.3324,  0.15, 0.0497],
-            'drop_cube_2': [0.3324,  0.00, 0.0497],
-            'drop_cube_3': [0.3324, -0.15, 0.0497],
+            'pre_slot1': [-0.3530,  0.062215, 0.32207],
+            'pre_slot2': [-0.3570, -0.037892, 0.32207],
+            'pre_slot3': [-0.3350, -0.131892, 0.32207],
+
+            'put_slot1': [-0.370988, 0.062215, 0.164674],
+            'put_slot2': [-0.373852, -0.042785, 0.168674],
+            'put_slot3': [-0.356977, -0.136785, 0.16574],
+
+            'get_slot1': [-0.370988, 0.060215, 0.1347],
+            'get_slot2': [-0.373852, -0.042785, 0.137674],
+            'get_slot3': [-0.356977, -0.158785, 0.13474],
+
             'pre_drop_cube_1': [0.3324,  0.15, 0.4228],
             'pre_drop_cube_2': [0.3324,  0.00, 0.4228],
             'pre_drop_cube_3': [0.3324, -0.15, 0.4228],
-            'drop_cube_15': [0.358370, 0.0, 0.120718],
-            'drop_cube_10': [0.3425, 0.0, 0.0604],
-            'drop_cube_5': [0.318082, 0.0, 0.015352],    
+
+            'drop_cube_15_1': [0.358370, 0.15, 0.120718],
+            'drop_cube_15_2': [0.358370, 0.0, 0.120718],
+            'drop_cube_15_3': [0.358370, -0.15, 0.120718],
+
+            'drop_cube_10_1': [0.3324, 0.15, 0.0647],
+            'drop_cube_10_2': [0.3324, 0.0, 0.0777],
+            'drop_cube_10_3': [0.3324, -0.15, 0.0647],
+
+            'drop_cube_5_1': [0.318082, 0.15, 0.015352],
+            'drop_cube_5_2': [0.318082, 0.0, 0.015352],
+            'drop_cube_5_3': [0.318082, -0.15, 0.015352],
+
             'shelf': [0.3003, 0.00, 0.4228]
         }
         
@@ -99,7 +112,7 @@ class ControlNode(Node):
             self.publish_target_coordinates('shelf') 
             time.sleep(5.0)
             self.publish_target_coordinates(target_name)
-            time.sleep(4.0)
+            time.sleep(5.0)
             self.publish_gripper(False) 
             time.sleep(3.0)
             self.publish_target_coordinates('shelf')
@@ -108,12 +121,12 @@ class ControlNode(Node):
             time.sleep(5.0)
 
         elif command.startswith("put_slot"):
-            slot_name = command.split("_")[1] 
-            pre_slot_name = "pre_" + slot_name 
+            base_slot = command.split("put_")[1] # Extrai 'slot1'
+            pre_slot_name = "pre_" + base_slot # Monta 'pre_slot1'
             
             self.publish_target_coordinates(pre_slot_name) 
             time.sleep(5.0)
-            self.publish_target_coordinates(slot_name) 
+            self.publish_target_coordinates(command)
             time.sleep(4.0)
             self.publish_gripper(True) 
             time.sleep(3.0)
@@ -127,19 +140,32 @@ class ControlNode(Node):
             time.sleep(5.0)
 
             # --- DAR RÉ PARA RECUPERAR A VISÃO ---
-            self.get_logger().info("Dando ré de 45cm...")
+            self.get_logger().info("Dando ré de 20cm...")
             cmd = Twist()
             cmd.linear.x = -0.20
-            self.cmd_vel_pub.publish(cmd)
-            time.sleep(5.0)
+            
+            # Publica o comando continuamente para evitar o corte de segurança do motor
+            start_time = time.time()
+            duration = 1.0  # 1.0s a 0.20 m/s = 0.20m (20cm)
+            
+            while (time.time() - start_time) < duration:
+                self.cmd_vel_pub.publish(cmd)
+                time.sleep(0.1)  # Frequência de 10Hz mantendo os motores vivos
+                
             cmd.linear.x = 0.0
             self.cmd_vel_pub.publish(cmd)
 
         elif command.startswith("put_cube_table"):
             workspace = command.split("_")[-1] # Extrai 'w1', 'w2' ou 'w3'
             h = self.height_map.get(workspace, '10') # Busca se é 5, 10 ou 15cm
-                    
-            target_name = f'drop_cube_{h}'
+
+            self.drop_counter += 1
+            if self.drop_counter > 3:
+                self.get_logger().warn("Aviso: Número máximo de drops atingido. Comando ignorado.")
+                self.sequence_running = False
+                return
+
+            target_name = f'drop_cube_{h}_{self.drop_counter}'
             self.get_logger().info(f"Soltando cubo na mesa {workspace} (Altura: {h}cm)")
                     
             self.publish_target_coordinates('shelf') 
@@ -154,15 +180,16 @@ class ControlNode(Node):
             time.sleep(4.0)
             self.publish_target_coordinates('initial') # Volta para posição inicial
             time.sleep(5.0)
+
         elif command.startswith("get_slot"):
-            slot_name = command.split("_")[1]
-            pre_slot_name = "pre_" + slot_name
+            base_slot = command.split("get_")[1]
+            pre_slot_name = "pre_" + base_slot
             
             self.publish_gripper(True) 
             time.sleep(1.0)
             self.publish_target_coordinates(pre_slot_name)
             time.sleep(4.0)
-            self.publish_target_coordinates(slot_name) 
+            self.publish_target_coordinates(command) # <--- USE O COMMAND AQUI! ('get_slot1')
             time.sleep(4.0)
             self.publish_gripper(False) 
             time.sleep(2.0)
@@ -170,7 +197,7 @@ class ControlNode(Node):
             time.sleep(4.0)
             self.publish_target_coordinates('pre_initial')
             time.sleep(4.0)
-            self.publish_target_coordinates('zero') # <-- AGORA SIM! Termina com a câmera ativa
+            self.publish_target_coordinates('zero') 
             time.sleep(4.0)
 
         elif command == "reset_arm":
