@@ -113,7 +113,7 @@ double MotorDC::updatePI(float rpm_alvo) {
     const float ZERO_BAND = 1.0f;
 
     // Verificação de Mudança de Direção (Reseta o Erro Acumulado Linearmente).
-    if (rpm_alvo * this->rpm_anterior < 0) { this->erro_acumulado *= 0.02; }
+    if (rpm_alvo * this->rpm_anterior < 0) { this->erro_acumulado *= 0.2; }
     this->rpm_anterior = rpm_alvo;
     
     this->rpm_alvo = rpm_alvo;
@@ -122,7 +122,7 @@ double MotorDC::updatePI(float rpm_alvo) {
     // Reseta o Acúmulo de Erro e Envia (PWM = 0) Caso Robô Esteja em Zona de Parada.
     if (fabs(rpm_alvo) < ZERO_BAND)
     {
-        this->erro_acumulado *= 0.02;
+        this->erro_acumulado *= 0.2;
         this->pwm_atual = 0.0f;
         return 0.0;
     }
@@ -136,7 +136,7 @@ double MotorDC::updatePI(float rpm_alvo) {
     double dt = (tempo_atual - this->tempo_anterior_pi) * 0.001;
     this->tempo_anterior_pi = tempo_atual;
 
-    if (dt < 0.001 || dt > 0.08) dt = 0.001;
+    if (dt < 0.001 || dt > 1.1) dt = 0.001;
 
     double integral = this->erro_acumulado + erro_atual * dt;
     double pwm_integral = this->Ki * integral;
