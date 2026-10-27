@@ -13,11 +13,10 @@
     (robot-at ?w - workspace)
     (connected ?w1 - workspace ?w2 - workspace)
     
-    ;; Estados Funcionais e de Segurança do Braço
     (arm-empty)
     (holding ?c - cube)
-    (arm-folded)    ;; Braço recolhido (Seguro para mover a base)
-    (vision-ready)  ;; Braço em zero_position (Câmera consegue enxergar)
+    (arm-folded)
+    (vision-ready)
 
     (cube-at ?c - cube ?w - workspace)
     (cube-tag ?c - cube ?t - tag)
@@ -39,6 +38,8 @@
     (next-height ?h1 - height ?h2 - height)
 
     (base-free)
+    
+    (target ?c - cube ?w - workspace)
   )
 
   (:action move
@@ -55,14 +56,12 @@
     )
   )
 
-  ;; CORREÇÃO: Adicionado ?w para o solver não ignorar a ação
   (:action zero_position
     :parameters (?w - workspace)
     :precondition (and (robot-at ?w) (arm-folded) (arm-empty))
     :effect (and (not (arm-folded)) (vision-ready))
   )
 
-  ;; CORREÇÃO: Adicionado ?w para o solver não ignorar a ação
   (:action reset_arm
     :parameters (?w - workspace)
     :precondition (and (robot-at ?w) (vision-ready) (arm-empty))
@@ -103,6 +102,7 @@
     :effect (and (container-aligned ?w))
   )
 
+  ;; o robô  tira o cubo se estiver na mesa certa
   (:action get_cube_slot
     :parameters (?c - cube ?s - slot ?w - workspace)
     :precondition (and
@@ -110,6 +110,7 @@
       (arm-empty)
       (at-slot ?c ?s)
       (arm-folded)
+      (target ?c ?w) 
     )
     :effect (and
       (not (arm-empty))
@@ -234,7 +235,6 @@
     )
   )
 
-  ;; CORREÇÃO: Adicionado ?w para garantir grounding perfeito e segurança
   (:action put_cube_slot
     :parameters (?c - cube ?s - slot ?w - workspace)
     :precondition (and

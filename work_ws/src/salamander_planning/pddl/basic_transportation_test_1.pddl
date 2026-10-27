@@ -1,4 +1,4 @@
-(define (problem basic-manipulation-test)
+(define (problem basic-transportation-test-1)
   (:domain salamander-domain)
 
   (:objects
@@ -10,30 +10,26 @@
 
   (:init
     (robot-at start)
-    (connected start w1)
-    (connected start w2)
-    (connected start w3)
+    (connected start w1) (connected w1 start)
+    (connected start w2) (connected w2 start)
+    (connected start w3) (connected w3 start)
 
-    (connected w1 w2)
-    (connected w1 w3)
-    (connected w1 finish)
+    (connected w1 w2) (connected w2 w1)
+    (connected w1 w3) (connected w3 w1)
+    (connected w1 finish) (connected finish w1)
 
-    (connected w2 w1)
-    (connected w2 w3)
-    (connected w2 finish)
+    (connected w2 w3) (connected w3 w2)
+    (connected w2 finish) (connected finish w2)
 
-    (connected w3 w1)
-    (connected w3 w2)
-    (connected w3 finish)
+    (connected w3 finish) (connected finish w3)
 
     (arm-empty)
     (arm-folded)
     (base-free)
 
-    ; aqui, iremos mudar os numeros dos w? e tag?
     (cube-at cubo1 w1)
     (cube-at cubo2 w1)
-    (cube-at cubo3 w1)
+    (cube-at cubo3 w3)
     (cube-tag cubo1 tag1)
     (cube-tag cubo2 tag2)
     (cube-tag cubo3 tag3)
@@ -44,15 +40,19 @@
     (empty-slot slot1)
     (empty-slot slot2)
     (empty-slot slot3)
+
+    ;; LÓGICA DE DESTINOS: O robô só desbloqueia a mochila nessas mesas
+    (target cubo1 w3)
+    (target cubo2 w2)
+    (target cubo3 w2)
   )
 
   (:goal
     (and 
-      (cube-at cubo1 finish)
-      (cube-at cubo2 finish)
-      (cube-at cubo3 finish)
-
-      ;(robot-at finish)
+      (cube-at cubo1 w3)
+      (cube-at cubo2 w2)
+      (cube-at cubo3 w2)
+      (robot-at finish)
     )
   )
 )

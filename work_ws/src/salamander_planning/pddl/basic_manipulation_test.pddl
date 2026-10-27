@@ -9,6 +9,7 @@
   )
 
   (:init
+
     (robot-at start)
     (connected start w1)
     (connected w1 w2)
@@ -32,6 +33,10 @@
     (empty-slot slot1)
     (empty-slot slot2)
     (empty-slot slot3)
+
+    (target cubo1 w2)
+    (target cubo2 w2)
+    (target cubo3 w2)
   )
 
   (:goal
@@ -43,4 +48,5 @@
       (robot-at finish)
     )
   )
+  
 )

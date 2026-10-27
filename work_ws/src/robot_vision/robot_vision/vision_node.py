@@ -227,31 +227,31 @@ class VisionNode(Node):
         target_z = 0.40
         tol_x = 0.012
         tol_z = 0.03    
-        #tol_yaw = 0.07
+        tol_yaw = 0.07
 
         k_x = 0.4
         k_z = 0.3 
-        #k_yaw = 0.3       
+        k_yaw = 0.3       
         max_speed = self.max_speed   
 
         erro_x = -x + 0.1
         erro_z = z - target_z
-        #erro_yaw = yaw
+        erro_yaw = yaw
 
         cmd = Twist()
 
         aligned_x = abs(erro_x) <= tol_x
         aligned_z = abs(erro_z) <= tol_z
-        #aligned_yaw = abs(erro_yaw) <= tol_yaw
+        aligned_yaw = abs(erro_yaw) <= tol_yaw
 
         if aligned_x and aligned_z: 
-            '''if not aligned_yaw:
+            if not aligned_yaw:
                 cmd.angular.z = float(np.clip(k_yaw * erro_yaw, -max_speed, max_speed))
                 self.get_logger().info(f"Alinhando Yaw da Tag {tag_id} -> CmdVel: angular.z={cmd.angular.z:.2f}")
                 
             else:
-                cmd.angular.z = 0.0'''
-            self.cube_aligned = True
+                cmd.angular.z = 0.0
+                self.cube_aligned = True
 
             cmd.linear.x = 0.0
             cmd.linear.y = 0.0
