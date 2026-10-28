@@ -68,7 +68,7 @@ class ControlNode(Node):
         
         # Mapeia qual mesa do PDDL representa qual altura no mundo real
         self.height_map = {
-            'w1': '5',
+            'w1': '10',
             'w2': '10',
             'w3': '15'
         }

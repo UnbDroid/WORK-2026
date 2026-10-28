@@ -24,7 +24,7 @@
     (connected w3 finish) (connected finish w3)
 
     (arm-empty)
-    (arm-folded)
+    (vision-ready)
     (base-free)
 
     (cube-at cubo1 w1)
