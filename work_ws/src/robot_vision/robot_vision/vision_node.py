@@ -27,10 +27,10 @@ class VisionNode(Node):
         self.cube_data_pub = self.create_publisher(CubeArray, "cube_data", 10)
 
         # PONTE COM O ACTION_NODE (Agora recebe String com o alvo)
-        self.vision_active = True 
+        self.vision_active = False 
         #self.current_target_id = -1
-        #self.create_subscription(String, "/vision_target", self.target_callback, 10)
-        #self.status_pub = self.create_publisher(Bool, "/vision_status", 10)
+        self.create_subscription(String, "/vision_target", self.target_callback, 10)
+        self.status_pub = self.create_publisher(Bool, "/vision_status", 10)
 
         self.last_seen = None
         self.lost_timeout = 2.0
@@ -73,7 +73,7 @@ class VisionNode(Node):
 
         self.timer = self.create_timer(0.033, self.process_frame_callback)
 
-    '''def target_callback(self, msg):
+    def target_callback(self, msg):
         # A mensagem será algo como "tag1", "tag2"
         tag_str = msg.data.replace("tag", "") # Tira a palavra tag e sobra o número
         try:
@@ -86,7 +86,7 @@ class VisionNode(Node):
             self.last_seen = self.get_clock().now().nanoseconds / 1e9
             self.get_logger().info(f'Visão ACORDADA pelo PDDL! Procurando cubo com tag: {self.current_target_id}')
         except ValueError:
-            self.get_logger().error(f"Falha ao extrair ID da tag enviada: {msg.data}")'''
+            self.get_logger().error(f"Falha ao extrair ID da tag enviada: {msg.data}")
 
     def container_enabled_callback(self, msg):
         self.container_detection_enabled = msg.data
@@ -273,6 +273,7 @@ class VisionNode(Node):
             self.alvo.remove(tag_id)
             self.allowed_ids.remove(tag_id)
             self.counter += 1
+            self.cube_aligned = True
 
             cmd.linear.x = 0.0
             cmd.linear.y = 0.0
@@ -282,8 +283,8 @@ class VisionNode(Node):
             
             status_msg = Bool()
             status_msg.data = True
-            #self.status_pub.publish(status_msg)
-            #self.vision_active = False 
+            self.status_pub.publish(status_msg)
+            self.vision_active = False 
             
             return True
 
