@@ -13,11 +13,11 @@ def generate_launch_description():
     salamander_share = get_package_share_directory('salamander_planning')
 
     cenario_file = os.path.join(
-        salamander_share, 'config', 'cenario_1.yaml'
+        salamander_share, 'config', 'cenario_2.yaml'
     )
 
     '''manipulation_file = os.path.join(
-        salamander_share, 'pddl', 'basic_manipulation_test.yaml'
+        salamander_share, 'pddl', 'basic_transportation_test_1.pddl'
     )'''
 
     plansys2_launch = IncludeLaunchDescription(

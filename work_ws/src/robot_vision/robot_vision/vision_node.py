@@ -19,6 +19,7 @@ class VisionNode(Node):
         super().__init__("vision_node")
 
         self.tag_size = 0.06  
+
         options = apriltag.DetectorOptions(families="tag36h11")
         self.detector = apriltag.Detector(options)
 
@@ -26,9 +27,9 @@ class VisionNode(Node):
         self.cmd_vel_pub = self.create_publisher(Twist, "/cmd_vel", 10)
         self.cube_data_pub = self.create_publisher(CubeArray, "cube_data", 10)
 
-        # PONTE COM O ACTION_NODE (Agora recebe String com o alvo)
+        # PONTE COM O ACTION_NODE
         self.vision_active = False 
-        #self.current_target_id = -1
+        self.current_target_id = -1
         self.create_subscription(String, "/vision_target", self.target_callback, 10)
         self.status_pub = self.create_publisher(Bool, "/vision_status", 10)
 
@@ -42,18 +43,17 @@ class VisionNode(Node):
         self.get_logger().info("Publishers 'cube_coordinates' e 'cube_data' inicializados!")
 
         self.cube_aligned = False
-        self.counter = 0
-        self.max_counter = 3
-        self.allowed_ids = [1, 2, 3]
-        self.alvo = []
         
+        # Estados possíveis: "IDLE", "RETURNING", "SEARCHING", "ALIGNING"
+        self.state = "IDLE" 
+        self.search_start_time = None
+        self.time_spent_searching = 0.0
+        self.return_start_time = None
+        self.wait_time = 3.0
+        self.wait_start = None
+        self.last_vision_usage = 0.0
 
         self.max_speed = 0.07     # m/s
-
-        self.direction = -1
-        self.duration_start = None
-        self.duration = 1.0
-        self.duration_max = 6.0
 
         self.indice_camera = 2 # Índice na raspberry pi (diferente no notebook)
         self.cap = cv2.VideoCapture(self.indice_camera, cv2.CAP_V4L2)
@@ -74,20 +74,29 @@ class VisionNode(Node):
         self.timer = self.create_timer(0.033, self.process_frame_callback)
 
     def target_callback(self, msg):
-        # mensagem chega como "1,2,3"
+        tag_str = msg.data.replace("tag", "") 
         try:
-            # quebra a string nas vírgulas e converte para inteiros
-            self.allowed_ids = [int(x.strip()) for x in msg.data.split(',') if x.strip()]
-            
+            self.current_target_id = int(tag_str)
             self.vision_active = True
             self.cube_aligned = False
-            self.duration_start = None
-            self.alvo = [] # limpa para pegar a primeira válida que aparecer
-            
             self.last_seen = self.get_clock().now().nanoseconds / 1e9
-            self.get_logger().info(f'Visão ACORDADA pelo PDDL! Tags válidas: {self.allowed_ids}')
-        except ValueError as e:
-            self.get_logger().error(f"Falha ao extrair IDs da string '{msg.data}': {e}")
+
+            tempo_ocioso = self.last_seen - self.last_vision_usage
+
+            # Se já gastamos tempo buscando antes, precisamos voltar primeiro
+            if self.time_spent_searching > 0.1 and tempo_ocioso < 80.0:
+                
+                self.state = "RETURNING"
+                self.return_start_time = self.last_seen
+                self.get_logger().info(f'Visão ACORDADA! Retornando por {self.time_spent_searching:.2f}s antes de buscar a Tag {self.current_target_id}')
+                self.last_vision_usage = 0
+            else:
+                self.state = "SEARCHING"
+                self.search_start_time = self.last_seen
+                self.get_logger().info(f'Visão ACORDADA! Iniciando busca direta pela Tag {self.current_target_id}')
+                
+        except ValueError:
+            self.get_logger().error(f"Falha ao extrair ID da tag enviada: {msg.data}")
 
     def container_enabled_callback(self, msg):
         self.container_detection_enabled = msg.data
@@ -101,20 +110,55 @@ class VisionNode(Node):
             self.cap.grab()
             return
 
+        agora = self.get_clock().now().nanoseconds / 1e9
+        cmd = Twist()
+
+        # --- MÁQUINA DE ESTADOS: RETORNO À ORIGEM ---
+        if self.state == "RETURNING":
+            tempo_retornando = agora - self.return_start_time
+            if tempo_retornando < self.time_spent_searching:
+                cmd.linear.y = -0.07 # Volta para a esquerda (negativo)
+                self.cmd_vel_pub.publish(cmd)
+                self.get_logger().info(f"Retornando à base... {tempo_retornando:.1f}/{self.time_spent_searching:.1f}s", throttle_duration_sec=0.5)
+                self.cap.grab() # Limpa o buffer
+                return
+            else:
+                # Chegou na base! Entra no estado de ESPERA
+                cmd.linear.y = 0.0
+                self.cmd_vel_pub.publish(cmd)
+                self.time_spent_searching = 0.0
+                
+                self.state = "WAITING"
+                self.wait_start = agora
+                self.get_logger().info(f"Retorno concluído. Aguardando {self.wait_time}s para estabilizar...")
+                return
+                
+        # --- MÁQUINA DE ESTADOS: ESPERA (NOVO) ---
+        elif self.state == "WAITING":
+            if agora - self.wait_start < self.wait_time:
+                cmd.linear.y = 0.0
+                self.cmd_vel_pub.publish(cmd)
+                self.cap.grab() # Limpa o buffer
+                return
+            else:
+                # Fim da espera, inicia a nova busca
+                self.state = "SEARCHING"
+                self.search_start_time = agora
+                self.get_logger().info(f"Espera concluída. Iniciando busca pela Tag {self.current_target_id}.")
+                # Não damos return aqui para ele fluir direto para a leitura do frame logo abaixo
+
+        # Daqui pra frente, estamos em SEARCHING ou ALIGNING
         ret, frame = self.cap.read()
         if not ret or frame is None:
             self.cap.grab()
             return
 
         display_frame = frame.copy()
-        agora = self.get_clock().now().nanoseconds / 1e9
- 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        detections = [det for det in self.detector.detect(gray) if det.tag_id in self.allowed_ids]
+        detections = [] if self.cube_aligned else self.detector.detect(gray)
 
-        self.get_logger().info(
-            f"Tags no frame: {detections} | alvo atual: {self.alvo[0] if self.alvo else 'Desconhecido'} | Contador: {self.counter}",
-            throttle_duration_sec=0.5)
+        ids_vistos = [d.tag_id for d in detections]
+        self.get_logger().info(f"Tags no frame: {ids_vistos} | alvo atual: {self.current_target_id}", throttle_duration_sec=0.5)
         
         coord_msg = PointStamped()
         coord_msg.header.stamp = self.get_clock().now().to_msg()
@@ -124,66 +168,58 @@ class VisionNode(Node):
         array_msg.header.stamp = self.get_clock().now().to_msg()
         array_msg.header.frame_id = "webcam_link"
 
-        cmd = Twist()
+        alvo = next((det for det in detections if det.tag_id == self.current_target_id), None)
 
+        if alvo is not None:
+            # Achou a tag! Muda pro estado de alinhamento
+            if self.state == "SEARCHING":
+                self.state = "ALIGNING"
+                # Congela o tempo que passamos buscando para podermos voltar depois
+                self.time_spent_searching = agora - self.search_start_time
+                self.get_logger().info(f"Tag {self.current_target_id} encontrada após {self.time_spent_searching:.2f}s! Iniciando alinhamento fino.")
 
-        if self.counter >= self.max_counter:
-            self.cmd_vel_pub.publish(Twist())  # para o robô
-            return
+            self.last_seen = agora
 
-        self.get_logger().info("Antes da condição de detecção.")
-        if not detections and (self.counter < self.max_counter):
+            tag_id = alvo.tag_id
+            camera_params = [500.0, 500.0, 320.0, 240.0] 
+            pose, _, _ = self.detector.detection_pose(
+                alvo, camera_params, tag_size=self.tag_size
+            )
+
+            x_m = pose[0][3] 
+            y_m = pose[1][3] 
+            z_m = pose[2][3] 
+            R = pose[:3, :3]
+            yaw = np.arctan2(R[1, 0], R[0, 0])
+
+            coord_msg.point.x = float(x_m)
+            coord_msg.point.y = float(y_m)
+            coord_msg.point.z = float(z_m)
+            self.coord_pub.publish(coord_msg)
+
+            cube_msg = Cube()
+            cube_msg.id = int(tag_id)
+            cube_msg.waypoint = "default"  
+            cube_msg.color = "cor"  
+            array_msg.cubes.append(cube_msg)
+
+            self.render_preview(display_frame, alvo, tag_id, x_m, y_m, z_m)
+            self.cube_alignment(tag_id, x_m, y_m, z_m, yaw)
+
+        elif self.state == "SEARCHING":
+            # Não achou a tag ainda, continua indo para a direita
             cmd.linear.y = 0.07
             self.cmd_vel_pub.publish(cmd)
-            self.get_logger().info("Nenhum Id encontrado. Entrando em busca lateral")
-            return
-
-
-        # Adiciona pra pegar só os cubos permitidos -> ta meio ganbiarra (refatorar dps)
-        if not self.alvo:
-            self.alvo.append(detections[0].tag_id)
-
-        alvo = next((det for det in detections if det.tag_id == self.alvo[0]), None)
-
-        if alvo is None and self.counter < self.max_counter:
-            cmd.linear.y = 0.07
-            self.cmd_vel_pub.publish(cmd)
-            return
-        
-        camera_params = [500.0, 500.0, 320.0, 240.0] 
-        pose, _, _ = self.detector.detection_pose(
-            alvo, camera_params, tag_size=self.tag_size
-        )
-
-        x_m = pose[0][3] 
-        y_m = pose[1][3] 
-        z_m = pose[2][3]
-
-        # Correção de ângulo -> nao precisa mais 
-        '''R = pose[:3, :3]
-        yaw = np.arctan2(R[1, 0], R[0, 0])'''
-
-        coord_msg.point.x = float(x_m)
-        coord_msg.point.y = float(y_m)
-        coord_msg.point.z = float(z_m)
-        self.coord_pub.publish(coord_msg)
-
-        cube_msg = Cube()
-        cube_msg.id = int(alvo.tag_id)
-        cube_msg.waypoint = "default"  
-        cube_msg.color = "cor"  
-        array_msg.cubes.append(cube_msg)
-
-        self.get_logger().info(f"Tag ID: {alvo.tag_id}: Coords: X={x_m:.5f} Y={y_m:.5f} Z={z_m:.5f} m")
-        self.render_preview(display_frame, alvo, alvo.tag_id, x_m, y_m, z_m)
-
-        self.cube_alignment(alvo.tag_id, x_m, y_m, z_m)
-
-        elif not self.cube_aligned:
+            self.get_logger().info("Buscando tag para a direita...", throttle_duration_sec=1.0)
+            
+        elif self.state == "ALIGNING":
             perdido = self.last_seen is None or (agora - self.last_seen) > self.lost_timeout
             if perdido:
-                self.cmd_vel_pub.publish(self.varredura(agora))
-                self.get_logger().info("Alvo perdido. Iniciando varredura...", throttle_duration_sec=1.0)
+                # Se perdeu durante o alinhamento, volta pra busca
+                self.state = "SEARCHING"
+                # Reativa o contador de tempo de busca a partir de onde parou
+                self.search_start_time = agora - self.time_spent_searching
+                self.get_logger().info("Alvo perdido durante alinhamento. Retomando busca para a direita...", throttle_duration_sec=1.0)
 
         container = None
         if self.container_detection_enabled:
@@ -204,22 +240,6 @@ class VisionNode(Node):
  
         cv2.imshow("Deteccao de Cubos - UnbDroid", display_frame)
         cv2.waitKey(1)
- 
-    '''def varredura(self, agora):
-        cmd = Twist()
- 
-        if self.duration_start is None:
-            self.duration_start = agora
-            self.duration = 1.0
-            self.direction = 1
- 
-        if agora - self.duration_start > self.duration:
-            self.direction *= -1
-            self.duration = min(self.duration + 1.0, self.duration_max)
-            self.duration_start = agora
- 
-        cmd.linear.y = self.max_speed * self.direction
-        return cmd'''
 
     def color_detection(self, roi, cor= "red"):
         hsv_frame = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
@@ -231,7 +251,6 @@ class VisionNode(Node):
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
         if not contours:
-            self.get_logger().info(f"Nenhum contorno {cor} detectado.")
             return None
 
         contour = max(contours, key=cv2.contourArea)
@@ -241,58 +260,46 @@ class VisionNode(Node):
         centro = (cx, cy)
         contorno = x, y, w, h
 
-        self.get_logger().info(f"Container {cor} detectado em ({cx}, {cy})")
         self.render_container_preview(roi, contorno, cor, centro)
-
         return x, y, w, h, cx, cy
 
-    def cube_alignment(self, tag_id, x, y, z):
-        target_z = 0.412
+    def cube_alignment(self, tag_id, x, y, z, yaw):
+        target_z = 0.40
         tol_x = 0.012
         tol_z = 0.03    
-        #tol_yaw = 0.07
+        tol_yaw = 0.07
 
-        k_x = 0.4
+        k_x = 0.42
         k_z = 0.3 
         k_yaw = 0.3       
         max_speed = self.max_speed   
 
         erro_x = -x + 0.1
         erro_z = z - target_z
-        #erro_yaw = yaw
+        erro_yaw = yaw
 
         cmd = Twist()
 
         aligned_x = abs(erro_x) <= tol_x
         aligned_z = abs(erro_z) <= tol_z
-        #aligned_yaw = abs(erro_yaw) <= tol_yaw
+        aligned_yaw = abs(erro_yaw) <= tol_yaw
 
         if aligned_x and aligned_z: 
-            
             self.cube_aligned = True
-            self.alvo.remove(tag_id)
-            self.allowed_ids.remove(tag_id)
-            self.counter += 1
-            self.cube_aligned = True
-            
-            tag_name_pddl = f"tag{tag_id}"
-            
-            if tag_id in self.alvo:
-                self.alvo.remove(tag_id)
-            if tag_id in self.allowed_ids:
-                self.allowed_ids.remove(tag_id)
-            self.counter += 1
 
             cmd.linear.x = 0.0
             cmd.linear.y = 0.0
             self.cmd_vel_pub.publish(cmd)
             self.get_logger().info(f"Tag ID {tag_id} ALINHADA! Robô parado.")
             
-            # publica a string para o C++
-            status_msg = String()
-            status_msg.data = tag_name_pddl
+            status_msg = Bool()
+            status_msg.data = True
             self.status_pub.publish(status_msg)
-            self.vision_active = False
+            
+            self.vision_active = False 
+            self.state = "IDLE"
+
+            self.last_vision_usage = self.get_clock().now().nanoseconds / 1e9
             
             return True
 
@@ -302,9 +309,7 @@ class VisionNode(Node):
         if not aligned_z:
             cmd.linear.x = float(np.clip(k_z * erro_z, -max_speed, max_speed))
 
-        self.cube_aligned = False
-
-        self.get_logger().info(f"Alinhando Tag {tag_id} -> CmdVel: vx={cmd.linear.x:.2f}, vy={cmd.linear.y:.2f}")
+        self.get_logger().info(f"Alinhando Tag {tag_id} -> CmdVel: vx={cmd.linear.x:.2f}, vy={cmd.linear.y:.2f}", throttle_duration_sec=0.2)
         self.cmd_vel_pub.publish(cmd)
         
     def render_preview(self, image, detection, tag_id, x, y, z):
@@ -331,7 +336,6 @@ class VisionNode(Node):
     def render_container_preview(self, image, contorno, cor, centro):
         x, y, w, h = contorno
         cx, cy = centro
-
         cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
         cv2.circle(image, centro, 5, (0, 0, 255), -1)
         cv2.putText(image, f"Centro: ({cx}, {cy}) px", (x, max(20, y - 10)), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 3)

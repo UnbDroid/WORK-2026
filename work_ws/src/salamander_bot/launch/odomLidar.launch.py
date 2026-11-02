@@ -58,6 +58,12 @@ def generate_launch_description():
                 PythonLaunchDescriptionSource(
                     os.path.join(rf2o_share, 'launch', 'rf2o_laser_odometry.launch.py')
                 ),
+                # ADICIONADO: Passando os frames exatos do robô para o rf2o
+                launch_arguments={
+                    'laser_frame_id': 'rplidar_a1m8_1',
+                    'base_frame_id': 'base_link',
+                    'odom_frame_id': 'odom'
+                }.items()
             )
         ]
     )

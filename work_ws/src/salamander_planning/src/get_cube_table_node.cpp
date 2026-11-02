@@ -18,17 +18,18 @@ public:
   }
 protected:
   void do_work() override {
+    std::string target_table = get_arguments()[0];
     if (!command_sent_) {
       std_msgs::msg::String cmd_msg;
-      cmd_msg.data = "get_cube_table";
+      cmd_msg.data = "get_cube_table_" + target_table;
       cmd_pub_->publish(cmd_msg);
       command_sent_ = true;
       arm_finished_ = false;
-      send_feedback(0.0, "Acionando braço para pegar na mesa...");
+      send_feedback(0.0, "Acionando braço para pegar na mesa..." + target_table);
     }
     if (arm_finished_) {
       command_sent_ = false;
-      finish(true, 1.0, "Cubo recolhido da mesa.");
+      finish(true, 1.0, "Cubo recolhido da mesa." + target_table);
     }
   }
 private:

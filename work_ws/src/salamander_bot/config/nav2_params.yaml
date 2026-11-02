@@ -114,7 +114,7 @@ controller_server:
       stateful: True
       plugin: "nav2_controller::SimpleGoalChecker"
       xy_goal_tolerance: 0.25
-      yaw_goal_tolerance: 0.38
+      yaw_goal_tolerance: 0.45
 
     # MPPI CONTROLLER CONFIGURADO PARA MECANUM
     FollowPath:
@@ -196,7 +196,7 @@ controller_server:
       GoalAngleCritic:
         enabled: true
         cost_power: 1
-        cost_weight: 4.7 #aumentei um pouco.
+        cost_weight: 5.0 #aumentei um pouco.
         threshold_to_consider: 0.7
       #plugin que incentiva o robô a se mover para frente sempre que possível, penalizando movimentos de ré e movimentos laterais desnecessários. (importante)
       PreferForwardCritic:

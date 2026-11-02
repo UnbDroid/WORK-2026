@@ -24,7 +24,7 @@ protected:
 
     if (!command_sent_) {
       std_msgs::msg::String cmd_msg;
-      cmd_msg.data = "put_cube_table";
+      cmd_msg.data = "put_cube_table_" + target_table;
       cmd_pub_->publish(cmd_msg);
       command_sent_ = true;
       arm_finished_ = false;

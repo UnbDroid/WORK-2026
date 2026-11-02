@@ -1,31 +1,30 @@
 import os
 
-# Importa utilitários do ROS 2 para gerenciar pacotes instalados
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, GroupAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
-from launch_ros.actions import Node
+from launch_ros.actions import SetRemap
 
 def generate_launch_description():
-    # Pega o diretório de instalação (share) do seu pacote de simulação do robô
     salamander_dir = get_package_share_directory('salamander_bot')
+    nav2_bringup_dir = get_package_share_directory('nav2_bringup') 
     
-    # Configurações de argumentos locais
     use_sim_time = LaunchConfiguration('use_sim_time')
     map_yaml_file = LaunchConfiguration('map')
     params_file = LaunchConfiguration('params_file')
 
-    # Caminho padrão para os parâmetros 
     default_params_path = os.path.join(salamander_dir, 'config', 'nav2_params.yaml')
-    default_map_path = os.path.join(salamander_dir, 'maps', 'sala.yaml')
+    default_map_path = os.path.join(salamander_dir, 'config', 'map_BTT.yaml')
 
-    # Declara os argumentos de inicialização que o terminal aceitará
     declare_use_sim_time_cmd = DeclareLaunchArgument(
         'use_sim_time', default_value='false',
         description='Use simulation (Gazebo) clock if true')
 
+    declare_map_yaml_cmd = DeclareLaunchArgument(
+        'map', default_value=default_map_path,
+        description='Full path to map yaml file to load')
 
     declare_params_file_cmd = DeclareLaunchArgument(
         'params_file', default_value=default_params_path,
@@ -41,29 +40,29 @@ def generate_launch_description():
         }.items()
     )
 
-    slam_toolbox_share = get_package_share_directory('slam_toolbox')
-    slam_toolbox_launch_path = os.path.join(
-            slam_toolbox_share,
-            'launch',
-            'localization_launch.py'
-        )
-    slam_localization = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource(slam_toolbox_launch_path),
+    # Usa o AMCL e o Map Server do Nav2
+    amcl_launch_path = os.path.join(nav2_bringup_dir, 'launch', 'localization_launch.py')
+    run_amcl_localization = GroupAction(
+        actions=[
+            SetRemap(src='/scan', dst='/scan_filtered'),
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(amcl_launch_path),
                 launch_arguments={
-                    'slam_params_file': os.path.join(salamander_dir, 'config', 'slam_toolbox_localization.yaml'),
+                    'map': map_yaml_file,
                     'use_sim_time': use_sim_time,
+                    'params_file': params_file,
+                    'autostart': 'true'
                 }.items()
             )
+        ]
+    )
 
-    # Cria a descrição de lançamento mestre que agrupa todas as ações criadas acima
     ld = LaunchDescription()
 
-
     ld.add_action(declare_use_sim_time_cmd)
+    ld.add_action(declare_map_yaml_cmd)
     ld.add_action(declare_params_file_cmd)
     
-    
-    # Inicializa todos os servidores de navegação (MPPI Controller, Planner, Behaviors, etc.)
+    ld.add_action(run_amcl_localization)
     ld.add_action(run_navigation_stack)
-    ld.add_action(slam_localization)
     return ld
