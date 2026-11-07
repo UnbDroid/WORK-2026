@@ -238,8 +238,8 @@ class VisionNode(Node):
 
             self.container_coord_pub.publish(container_msg)
  
-        cv2.imshow("Deteccao de Cubos - UnbDroid", display_frame)
-        cv2.waitKey(1)
+        #cv2.imshow("Deteccao de Cubos - UnbDroid", display_frame)
+        #cv2.waitKey(1)
 
     def color_detection(self, roi, cor= "red"):
         hsv_frame = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)

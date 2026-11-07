@@ -3,8 +3,8 @@
     waypoints: ["start", "w1", "w2", "w3", "finish"]
     
     # [X, Y, Yaw_em_radianos]
-    start_coords: [-0.042, 0.008, -0.017]
-    w1_coords: [1.70, 0.18, 0.0]             # Frente (0 radianos)
-    w2_coords: [0.80, -1.37, -1.571]         # 90° para a direita (-PI/2)
-    w3_coords: [0.28, -0.73, 3.142]          # 180° (PI)
-    finish_coords: [-0.042, 0.008, -0.017]
+    start_coords: [-0.10, 0.05, -0.017]
+    w1_coords: [1.29, 0.10, 0.0]             # Frente (0 radianos)
+    w2_coords: [1.13, -0.81, -1.571]         # 90° para a direita (-PI/2), 0.83 -> 1.23 (pra frente); -0.91 -> -0.81 (pra esquerda)
+    w3_coords: [-0.37, -0.42, 3.142]         # 180° (PI), -0.33 -> -0.10 (pra frente); -0.42 -> -0.32 (pra esquerda)
+    finish_coords: [-0.10, 0.05, -0.017]

@@ -38,13 +38,13 @@ class ControlNode(Node):
             'pre_slot2': [-0.373852, -0.042785, 0.32207],
             'pre_slot3': [-0.356977, -0.143785, 0.32207],
 
-            'put_slot1': [-0.370988, 0.060215, 0.154674],
-            'put_slot2': [-0.373852, -0.042785, 0.154674],
-            'put_slot3': [-0.356977, -0.143785, 0.15074],
+            'put_slot1': [-0.370988, 0.060215, 0.164674],
+            'put_slot2': [-0.373852, -0.042785, 0.164674],
+            'put_slot3': [-0.356977, -0.143785, 0.16074],
 
-            'get_slot1': [-0.370988, 0.060215, 0.1407],
-            'get_slot2': [-0.373852, -0.042785, 0.1407],
-            'get_slot3': [-0.356977, -0.143785, 0.14074],
+            'get_slot1': [-0.370988, 0.060215, 0.1527],
+            'get_slot2': [-0.373852, -0.042785, 0.1527],
+            'get_slot3': [-0.356977, -0.143785, 0.15274],
 
             'pre_drop_cube_1': [0.3324,  0.15, 0.3228],
             'pre_drop_cube_2': [0.3324,  0.00, 0.3228],
@@ -67,9 +67,9 @@ class ControlNode(Node):
         
         # Mapeia qual mesa do PDDL representa qual altura no mundo real
         self.height_map = {
-            'w1': '15',
-            'w2': '15',
-            'w3': '10'
+            'w1': '10',
+            'w2': '5',
+            'w3': '15'
         }
         
         self.get_logger().info("Control Node do Braço aguardando comandos do PlanSys2...")
@@ -107,9 +107,7 @@ class ControlNode(Node):
             
             self.get_logger().info(f"Pegando cubo na mesa {workspace} (Altura: {h}cm)")
             self.publish_gripper(True) 
-            time.sleep(1.0)
-            self.publish_target_coordinates('shelf') 
-            time.sleep(5.0)
+            time.sleep(3.0)
             self.publish_target_coordinates(target_name)
             time.sleep(5.0)
             self.publish_gripper(False) 
@@ -124,7 +122,7 @@ class ControlNode(Node):
             pre_slot_name = "pre_" + base_slot # Monta 'pre_slot1'
             
             self.publish_target_coordinates(pre_slot_name) 
-            time.sleep(5.0)
+            time.sleep(4.0)
             self.publish_target_coordinates(command)
             time.sleep(4.0)
             self.publish_gripper(True) 
@@ -133,19 +131,17 @@ class ControlNode(Node):
             time.sleep(4.0)
             self.publish_target_coordinates('pre_initial') 
             time.sleep(4.0)
-            self.publish_target_coordinates('initial') 
-            time.sleep(5.0)
             self.publish_target_coordinates('zero') 
             time.sleep(5.0)
 
             # --- DAR RÉ PARA RECUPERAR A VISÃO ---
             self.get_logger().info("Dando ré de 20cm...")
             cmd = Twist()
-            cmd.linear.x = -0.20
+            cmd.linear.x = -0.10
             
             # Publica o comando continuamente para evitar o corte de segurança do motor
             start_time = time.time()
-            duration = 1.0  # 1.0s a 0.20 m/s = 0.20m (20cm)
+            duration = 2.0  # 1.0s a 0.20 m/s = 0.20m (20cm)
             
             while (time.time() - start_time) < duration:
                 self.cmd_vel_pub.publish(cmd)
@@ -165,14 +161,14 @@ class ControlNode(Node):
                 return
 
             target_name = f'drop_cube_{h}_{self.drop_counter}'
-            pre_target_name = f'pre_drop_cube_{h}'
+            pre_target_name = f'pre_drop_cube_{self.drop_counter}'
             
             self.get_logger().info(f"Soltando cubo na mesa {workspace} (Altura: {h}cm)")
                     
             self.publish_target_coordinates('shelf') 
-            time.sleep(5.0)
-            self.publish_target_coordinates(target_name) # Desce na altura certa
             time.sleep(4.0)
+            self.publish_target_coordinates(target_name) # Desce na altura certa
+            time.sleep(3.0)
             self.publish_gripper(True) # Solta o cubo
             time.sleep(2.0)
             self.publish_target_coordinates(pre_target_name) # Sobe para a altura de segurança
@@ -191,19 +187,17 @@ class ControlNode(Node):
             self.publish_target_coordinates(pre_slot_name)
             time.sleep(4.0)
             self.publish_target_coordinates(command) # <--- USE O COMMAND AQUI! ('get_slot1')
-            time.sleep(4.0)
+            time.sleep(3.0)
             self.publish_gripper(False) 
             time.sleep(2.0)
             self.publish_target_coordinates(pre_slot_name) 
             time.sleep(4.0)
             self.publish_target_coordinates('pre_initial')
-            time.sleep(4.0)
-            self.publish_target_coordinates('zero') 
-            time.sleep(4.0)
+            time.sleep(3.0)
 
         elif command == "reset_arm":
             self.publish_target_coordinates('pre_initial')
-            time.sleep(4.0)
+            time.sleep(3.0)
             self.publish_target_coordinates('initial')
             time.sleep(3.0)
             self.publish_gripper(True) 
