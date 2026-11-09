@@ -1,4 +1,3 @@
-
 import os
 
 from ament_index_python.packages import get_package_share_directory
@@ -28,7 +27,6 @@ def generate_launch_description():
         )
     )
 
-
     move_action_node = Node(
         package='salamander_planning',
         executable='move_action_node',
@@ -43,6 +41,25 @@ def generate_launch_description():
         parameters=[cenario_file],
     )
 
+    align_container_node = Node(
+        package='salamander_planning',
+        executable='align_container_node',
+        name='align_container_node',
+        parameters=[cenario_file],
+    )
+
+    stack_cube_base = Node(
+        package='salamander_planning',
+        executable='stack_cube_base_node',
+        name='stack_cube_base_node',
+    )
+
+    stack_cube_top = Node(
+        package='salamander_planning',
+        executable='stack_cube_top_node',
+        name='stack_cube_top_node',
+    )
+
     vision_node = Node(
         package='robot_vision',
         executable='vision_node',
@@ -54,13 +71,6 @@ def generate_launch_description():
         executable='control_node',
         name='control_node',
     )
-
-    '''publish_arm_target = ExecuteProcess(
-        cmd=['ros2', 'topic', 'pub', '--once', '-w', '1',
-            '/arm_coordinates', 'geometry_msgs/msg/Point',
-            '{x: -0.291334, y: 0.0, z: 0.2075}'],
-        output='screen',
-    )'''
 
     get_cube_table = Node(
         package='salamander_planning',
@@ -102,6 +112,9 @@ def generate_launch_description():
         plansys2_launch,
         move_action_node,
         align_action_node,
+        align_container_node,
+        stack_cube_base,
+        stack_cube_top,
         vision_node,
         arm_control,
         get_cube_table,
@@ -110,5 +123,4 @@ def generate_launch_description():
         put_cube_slot,
         reset,
         zero_position
-        #publish_arm_target
     ])

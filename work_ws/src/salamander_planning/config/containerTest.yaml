@@ -1,0 +1,8 @@
+/**:
+  ros__parameters:
+    waypoints: ["start", "w1", "finish"]
+
+    # [X, Y, Yaw_em_radianos]
+    start_coords:  [0.0, 0.0, 0.0]
+    w1_coords: [0.6716, -0.2442, 0.0]   # [x, y, yaw]
+    finish_coords: [0.0, 0.0, 0.0]

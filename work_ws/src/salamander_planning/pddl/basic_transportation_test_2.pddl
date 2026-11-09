@@ -40,11 +40,11 @@
     (cube-at cubo4 w3)
     (cube-at cubo5 w4)
     
-    (cube-tag cubo1 tag1)
-    (cube-tag cubo2 tag2)
-    (cube-tag cubo3 tag3)
-    (cube-tag cubo4 tag4)
-    (cube-tag cubo5 tag5)
+    (tag_cube cubo1 tag1)
+    (tag_cube cubo2 tag2)
+    (tag_cube cubo3 tag3)
+    (tag_cube cubo4 tag4)
+    (tag_cube cubo5 tag5)
     
     (free cubo1)
     (free cubo2)
