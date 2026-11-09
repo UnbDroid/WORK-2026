@@ -14,6 +14,7 @@ find_package(nav2_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(lifecycle_msgs REQUIRED)
 
 # Declara o nó C++ e vincula as bibliotecas necessárias
 add_executable(move_action_node src/move_action_node.cpp)
@@ -33,8 +34,14 @@ ament_target_dependencies(put_cube_slot_node rclcpp plansys2_executor std_msgs)
 add_executable(put_cube_table_node src/put_cube_table_node.cpp)
 ament_target_dependencies(put_cube_table_node rclcpp plansys2_executor std_msgs)
 
+add_executable(align_container_node src/align_container_node.cpp)
+ament_target_dependencies(align_container_node rclcpp plansys2_executor std_msgs lifecycle_msgs)
+
 add_executable(get_cube_slot_node src/get_cube_slot_node.cpp)
 ament_target_dependencies(get_cube_slot_node rclcpp plansys2_executor std_msgs)
+
+add_executable(put_cube_container_node src/put_cube_container_node.cpp)
+ament_target_dependencies(put_cube_container_node rclcpp plansys2_executor std_msgs)
 
 add_executable(reset_arm_node src/reset_arm_node.cpp)
 ament_target_dependencies(reset_arm_node rclcpp plansys2_executor std_msgs)
@@ -49,6 +56,8 @@ install(TARGETS
   put_cube_slot_node
   reset_arm_node
   put_cube_table_node
+  align_container_node
+  put_cube_container_node
   get_cube_slot_node
   zero_position_node
   DESTINATION lib/${PROJECT_NAME}
