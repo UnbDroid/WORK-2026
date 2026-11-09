@@ -6,7 +6,6 @@
     cube
     tag
     slot
-    height
   )
 
   (:predicates
@@ -19,7 +18,6 @@
     (vision-ready)
 
     (cube-at ?c - cube ?w - workspace)
-    (cube-tag ?c - cube ?t - tag)
     (free ?c - cube)
 
     (empty-slot ?s - slot)
@@ -33,13 +31,14 @@
 
     (precision-slot ?t - tag ?w - workspace)
     (stacking-area ?w - workspace)
-    (on-top ?c-top - cube ?c-bottom - cube)
-    (cube-height ?c - cube ?h - height)
-    (next-height ?h1 - height ?h2 - height)
 
     (base-free)
-    
     (target ?c - cube ?w - workspace)
+
+    (tag_desk ?w - workspace ?t - tag)   ;; Qual tag representa a mesa
+    (tag_cube ?c - cube ?t - tag)        ;; Qual tag representa o cubo
+    (cube_at_stack_base ?c - cube ?w - workspace) ;; Cubo colocado como base
+    (cube_stacked ?c_top - cube ?c_base - cube ?w - workspace) ;; Empilhamento
   )
 
   (:action move
@@ -74,14 +73,11 @@
     :effect (and (container-found ?w))
   )
 
-  (:action align_to_cube
-    :parameters (?w - workspace ?c - cube ?t - tag)
+  (:action align_tag
+    :parameters (?w - workspace ?t - tag)
     :precondition (and 
       (robot-at ?w) 
-      (cube-at ?c ?w) 
-      (cube-tag ?c ?t)
-      (base-free)
-      (arm-empty)
+      (arm-empty) 
       (vision-ready)
     )
     :effect (and 
@@ -90,19 +86,12 @@
     )
   )
 
-  (:action align-tag
-    :parameters (?w - workspace ?t - tag)
-    :precondition (and (robot-at ?w) (arm-empty) (tag-found ?t ?w))
-    :effect (and (aligned-tag ?t ?w))
-  )
-
   (:action align-container
     :parameters (?w - workspace)
     :precondition (and (robot-at ?w) (container-found ?w))
     :effect (and (container-aligned ?w))
   )
 
-  ;; o robô  tira o cubo se estiver na mesa certa
   (:action get_cube_slot
     :parameters (?c - cube ?s - slot ?w - workspace)
     :precondition (and
@@ -186,28 +175,46 @@
     )
   )
 
-  (:action put-cube-pile
-    :parameters (?w - workspace ?c-held - cube ?c-base - cube ?t-base - tag ?alt-base - height ?alt-new - height)
+  
+  ;; colocar a base usando a Tag de referência da Mesa
+  (:action stack_cube_base
+    :parameters (?w - workspace ?c - cube ?t_desk - tag)
     :precondition (and
       (robot-at ?w)
       (stacking-area ?w)
-      (holding ?c-held)
-      (aligned-tag ?t-base ?w)
-      (cube-tag ?c-base ?t-base)
-      (cube-at ?c-base ?w)
-      (free ?c-base)
-      (cube-height ?c-base ?alt-base)
-      (next-height ?alt-base ?alt-new)
+      (holding ?c)
+      (tag_desk ?w ?t_desk)      ;; Mesa é dona desta tag
+      (aligned-tag ?t_desk ?w)   ;; Robô alinhado com a tag da mesa
       (vision-ready)
     )
     :effect (and
-      (not (holding ?c-held))
+      (not (holding ?c))
       (arm-empty)
-      (cube-at ?c-held ?w)
-      (on-top ?c-held ?c-base)
-      (not (free ?c-base))
-      (free ?c-held)
-      (cube-height ?c-held ?alt-new)
+      (cube-at ?c ?w)
+      (cube_at_stack_base ?c ?w) ;; Registra que este cubo agora é a base
+      (free ?c)                  
+      (not (vision-ready))
+      (arm-folded)
+    )
+  )
+
+  ;; empilhar no topo
+  (:action stack_cube_top
+    :parameters (?w - workspace ?c_top - cube ?c_base - cube ?t_base - tag)
+    :precondition (and
+      (robot-at ?w)
+      (stacking-area ?w)
+      (holding ?c_top)
+      (cube_at_stack_base ?c_base ?w) ;; O cubo base precisa estar lá
+      (tag_cube ?c_base ?t_base)      ;; Descobre a tag do cubo base
+      (aligned-tag ?t_base ?w)        ;; Robô alinhado com a tag do cubo base
+      (vision-ready)
+    )
+    :effect (and
+      (not (holding ?c_top))
+      (arm-empty)
+      (cube-at ?c_top ?w)
+      (cube_stacked ?c_top ?c_base ?w)
       (not (vision-ready))
       (arm-folded)
     )
@@ -219,7 +226,7 @@
       (robot-at ?w)
       (arm-empty)
       (aligned-tag ?t ?w)
-      (cube-tag ?c ?t)
+      (tag_cube ?c ?t)
       (cube-at ?c ?w)
       (free ?c)
       (vision-ready)
