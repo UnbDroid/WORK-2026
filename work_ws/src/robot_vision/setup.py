@@ -19,12 +19,13 @@ setup(
     license='TODO: License declaration',
     extras_require={
         'test': [
-            'pytest',
+            'pytest',   
         ],
     },
     entry_points={
         'console_scripts': [
-            "vision_node = robot_vision.vision_node:main"
+            "vision_node = robot_vision.vision_node:main",
+            "trackbar = robot_vision.trackbar:main"
         ],
     },
 )

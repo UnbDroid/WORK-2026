@@ -7,6 +7,7 @@
     tag
     slot
     height
+    container
   )
 
   (:predicates
@@ -26,12 +27,17 @@
     (at-slot ?c - cube ?s - slot)
 
     (tag-found ?t - tag ?w - workspace)
-    (container-found ?w - workspace)
+    (container-found ?k - container)
     
     (aligned-tag ?t - tag ?w - workspace)
-    (container-aligned ?w - workspace)
+    (container-aligned ?k - container)
+  
+    (container-at ?k - container ?w - workspace)
+    (target-container ?c - cube ?k - container)
+    (cube-in ?c - cube ?k - container)
 
     (precision-slot ?t - tag ?w - workspace)
+    (target-slot ?c - cube ?s - slot)
     (stacking-area ?w - workspace)
     (on-top ?c-top - cube ?c-bottom - cube)
     (cube-height ?c - cube ?h - height)
@@ -68,12 +74,6 @@
     :effect (and (not (vision-ready)) (arm-folded))
   )
 
-  (:action find-container
-    :parameters (?w - workspace)
-    :precondition (robot-at ?w)
-    :effect (and (container-found ?w))
-  )
-
   (:action align_to_cube
     :parameters (?w - workspace ?c - cube ?t - tag)
     :precondition (and 
@@ -96,10 +96,25 @@
     :effect (and (aligned-tag ?t ?w))
   )
 
+  (:action find-container
+  :parameters (?w - workspace ?k - container)
+  :precondition (and 
+    (robot-at ?w) 
+    (container-at ?k ?w)
+    (vision-ready)
+  )
+  :effect (container-found ?k)
+  )
+
   (:action align-container
-    :parameters (?w - workspace)
-    :precondition (and (robot-at ?w) (container-found ?w))
-    :effect (and (container-aligned ?w))
+    :parameters (?w - workspace ?c - cube ?k - container)
+    :precondition (and
+      (robot-at ?w)
+      (holding ?c)
+      (container-at ?k ?w)
+      (target-container ?c ?k)
+      (vision-ready))
+    :effect (and (container-aligned ?k))
   )
 
   ;; o robô  tira o cubo se estiver na mesa certa
@@ -140,20 +155,21 @@
   )
 
   (:action put-cube-container
-    :parameters (?w - workspace ?c - cube)
+    :parameters (?w - workspace ?c - cube ?k - container)
     :precondition (and
       (robot-at ?w)
       (holding ?c)
-      (container-aligned ?w)
-      (vision-ready)
-    )
+      (container-at ?k ?w)
+      (container-aligned ?k)
+      (target-container ?c ?k)
+      (vision-ready))
     :effect (and
       (not (holding ?c))
       (arm-empty)
-      (cube-at ?c ?w)
+      (cube-in ?c ?k)
+      (not (container-aligned ?k))
       (not (vision-ready))
-      (arm-folded)
-    )
+      (arm-folded))
   )
 
   (:action put-cube-shelf
@@ -252,4 +268,19 @@
       (vision-ready)
     )
   )
+
+  ;(:action cube_realoc
+  ;  :parameters (?c - cube ?w - workspace ?t - tag)
+  ;  :precondition (and
+  ;    (robot-at ?w)
+  ;    (empty-slot ?s)
+  ;    (precision-slot ?t ?w)
+  ;  )
+  ;  :effect (and
+  ;    (not (empty-slot ?s))
+  ;    (not (precision-slot ?t ?w))
+  ;    (holding ?c)
+  ;    (vision-ready)
+  ;  )
+  ;)
 )

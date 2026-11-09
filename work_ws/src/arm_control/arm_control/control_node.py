@@ -31,7 +31,9 @@ class ControlNode(Node):
             'pre_initial': [-0.291334, 0.0, 0.32207],
             'zero': [0.378666, 0.00, 0.2075],
             'get_cube_15':  [0.348748, 0.0, 0.085718],
+            
             'get_cube_10':  [0.3324, 0.0, 0.0697],
+
             'get_cube_5': [0.307641, 0.0, 0.021291],
             'teste_cube':  [0.3324, 0.00, 0.0497],
             'pre_slot1': [-0.370988,  0.060215, 0.32207],
@@ -61,6 +63,9 @@ class ControlNode(Node):
             'drop_cube_5_1': [0.307641, 0.15, 0.021291],
             'drop_cube_5_2': [0.307641, 0.0, 0.031291],
             'drop_cube_5_3': [0.307641, -0.15, 0.021291],
+
+            'pre_drop_container': [0.3324, 0.00, 0.3228],
+            'drop_container': [0.3324, 0.00, 0.1027],
 
             'shelf': [0.3003, 0.00, 0.4228]
         }
@@ -176,6 +181,22 @@ class ControlNode(Node):
             self.publish_target_coordinates('pre_initial') # Recolhe
             time.sleep(4.0)
             self.publish_target_coordinates('initial') # Volta para posição inicial
+            time.sleep(5.0)
+
+        elif command.startswith("put_cube_container"):
+            self.get_logger().info("Soltando cubo no contêiner")
+
+            self.publish_target_coordinates('pre_drop_container')
+            time.sleep(5.0)
+            self.publish_target_coordinates('drop_container')   # desce sobre o contêiner
+            time.sleep(4.0)
+            self.publish_gripper(True)                          # solta o cubo
+            time.sleep(2.0)
+            self.publish_target_coordinates('pre_drop_container')  # sobe antes de recolher
+            time.sleep(4.0)
+            self.publish_target_coordinates('pre_initial')
+            time.sleep(4.0)
+            self.publish_target_coordinates('initial')          # termina dobrado
             time.sleep(5.0)
 
         elif command.startswith("get_slot"):
