@@ -49,6 +49,12 @@ ament_target_dependencies(reset_arm_node rclcpp plansys2_executor std_msgs)
 add_executable(zero_position_node src/zero_position_node.cpp)
 ament_target_dependencies(zero_position_node rclcpp plansys2_executor std_msgs)
 
+add_executable(stack_cube_base_node src/stack_cube_base.cpp)
+ament_target_dependencies(stack_cube_base_node rclcpp plansys2_executor std_msgs)
+
+add_executable(stack_cube_top_node src/stack_cube_top.cpp)
+ament_target_dependencies(stack_cube_top_node rclcpp plansys2_executor std_msgs)
+
 install(TARGETS
   move_action_node
   align_action_node
@@ -60,6 +66,8 @@ install(TARGETS
   put_cube_container_node
   get_cube_slot_node
   zero_position_node
+  stack_cube_base_node
+  stack_cube_top_node
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -68,4 +76,3 @@ install(DIRECTORY pddl launch config
 )
 
 ament_package()
-# ----------------------------------------------

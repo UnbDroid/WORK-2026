@@ -67,6 +67,18 @@ class ControlNode(Node):
             'pre_drop_container': [0.3324, 0.00, 0.3228],
             'drop_container': [0.3324, 0.00, 0.1027],
 
+            'pre_stack_15': [0.398370, 0.00, 0.3228],
+            'pre_stack_10': [0.3324, 0.00, 0.3228],
+            'pre_stack_5':  [0.307641, 0.00, 0.3228],
+
+            'stack_base_15': [0.398370, 0.00, 0.082018],
+            'stack_base_10': [0.3324, 0.00, 0.0777],
+            'stack_base_5':  [0.307641, 0.00, 0.031291],
+
+            'stack_top_15': [0.398370, 0.00, 0.124018], # Base Z + 0.042 (altura do cubo ATTC)
+            'stack_top_10': [0.3324, 0.00, 0.1197],     # Base Z + 0.042
+            'stack_top_5':  [0.307641, 0.00, 0.073291], # Base Z + 0.042
+
             'shelf': [0.3003, 0.00, 0.4228]
         }
         
@@ -104,7 +116,6 @@ class ControlNode(Node):
     def execute_sequence(self, command):
         self.get_logger().info(f"Iniciando coreografia: {command}")
         
-        # Agora é startswith porque a string chega como "get_cube_table_w1"
         if command.startswith("get_cube_table"):
             workspace = command.split("_")[-1] # Extrai 'w1'
             h = self.height_map.get(workspace, '10') # Pega a altura. Se não achar, usa 10cm por segurança
@@ -207,7 +218,7 @@ class ControlNode(Node):
             time.sleep(1.0)
             self.publish_target_coordinates(pre_slot_name)
             time.sleep(4.0)
-            self.publish_target_coordinates(command) # <--- USE O COMMAND AQUI! ('get_slot1')
+            self.publish_target_coordinates(command)
             time.sleep(3.0)
             self.publish_gripper(False) 
             time.sleep(2.0)
@@ -215,6 +226,52 @@ class ControlNode(Node):
             time.sleep(4.0)
             self.publish_target_coordinates('pre_initial')
             time.sleep(3.0)
+
+        elif command.startswith("PLACE_BASE"):
+            # O comando vem como "PLACE_BASE_w1" do nó de ação
+            workspace = command.split("_")[-1] 
+            h = self.height_map.get(workspace, '10') 
+            
+            target_name = f'stack_base_{h}'
+            pre_target_name = f'pre_stack_{h}'
+            
+            self.get_logger().info(f"Soltando cubo BASE na mesa {workspace} (Altura: {h}cm)")
+                    
+            self.publish_target_coordinates('shelf') 
+            time.sleep(4.0)
+            self.publish_target_coordinates(target_name)
+            time.sleep(3.0)
+            self.publish_gripper(True)
+            time.sleep(2.0)
+            self.publish_target_coordinates(pre_target_name)
+            time.sleep(4.0)
+            self.publish_target_coordinates('pre_initial')
+            time.sleep(4.0)
+            self.publish_target_coordinates('initial')
+            time.sleep(5.0)
+
+        elif command.startswith("PLACE_TOP_OFFSET"):
+            # O comando vem como "PLACE_TOP_OFFSET_w1" do nó de ação
+            workspace = command.split("_")[-1] 
+            h = self.height_map.get(workspace, '10') 
+            
+            target_name = f'stack_top_{h}'
+            pre_target_name = f'pre_stack_{h}'
+            
+            self.get_logger().info(f"Soltando cubo TOPO na mesa {workspace} (Altura: {h}cm + 42mm)")
+                    
+            self.publish_target_coordinates('shelf') 
+            time.sleep(4.0)
+            self.publish_target_coordinates(target_name)
+            time.sleep(3.0)
+            self.publish_gripper(True)
+            time.sleep(2.0)
+            self.publish_target_coordinates(pre_target_name)
+            time.sleep(4.0)
+            self.publish_target_coordinates('pre_initial')
+            time.sleep(4.0)
+            self.publish_target_coordinates('initial')
+            time.sleep(5.0)
 
         elif command == "reset_arm":
             self.publish_target_coordinates('pre_initial')
