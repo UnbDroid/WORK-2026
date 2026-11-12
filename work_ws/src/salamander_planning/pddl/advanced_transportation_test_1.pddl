@@ -6,7 +6,7 @@
     cubo1 cubo2 cubo3 cubo4 cubo5 cubo6 - cube
     tag1 tag2 tag3 tag4 tag5 tag6 - tag
     slot1 slot2 slot3 - slot
-    container-red container-blue - container
+    container-blue - container
   )
 
   (:init
@@ -40,16 +40,15 @@
     (target cubo1 w1)
     (target cubo2 w1)
 
-    (container-at container-red w1)
     (container-at container-blue w1)
 
     (target-container cubo1 container-blue)
-    (target-container cubo2 container-red)
+    (target-container cubo2 container-blue)
   )
 
   (:goal (and
     (cube-in cubo1 container-blue)
-    (cube-in cubo2 container-red)
+    (cube-in cubo2 container-blue)
     (robot-at finish)
     )
   )

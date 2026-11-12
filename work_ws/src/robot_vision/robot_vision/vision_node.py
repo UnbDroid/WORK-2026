@@ -81,14 +81,17 @@ class VisionNode(Node):
         self.fx, self.fy = 500.0, 500.0
         self.cx0, self.cy0 = 320.0, 240.0
         self.container_long_side = 0.160   # m (dimensão externa maior)
+        self.hits = 0
+        self.prev_c = None
 
         self.red_lower = np.array([136, 87, 111], np.uint8)
         self.red_upper = np.array([180, 255, 255], np.uint8)
         self.red_lower2 = np.array([170, self.red_lower[1], self.red_lower[2]], np.uint8)
         self.red_upper2 = np.array([179, self.red_upper[1], self.red_upper[2]], np.uint8)
-        
-        self.blue_lower = np.array([23, 150, 100], np.uint8)
-        self.blue_upper = np.array([179, 255, 255], np.uint8)
+
+        self.blue_lower = np.array([87, 81, 100], np.uint8)
+        self.blue_upper = np.array([141, 255, 205], np.uint8)
+
 
 
         if not self.cap.isOpened():
@@ -271,6 +274,19 @@ class VisionNode(Node):
 
         if container is not None:
             x, y, w, h, cx, cy = container
+            if self.prev_c is not None \
+                    and abs(cx - self.prev_c[0]) < 25 and abs(cy - self.prev_c[1]) < 25:
+                self.hits += 1
+            else:
+                self.hits = 1
+            self.prev_c = (cx, cy)
+        else:
+            self.hits, self.prev_c = 0, None
+
+        confirmado = container is not None and self.hits >= 3
+
+        # --- alinhamento: só com detecção confirmada ---
+        if confirmado:
             xyz = self.container_pixels_to_xyz(w, h, cx, cy)
             if xyz is None:
                 return
@@ -289,13 +305,18 @@ class VisionNode(Node):
 
             self.alignment(-1, x_m, y_m, z_m, **self.profiles["container"])
 
+        # --- viu algo, mas ainda não confirmou: para e espera ---
+        elif container is not None and self.state == "SEARCHING":
+            self.cmd_vel_pub.publish(Twist())
+
+        # --- nada visto ---
         elif self.state == "SEARCHING":
             cmd.linear.y = 0.07
             self.cmd_vel_pub.publish(cmd)
+
         elif self.state == "ALIGNING" and (agora - self.last_seen) > self.lost_timeout:
             self.state = "SEARCHING"
             self.search_start_time = agora
-
 
 
     def container_pixels_to_xyz(self, w_px, h_px, cx_px, cy_px):
@@ -308,8 +329,6 @@ class VisionNode(Node):
         y = (cy_px - self.cy0) * z / self.fy
         return x, y, z
 
-
-    # TODO: Editar considerando que há momentos em nque vai detectar a tag, mas não vai alinhar (Caso não saiba a ordem dos cubos na precisão)
     def detect_tag(self, alvo, agora, display_frame, coord_msg, array_msg):
         # Achou a tag! Muda pro estado de alinhamento
         if self.state == "SEARCHING":
@@ -354,19 +373,18 @@ class VisionNode(Node):
             self.get_logger().info("Alinhando com o cubo. Depois tem q pegar")
             
             return True
-            #armazena, procura tag com cor = None, com tag igual e poe
         else:
             self.get_logger().info("Cubo não detectado na mesa de precisão.")
             return False
 
 
-    # TODO: Editar considerando que não vai ser necessário detectar cor na precisão, mas no container sim, alé de talvez precisar catalogar a cor do cubo pra colocar
-    def color_detection(self, roi, cor="None"):
+    def color_detection(self, roi, cor="None"): # ROI menor quando for detectar cor de cubo (TODO: testar valores)
         hsv_frame = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
 
         red_mask = cv2.bitwise_or(
             cv2.inRange(hsv_frame, self.red_lower, self.red_upper),
             cv2.inRange(hsv_frame, self.red_lower2, self.red_upper2))
+        
         blue_mask = cv2.inRange(hsv_frame, self.blue_lower, self.blue_upper)
 
         if cor == "red":
@@ -379,29 +397,16 @@ class VisionNode(Node):
         if cv2.countNonZero(mask) < 1000:
             return None
 
-        # editar para detecção de conteiner e detecçao de cubo
-
-        # Remove pequenos ruídos
+        # Reduz ruído
         kernel_open = np.ones((3, 3), np.uint8)
-        mask = cv2.morphologyEx(
-            mask, cv2.MORPH_OPEN, kernel_open
-        )
-
-        # Fecha pequenos espaços dentro da região detectada
+        mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel_open)
         kernel_close = np.ones((9, 9), np.uint8)
-        mask = cv2.morphologyEx(
-            mask, cv2.MORPH_CLOSE, kernel_close, iterations=2
-        )
+        mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel_close, iterations=2)
 
-        contours, _ = cv2.findContours(
-            mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
-        )
+        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
         # Filtra contornos pequenos
-        contours = [
-            c for c in contours
-            if cv2.contourArea(c) > 500
-        ]
+        contours = [c for c in contours if cv2.contourArea(c) > 1000]
 
         if len(contours) == 0:
             return None
@@ -409,7 +414,6 @@ class VisionNode(Node):
         # Seleciona o maior contorno
         contour = max(contours, key=cv2.contourArea)
 
-        # Calcula o retângulo delimitador
         x, y, w, h = cv2.boundingRect(contour)
 
         cx = x + w // 2
@@ -423,8 +427,6 @@ class VisionNode(Node):
         return x, y, w, h, cx, cy
 
 
-
-    # TODO: Editar função para cubo, mesa de precisão e container juntos
     def alignment(self, tag_id, x, y, z, target_z = 0.412, x_offset = 0.10):
         tol_x = 0.012
         tol_z = 0.03    
@@ -476,7 +478,6 @@ class VisionNode(Node):
         self.cmd_vel_pub.publish(cmd)
 
 
-    # TODO: Renderização  
     def render_preview(self, image, detection, tag_id, x, y, z):
         corners = detection.corners.astype(int)
         for i in range(4):
