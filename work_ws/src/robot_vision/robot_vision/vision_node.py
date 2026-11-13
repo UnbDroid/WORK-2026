@@ -44,7 +44,7 @@ class VisionNode(Node):
             "container": dict(target_z=0.30,  x_offset=0.0),    # calibrar com a caixa
         }
 
-        self.search_cube_enabled = False
+        #self.search_cube_enabled = False
 
         self.container_detection_enabled = False
         self.container_color = "blue"
@@ -89,9 +89,8 @@ class VisionNode(Node):
         self.red_lower2 = np.array([170, self.red_lower[1], self.red_lower[2]], np.uint8)
         self.red_upper2 = np.array([179, self.red_upper[1], self.red_upper[2]], np.uint8)
 
-        self.blue_lower = np.array([87, 81, 100], np.uint8)
-        self.blue_upper = np.array([141, 255, 205], np.uint8)
-
+        self.blue_lower = np.array([90, 117, 29], np.uint8)
+        self.blue_upper = np.array([130, 255, 184], np.uint8)
 
 
         if not self.cap.isOpened():
@@ -139,6 +138,8 @@ class VisionNode(Node):
         self.mode = mode
         self.vision_active = True
         self.cube_aligned = False
+        self.hits = 0
+        self.prev_c = None
         self.last_seen = self.get_clock().now().nanoseconds / 1e9
 
         if mode == "container":
@@ -219,54 +220,76 @@ class VisionNode(Node):
         if self.mode == "container":
             self.handle_container(frame, display_frame, agora)
         else:
-            self.handle_tag(frame, display_frame, agora)
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            detections = [] if self.cube_aligned else self.detector.detect(gray)
+            ids_vistos = [d.tag_id for d in detections]
+            self.get_logger().info(f"Tags no frame: {ids_vistos} | alvo atual: {self.current_target_id}", throttle_duration_sec=0.5)
+            
+            coord_msg = PointStamped()
+            coord_msg.header.stamp = self.get_clock().now().to_msg()
+            coord_msg.header.frame_id = "webcam_link"
+            
+            array_msg = CubeArray()
+            array_msg.header.stamp = self.get_clock().now().to_msg()
+            array_msg.header.frame_id = "webcam_link"
+    
+            alvo = next((det for det in detections if det.tag_id == self.current_target_id), None)
+    
+            if alvo is not None:
+                if self.state == "SEARCHING":
+                    self.state = "ALIGNING"
+                    # Congela o tempo que passamos buscando para podermos voltar depois
+                    self.time_spent_searching = agora - self.search_start_time
+                    self.get_logger().info(f"Tag {self.current_target_id} encontrada após {self.time_spent_searching:.2f}s! Iniciando alinhamento fino.")
+        
+                self.last_seen = agora
+        
+                tag_id = alvo.tag_id
+                camera_params = [500.0, 500.0, 320.0, 240.0] 
+                pose, _, _ = self.detector.detection_pose(
+                    alvo, camera_params, tag_size=self.tag_size
+                )
+        
+                x_m = pose[0][3] 
+                y_m = pose[1][3] 
+                z_m = pose[2][3] 
+                '''R = pose[:3, :3]
+                yaw = np.arctan2(R[1, 0], R[0, 0])'''
+        
+                coord_msg.point.x = float(x_m)
+                coord_msg.point.y = float(y_m)
+                coord_msg.point.z = float(z_m)
+                self.coord_pub.publish(coord_msg)
+        
+                cube_msg = Cube()
+                cube_msg.id = int(tag_id)
+                cube_msg.waypoint = "default"  
+                cube_msg.color = "cor"  
+                array_msg.cubes.append(cube_msg)
+        
+                self.render_preview(display_frame, alvo, tag_id, x_m, y_m, z_m)
+                self.alignment(tag_id, x_m, y_m, z_m, **self.profiles[self.mode])
+        
+    
+            elif self.state == "SEARCHING":
+                # Não achou a tag ainda, continua indo para a direita
+                cmd.linear.y = 0.07
+                self.cmd_vel_pub.publish(cmd)
+                self.get_logger().info("Buscando tag para a direita...", throttle_duration_sec=1.0)
+                
+            elif self.state == "ALIGNING":
+                perdido = self.last_seen is None or (agora - self.last_seen) > self.lost_timeout
+                if perdido:
+                    # Se perdeu durante o alinhamento, volta pra busca
+                    self.state = "SEARCHING"
+                    # Reativa o contador de tempo de busca a partir de onde parou
+                    self.search_start_time = agora - self.time_spent_searching
+                    self.get_logger().info("Alvo perdido durante alinhamento. Retomando busca para a direita...", throttle_duration_sec=1.0)
+    
 
         cv2.imshow("Deteccao de Cubos - UnbDroid", display_frame)
         cv2.waitKey(1)
         return
-
-    def handle_tag(self, frame, display_frame, agora):
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        detections = [] if self.cube_aligned else self.detector.detect(gray)
-        ids_vistos = [d.tag_id for d in detections]
-        self.get_logger().info(f"Tags no frame: {ids_vistos} | alvo atual: {self.current_target_id}", throttle_duration_sec=0.5)
-        
-        coord_msg = PointStamped()
-        coord_msg.header.stamp = self.get_clock().now().to_msg()
-        coord_msg.header.frame_id = "webcam_link"
-        
-        array_msg = CubeArray()
-        array_msg.header.stamp = self.get_clock().now().to_msg()
-        array_msg.header.frame_id = "webcam_link"
-
-        alvo = next((det for det in detections if det.tag_id == self.current_target_id), None)
-
-        cmd = Twist()  # Inicializa o comando de velocidade
-
-        # Só ativar na mesa de procura
-        if alvo is not None:
-            if self.search_cube_enabled:
-                self.detect_tag(alvo, agora, display_frame, coord_msg, array_msg)
-            '''elif self.precision_table_enabled:
-                self.get_logger().info("Entrou no caso da mesa de precisão")
-                cubo = self.precision_table(alvo, display_frame)
-                self.detect_tag(alvo, agora, display_frame, coord_msg, array_msg)'''
-                
-
-        elif self.state == "SEARCHING":
-            # Não achou a tag ainda, continua indo para a direita
-            cmd.linear.y = 0.07
-            self.cmd_vel_pub.publish(cmd)
-            self.get_logger().info("Buscando tag para a direita...", throttle_duration_sec=1.0)
-            
-        elif self.state == "ALIGNING":
-            perdido = self.last_seen is None or (agora - self.last_seen) > self.lost_timeout
-            if perdido:
-                # Se perdeu durante o alinhamento, volta pra busca
-                self.state = "SEARCHING"
-                # Reativa o contador de tempo de busca a partir de onde parou
-                self.search_start_time = agora - self.time_spent_searching
-                self.get_logger().info("Alvo perdido durante alinhamento. Retomando busca para a direita...", throttle_duration_sec=1.0)
 
     def handle_container(self, frame, display_frame, agora):
         cmd = Twist()
@@ -329,41 +352,6 @@ class VisionNode(Node):
         y = (cy_px - self.cy0) * z / self.fy
         return x, y, z
 
-    def detect_tag(self, alvo, agora, display_frame, coord_msg, array_msg):
-        # Achou a tag! Muda pro estado de alinhamento
-        if self.state == "SEARCHING":
-            self.state = "ALIGNING"
-            # Congela o tempo que passamos buscando para podermos voltar depois
-            self.time_spent_searching = agora - self.search_start_time
-            self.get_logger().info(f"Tag {self.current_target_id} encontrada após {self.time_spent_searching:.2f}s! Iniciando alinhamento fino.")
-
-        self.last_seen = agora
-
-        tag_id = alvo.tag_id
-        camera_params = [500.0, 500.0, 320.0, 240.0] 
-        pose, _, _ = self.detector.detection_pose(
-            alvo, camera_params, tag_size=self.tag_size
-        )
-
-        x_m = pose[0][3] 
-        y_m = pose[1][3] 
-        z_m = pose[2][3] 
-        '''R = pose[:3, :3]
-        yaw = np.arctan2(R[1, 0], R[0, 0])'''
-
-        coord_msg.point.x = float(x_m)
-        coord_msg.point.y = float(y_m)
-        coord_msg.point.z = float(z_m)
-        self.coord_pub.publish(coord_msg)
-
-        cube_msg = Cube()
-        cube_msg.id = int(tag_id)
-        cube_msg.waypoint = "default"  
-        cube_msg.color = "cor"  
-        array_msg.cubes.append(cube_msg)
-
-        self.render_preview(display_frame, alvo, tag_id, x_m, y_m, z_m)
-        self.alignment(tag_id, x_m, y_m, z_m, **self.profiles[self.mode])
 
     def precision_table(self, display_frame, x, y, w, h):
         roi = display_frame[y:y+h, x:x+w] # checar valores
