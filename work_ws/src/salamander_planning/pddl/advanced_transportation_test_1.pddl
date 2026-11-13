@@ -7,7 +7,7 @@
     tag1 tag2 tag3 tag4 tag5 tag6 - tag
     tag_desk_w5 - tag
     slot1 slot2 slot3 slot_fantasma - slot
-    container-red container-blue - container
+    container-blue - container
   )
 
   (:init
@@ -46,10 +46,10 @@
     (cube-at cubo5 w4) (free cubo5)
     (cube-at cubo6 w6) (free cubo6)
 
-    (container-at container-blue w3)
-    (container-at container-red w2)
+    (container-at container-blue w1)
+
     (target-container cubo1 container-blue)
-    (target-container cubo2 container-red)
+    (target-container cubo2 container-blue)
 
     (stacking-area w5)
     (tag_desk w5 tag_desk_w5)
@@ -64,7 +64,7 @@
 
   (:goal (and
     (cube-in cubo1 container-blue)
-    (cube-in cubo2 container-red)
+    (cube-in cubo2 container-blue)
     (cube-at cubo3 w4)
     (cube_stacked cubo5 cubo4 w5)
     (cube-at cubo6 w6)

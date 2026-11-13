@@ -44,7 +44,7 @@ class VisionNode(Node):
             "container": dict(target_z=0.30,  x_offset=0.0),    # calibrar com a caixa
         }
 
-        self.search_cube_enabled = False
+        #self.search_cube_enabled = False
 
         self.container_detection_enabled = False
         self.container_color = "blue"
@@ -81,14 +81,16 @@ class VisionNode(Node):
         self.fx, self.fy = 500.0, 500.0
         self.cx0, self.cy0 = 320.0, 240.0
         self.container_long_side = 0.160   # m (dimensão externa maior)
+        self.hits = 0
+        self.prev_c = None
 
         self.red_lower = np.array([136, 87, 111], np.uint8)
         self.red_upper = np.array([180, 255, 255], np.uint8)
         self.red_lower2 = np.array([170, self.red_lower[1], self.red_lower[2]], np.uint8)
         self.red_upper2 = np.array([179, self.red_upper[1], self.red_upper[2]], np.uint8)
-        
-        self.blue_lower = np.array([23, 150, 100], np.uint8)
-        self.blue_upper = np.array([179, 255, 255], np.uint8)
+
+        self.blue_lower = np.array([90, 117, 29], np.uint8)
+        self.blue_upper = np.array([130, 255, 184], np.uint8)
 
 
         if not self.cap.isOpened():
@@ -136,6 +138,8 @@ class VisionNode(Node):
         self.mode = mode
         self.vision_active = True
         self.cube_aligned = False
+        self.hits = 0
+        self.prev_c = None
         self.last_seen = self.get_clock().now().nanoseconds / 1e9
 
         if mode == "container":
@@ -216,54 +220,76 @@ class VisionNode(Node):
         if self.mode == "container":
             self.handle_container(frame, display_frame, agora)
         else:
-            self.handle_tag(frame, display_frame, agora)
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            detections = [] if self.cube_aligned else self.detector.detect(gray)
+            ids_vistos = [d.tag_id for d in detections]
+            self.get_logger().info(f"Tags no frame: {ids_vistos} | alvo atual: {self.current_target_id}", throttle_duration_sec=0.5)
+            
+            coord_msg = PointStamped()
+            coord_msg.header.stamp = self.get_clock().now().to_msg()
+            coord_msg.header.frame_id = "webcam_link"
+            
+            array_msg = CubeArray()
+            array_msg.header.stamp = self.get_clock().now().to_msg()
+            array_msg.header.frame_id = "webcam_link"
+    
+            alvo = next((det for det in detections if det.tag_id == self.current_target_id), None)
+    
+            if alvo is not None:
+                if self.state == "SEARCHING":
+                    self.state = "ALIGNING"
+                    # Congela o tempo que passamos buscando para podermos voltar depois
+                    self.time_spent_searching = agora - self.search_start_time
+                    self.get_logger().info(f"Tag {self.current_target_id} encontrada após {self.time_spent_searching:.2f}s! Iniciando alinhamento fino.")
+        
+                self.last_seen = agora
+        
+                tag_id = alvo.tag_id
+                camera_params = [500.0, 500.0, 320.0, 240.0] 
+                pose, _, _ = self.detector.detection_pose(
+                    alvo, camera_params, tag_size=self.tag_size
+                )
+        
+                x_m = pose[0][3] 
+                y_m = pose[1][3] 
+                z_m = pose[2][3] 
+                '''R = pose[:3, :3]
+                yaw = np.arctan2(R[1, 0], R[0, 0])'''
+        
+                coord_msg.point.x = float(x_m)
+                coord_msg.point.y = float(y_m)
+                coord_msg.point.z = float(z_m)
+                self.coord_pub.publish(coord_msg)
+        
+                cube_msg = Cube()
+                cube_msg.id = int(tag_id)
+                cube_msg.waypoint = "default"  
+                cube_msg.color = "cor"  
+                array_msg.cubes.append(cube_msg)
+        
+                self.render_preview(display_frame, alvo, tag_id, x_m, y_m, z_m)
+                self.alignment(tag_id, x_m, y_m, z_m, **self.profiles[self.mode])
+        
+    
+            elif self.state == "SEARCHING":
+                # Não achou a tag ainda, continua indo para a direita
+                cmd.linear.y = 0.07
+                self.cmd_vel_pub.publish(cmd)
+                self.get_logger().info("Buscando tag para a direita...", throttle_duration_sec=1.0)
+                
+            elif self.state == "ALIGNING":
+                perdido = self.last_seen is None or (agora - self.last_seen) > self.lost_timeout
+                if perdido:
+                    # Se perdeu durante o alinhamento, volta pra busca
+                    self.state = "SEARCHING"
+                    # Reativa o contador de tempo de busca a partir de onde parou
+                    self.search_start_time = agora - self.time_spent_searching
+                    self.get_logger().info("Alvo perdido durante alinhamento. Retomando busca para a direita...", throttle_duration_sec=1.0)
+    
 
         cv2.imshow("Deteccao de Cubos - UnbDroid", display_frame)
         cv2.waitKey(1)
         return
-
-    def handle_tag(self, frame, display_frame, agora):
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        detections = [] if self.cube_aligned else self.detector.detect(gray)
-        ids_vistos = [d.tag_id for d in detections]
-        self.get_logger().info(f"Tags no frame: {ids_vistos} | alvo atual: {self.current_target_id}", throttle_duration_sec=0.5)
-        
-        coord_msg = PointStamped()
-        coord_msg.header.stamp = self.get_clock().now().to_msg()
-        coord_msg.header.frame_id = "webcam_link"
-        
-        array_msg = CubeArray()
-        array_msg.header.stamp = self.get_clock().now().to_msg()
-        array_msg.header.frame_id = "webcam_link"
-
-        alvo = next((det for det in detections if det.tag_id == self.current_target_id), None)
-
-        cmd = Twist()  # Inicializa o comando de velocidade
-
-        # Só ativar na mesa de procura
-        if alvo is not None:
-            if self.search_cube_enabled:
-                self.detect_tag(alvo, agora, display_frame, coord_msg, array_msg)
-            '''elif self.precision_table_enabled:
-                self.get_logger().info("Entrou no caso da mesa de precisão")
-                cubo = self.precision_table(alvo, display_frame)
-                self.detect_tag(alvo, agora, display_frame, coord_msg, array_msg)'''
-                
-
-        elif self.state == "SEARCHING":
-            # Não achou a tag ainda, continua indo para a direita
-            cmd.linear.y = 0.07
-            self.cmd_vel_pub.publish(cmd)
-            self.get_logger().info("Buscando tag para a direita...", throttle_duration_sec=1.0)
-            
-        elif self.state == "ALIGNING":
-            perdido = self.last_seen is None or (agora - self.last_seen) > self.lost_timeout
-            if perdido:
-                # Se perdeu durante o alinhamento, volta pra busca
-                self.state = "SEARCHING"
-                # Reativa o contador de tempo de busca a partir de onde parou
-                self.search_start_time = agora - self.time_spent_searching
-                self.get_logger().info("Alvo perdido durante alinhamento. Retomando busca para a direita...", throttle_duration_sec=1.0)
 
     def handle_container(self, frame, display_frame, agora):
         cmd = Twist()
@@ -271,6 +297,19 @@ class VisionNode(Node):
 
         if container is not None:
             x, y, w, h, cx, cy = container
+            if self.prev_c is not None \
+                    and abs(cx - self.prev_c[0]) < 25 and abs(cy - self.prev_c[1]) < 25:
+                self.hits += 1
+            else:
+                self.hits = 1
+            self.prev_c = (cx, cy)
+        else:
+            self.hits, self.prev_c = 0, None
+
+        confirmado = container is not None and self.hits >= 3
+
+        # --- alinhamento: só com detecção confirmada ---
+        if confirmado:
             xyz = self.container_pixels_to_xyz(w, h, cx, cy)
             if xyz is None:
                 return
@@ -289,13 +328,18 @@ class VisionNode(Node):
 
             self.alignment(-1, x_m, y_m, z_m, **self.profiles["container"])
 
+        # --- viu algo, mas ainda não confirmou: para e espera ---
+        elif container is not None and self.state == "SEARCHING":
+            self.cmd_vel_pub.publish(Twist())
+
+        # --- nada visto ---
         elif self.state == "SEARCHING":
             cmd.linear.y = 0.07
             self.cmd_vel_pub.publish(cmd)
+
         elif self.state == "ALIGNING" and (agora - self.last_seen) > self.lost_timeout:
             self.state = "SEARCHING"
             self.search_start_time = agora
-
 
 
     def container_pixels_to_xyz(self, w_px, h_px, cx_px, cy_px):
@@ -309,43 +353,6 @@ class VisionNode(Node):
         return x, y, z
 
 
-    # TODO: Editar considerando que há momentos em nque vai detectar a tag, mas não vai alinhar (Caso não saiba a ordem dos cubos na precisão)
-    def detect_tag(self, alvo, agora, display_frame, coord_msg, array_msg):
-        # Achou a tag! Muda pro estado de alinhamento
-        if self.state == "SEARCHING":
-            self.state = "ALIGNING"
-            # Congela o tempo que passamos buscando para podermos voltar depois
-            self.time_spent_searching = agora - self.search_start_time
-            self.get_logger().info(f"Tag {self.current_target_id} encontrada após {self.time_spent_searching:.2f}s! Iniciando alinhamento fino.")
-
-        self.last_seen = agora
-
-        tag_id = alvo.tag_id
-        camera_params = [500.0, 500.0, 320.0, 240.0] 
-        pose, _, _ = self.detector.detection_pose(
-            alvo, camera_params, tag_size=self.tag_size
-        )
-
-        x_m = pose[0][3] 
-        y_m = pose[1][3] 
-        z_m = pose[2][3] 
-        '''R = pose[:3, :3]
-        yaw = np.arctan2(R[1, 0], R[0, 0])'''
-
-        coord_msg.point.x = float(x_m)
-        coord_msg.point.y = float(y_m)
-        coord_msg.point.z = float(z_m)
-        self.coord_pub.publish(coord_msg)
-
-        cube_msg = Cube()
-        cube_msg.id = int(tag_id)
-        cube_msg.waypoint = "default"  
-        cube_msg.color = "cor"  
-        array_msg.cubes.append(cube_msg)
-
-        self.render_preview(display_frame, alvo, tag_id, x_m, y_m, z_m)
-        self.alignment(tag_id, x_m, y_m, z_m, **self.profiles[self.mode])
-
     def precision_table(self, display_frame, x, y, w, h):
         roi = display_frame[y:y+h, x:x+w] # checar valores
 
@@ -354,19 +361,18 @@ class VisionNode(Node):
             self.get_logger().info("Alinhando com o cubo. Depois tem q pegar")
             
             return True
-            #armazena, procura tag com cor = None, com tag igual e poe
         else:
             self.get_logger().info("Cubo não detectado na mesa de precisão.")
             return False
 
 
-    # TODO: Editar considerando que não vai ser necessário detectar cor na precisão, mas no container sim, alé de talvez precisar catalogar a cor do cubo pra colocar
-    def color_detection(self, roi, cor="None"):
+    def color_detection(self, roi, cor="None"): # ROI menor quando for detectar cor de cubo (TODO: testar valores)
         hsv_frame = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
 
         red_mask = cv2.bitwise_or(
             cv2.inRange(hsv_frame, self.red_lower, self.red_upper),
             cv2.inRange(hsv_frame, self.red_lower2, self.red_upper2))
+        
         blue_mask = cv2.inRange(hsv_frame, self.blue_lower, self.blue_upper)
 
         if cor == "red":
@@ -379,29 +385,16 @@ class VisionNode(Node):
         if cv2.countNonZero(mask) < 1000:
             return None
 
-        # editar para detecção de conteiner e detecçao de cubo
-
-        # Remove pequenos ruídos
+        # Reduz ruído
         kernel_open = np.ones((3, 3), np.uint8)
-        mask = cv2.morphologyEx(
-            mask, cv2.MORPH_OPEN, kernel_open
-        )
-
-        # Fecha pequenos espaços dentro da região detectada
+        mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel_open)
         kernel_close = np.ones((9, 9), np.uint8)
-        mask = cv2.morphologyEx(
-            mask, cv2.MORPH_CLOSE, kernel_close, iterations=2
-        )
+        mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel_close, iterations=2)
 
-        contours, _ = cv2.findContours(
-            mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
-        )
+        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
         # Filtra contornos pequenos
-        contours = [
-            c for c in contours
-            if cv2.contourArea(c) > 500
-        ]
+        contours = [c for c in contours if cv2.contourArea(c) > 1000]
 
         if len(contours) == 0:
             return None
@@ -409,7 +402,6 @@ class VisionNode(Node):
         # Seleciona o maior contorno
         contour = max(contours, key=cv2.contourArea)
 
-        # Calcula o retângulo delimitador
         x, y, w, h = cv2.boundingRect(contour)
 
         cx = x + w // 2
@@ -423,8 +415,6 @@ class VisionNode(Node):
         return x, y, w, h, cx, cy
 
 
-
-    # TODO: Editar função para cubo, mesa de precisão e container juntos
     def alignment(self, tag_id, x, y, z, target_z = 0.412, x_offset = 0.10):
         tol_x = 0.012
         tol_z = 0.03    
@@ -476,7 +466,6 @@ class VisionNode(Node):
         self.cmd_vel_pub.publish(cmd)
 
 
-    # TODO: Renderização  
     def render_preview(self, image, detection, tag_id, x, y, z):
         corners = detection.corners.astype(int)
         for i in range(4):
