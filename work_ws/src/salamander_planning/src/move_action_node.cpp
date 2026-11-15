@@ -44,10 +44,15 @@ protected:
   {
     if (!goal_sent_) {
       goal_sent_ = true;
+      std::string origin = get_arguments()[0];
       std::string dest = get_arguments()[1];
       
+      // LOG: O robô começou a se mover
+      RCLCPP_INFO(this->get_logger(), ">> MOVIMENTAÇÃO: PALIO navegando de %s para %s...", origin.c_str(), dest.c_str());
+
       // Trava de segurança: se o PDDL mandar para um ponto que não está no YAML
       if (waypoints_.find(dest) == waypoints_.end()) {
+         RCLCPP_ERROR(this->get_logger(), "!! ERRO: Ponto %s não existe no arquivo YAML de configuração!", dest.c_str());
          send_feedback(0.0, "Erro: Ponto " + dest + " não existe no arquivo YAML");
          goal_sent_ = false;
          finish(false, 0.0, "Destino inválido");
@@ -61,11 +66,16 @@ protected:
       
       auto send_goal_options = rclcpp_action::Client<nav2_msgs::action::NavigateToPose>::SendGoalOptions();
       
-      send_goal_options.result_callback = [this](const rclcpp_action::ClientGoalHandle<nav2_msgs::action::NavigateToPose>::WrappedResult & result) {
+      // Capturamos [this, dest] para a função lambda lembrar qual era o destino
+      send_goal_options.result_callback = [this, dest](const rclcpp_action::ClientGoalHandle<nav2_msgs::action::NavigateToPose>::WrappedResult & result) {
         goal_sent_ = false;
         if (result.code == rclcpp_action::ResultCode::SUCCEEDED) {
+          // LOG: O robô chegou no alvo
+          RCLCPP_INFO(this->get_logger(), "<< CHEGOU: PALIO alcançou o ponto %s com sucesso!", dest.c_str());
           finish(true, 1.0, "Destino alcançado");
         } else {  
+          // LOG: Algo deu errado na navegação do Nav2
+          RCLCPP_ERROR(this->get_logger(), "!! FALHA: PALIO não conseguiu chegar ao ponto %s. Nav2 abortou.", dest.c_str());
           finish(false, 1.0, "Falha na navegação");
         }
       };

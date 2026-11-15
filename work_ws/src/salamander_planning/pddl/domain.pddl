@@ -24,6 +24,7 @@
     (empty-slot ?s - slot)
     (at-slot ?c - cube ?s - slot)
 
+
     (tag-found ?t - tag ?w - workspace)
     (container-found ?k - container)
     
@@ -41,14 +42,10 @@
     (base-free)
     (target ?c - cube ?w - workspace)
 
-    (tag_desk ?w - workspace ?t - tag)   
-    (tag_cube ?c - cube ?t - tag)        
-    (cube_at_stack_base ?c - cube ?w - workspace) 
-    (cube_stacked ?c_top - cube ?c_base - cube ?w - workspace) 
-
-    ;; NOVOS PREDICADOS DE OTIMIZAÇÃO (POSITIVOS)
-    (slot-enabled ?s - slot)
-    (enables ?s1 - slot ?s2 - slot)
+    (tag-desk ?w - workspace ?t - tag)   
+    (tag-cube ?c - cube ?t - tag)        
+    (cube-stacked-top ?c_top - cube ?c_base - cube ?w - workspace) 
+    (cube-stacked-base ?c_top - cube ?c_base - cube ?w - workspace) 
   )
 
   (:action move
@@ -91,7 +88,7 @@
     )
   )
 
-  (:action align-container
+  (:action align_container
     :parameters (?w - workspace ?c - cube ?k - container)
     :precondition (and
       (robot-at ?w)
@@ -104,10 +101,10 @@
     :effect (and 
       (container-aligned ?k)
       (not (base-free))
+      (vision-ready)
     )
   )
 
-  ;; GET simplificado: O robô pode tirar de qualquer slot a qualquer momento
   (:action get_cube_slot
     :parameters (?c - cube ?s - slot ?w - workspace)
     :precondition (and
@@ -115,7 +112,7 @@
       (arm-empty)
       (at-slot ?c ?s)
       (arm-folded)
-      (target ?c ?w) 
+      (target ?c ?w)
     )
     :effect (and
       (not (arm-empty))
@@ -127,15 +124,12 @@
     )
   )
 
-  ;; PUT otimizado: Exige que o slot esteja habilitado, e habilita o próximo
   (:action put_cube_slot
-    :parameters (?c - cube ?s - slot ?w - workspace ?s_next - slot)
+    :parameters (?c - cube ?s - slot ?w - workspace)
     :precondition (and
       (robot-at ?w)
       (holding ?c)
       (empty-slot ?s)
-      (slot-enabled ?s)
-      (enables ?s ?s_next)
       (arm-folded)
       (base-free)
     )
@@ -144,7 +138,6 @@
       (arm-empty)
       (at-slot ?c ?s)
       (not (empty-slot ?s))
-      (slot-enabled ?s_next)
       (not (arm-folded))
       (vision-ready)
     )
@@ -152,12 +145,7 @@
 
   (:action put_cube_table
     :parameters (?w - workspace ?c - cube)
-    :precondition (and 
-      (robot-at ?w) 
-      (holding ?c) 
-      (vision-ready)
-      (base-free)
-    )
+    :precondition (and (robot-at ?w) (holding ?c) (vision-ready)(base-free))
     :effect (and
       (not (holding ?c))
       (arm-empty)
@@ -168,7 +156,20 @@
     )
   )
 
-  (:action put-cube-container
+  (:action put_cube_shelf
+    :parameters (?w - workspace ?c - cube)
+    :precondition (and (robot-at ?w) (holding ?c) (vision-ready) (base-free))
+    :effect (and
+      (not (holding ?c))
+      (arm-empty)
+      (cube-at ?c ?w)
+      (free ?c)
+      (not (vision-ready))
+      (arm-folded)
+    )
+  )
+
+  (:action put_cube_container
     :parameters (?w - workspace ?c - cube ?k - container)
     :precondition (and
       (robot-at ?w)
@@ -189,29 +190,15 @@
     )
   )
 
-  (:action put-cube-shelf
-    :parameters (?w - workspace ?c - cube)
-    :precondition (and (robot-at ?w) (holding ?c) (vision-ready))
-    :effect (and
-      (not (holding ?c))
-      (arm-empty)
-      (cube-at ?c ?w)
-      (not (vision-ready))
-      (arm-folded)
-    )
-  )
-
-  (:action put-cube-precision
+  (:action put_cube_precision
     :parameters (?w - workspace ?c - cube ?t-hole - tag)
     :precondition (and
       (robot-at ?w)
-      (holding ?c)
       (aligned-tag ?t-hole ?w)
       (precision-slot ?t-hole ?w)
       (vision-ready)
     )
     :effect (and
-      (not (holding ?c))
       (arm-empty)
       (cube-at ?c ?w)
       (not (aligned-tag ?t-hole ?w))
@@ -222,48 +209,50 @@
   )
 
   (:action stack_cube_base
-    :parameters (?w - workspace ?c - cube ?t_desk - tag)
+    :parameters (?w - workspace ?c_base - cube ?s1 - slot ?t_desk - tag ?c_top - cube)
     :precondition (and
       (robot-at ?w)
+      (arm-empty)
       (stacking-area ?w)
-      (holding ?c)
-      (tag_desk ?w ?t_desk)      
-      (aligned-tag ?t_desk ?w)   
+      (tag-desk ?w ?t_desk)      
+      (aligned-tag ?t_desk ?w)
+      (at-slot ?c_base ?s1)
       (vision-ready)
     )
     :effect (and
-      (not (holding ?c))
+      (cube-at ?c_base ?w)
       (arm-empty)
-      (cube-at ?c ?w)
-      (cube_at_stack_base ?c ?w) 
-      (free ?c)                  
+      (cube-stacked-base ?c_top ?c_base ?w) 
+      (free ?c_base)                  
       (not (aligned-tag ?t_desk ?w))
       (base-free)
       (not (vision-ready))
       (arm-folded)
+      (empty-slot ?s1)
+      (not (at-slot ?c_base ?s1))
     )
   )
 
   (:action stack_cube_top
-    :parameters (?w - workspace ?c_top - cube ?c_base - cube ?t_base - tag)
+    :parameters (?w - workspace ?c_top - cube ?s2 - slot ?c_base - cube ?t_base - tag)
     :precondition (and
       (robot-at ?w)
       (stacking-area ?w)
-      (holding ?c_top)
-      (cube_at_stack_base ?c_base ?w) 
-      (tag_cube ?c_base ?t_base)      
+      (at-slot ?c_top ?s2)
+      (cube-stacked-base ?c_top ?c_base ?w)
+      (tag-cube ?c_base ?t_base)      
       (aligned-tag ?t_base ?w)        
       (vision-ready)
     )
     :effect (and
-      (not (holding ?c_top))
-      (arm-empty)
       (cube-at ?c_top ?w)
-      (cube_stacked ?c_top ?c_base ?w)
+      (cube-stacked-top ?c_top ?c_base ?w)
       (not (aligned-tag ?t_base ?w))
       (base-free)
       (not (vision-ready))
       (arm-folded)
+      (empty-slot ?s2)
+      (not (at-slot ?c_top ?s2))
     )
   )
 
@@ -273,7 +262,7 @@
       (robot-at ?w)
       (arm-empty)
       (aligned-tag ?t ?w)
-      (tag_cube ?c ?t)
+      (tag-cube ?c ?t)
       (cube-at ?c ?w)
       (free ?c)
       (vision-ready)

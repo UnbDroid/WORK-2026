@@ -5,7 +5,7 @@
     start w1 w2 w3 finish - workspace
     cubo1 cubo2 cubo3 - cube
     tag1 tag2 tag3 - tag
-    slot1 slot2 slot3 - slot
+    slot1 slot2 slot3 slot_fantasma - slot
   )
 
   (:init
@@ -30,9 +30,9 @@
     (cube-at cubo1 w1)
     (cube-at cubo2 w1)
     (cube-at cubo3 w3)
-    (tag_cube cubo1 tag1)
-    (tag_cube cubo2 tag2)
-    (tag_cube cubo3 tag3)
+    (tag-cube cubo1 tag1)
+    (tag-cube cubo2 tag2)
+    (tag-cube cubo3 tag3)
     (free cubo1)
     (free cubo2)
     (free cubo3)
@@ -41,7 +41,6 @@
     (empty-slot slot2)
     (empty-slot slot3)
 
-    ;; LÓGICA DE DESTINOS: O robô só desbloqueia a mochila nessas mesas
     (target cubo1 w3)
     (target cubo2 w2)
     (target cubo3 w2)

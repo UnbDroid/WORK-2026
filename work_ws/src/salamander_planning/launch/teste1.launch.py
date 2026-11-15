@@ -2,11 +2,9 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, TimerAction, ExecuteProcess, RegisterEventHandler
-from launch.event_handlers import OnProcessStart
+from launch.actions import IncludeLaunchDescription, TimerAction, ExecuteProcess
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
-
 
 def generate_launch_description():
     salamander_share = get_package_share_directory('salamander_planning')
@@ -15,17 +13,32 @@ def generate_launch_description():
         salamander_share, 'config', 'cenario_2.yaml'
     )
 
-    '''manipulation_file = os.path.join(
-        salamander_share, 'pddl', 'basic_transportation_test_1.pddl'
-    )'''
+    problem_file = os.path.join(
+        salamander_share, 'pddl', 'advanced_transportation_test1.pddl'
+    )
 
     plansys2_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(
                 salamander_share, 'launch', 'plansys2.launch.py'
             )
-        )
+        ),
+        launch_arguments={
+            'model_file': os.path.join(salamander_share, 'pddl', 'domain.pddl'),
+            'problem_file': problem_file
+        }.items()
     )
+
+    # atraso de 6 segundos para garantir que o PlanSys2 esteja online
+    #delayed_problem_loader = TimerAction(
+    #    period=4.0,
+    #    actions=[
+    #        ExecuteProcess(
+    #            cmd=['bash', '-c', f'echo "quit" | ros2 run plansys2_terminal plansys2_terminal --ros-args -p problem_file:={problem_file}'],
+    #            output='screen'
+    #        )
+    #    ]
+    #)
 
     move_action_node = Node(
         package='salamander_planning',
@@ -108,8 +121,16 @@ def generate_launch_description():
         name='zero_position_node',
     )
 
+    put_cube_container = Node(
+        package='salamander_planning',
+        executable='put_cube_container_node',
+        name='put_cube_container_node',
+    )
+
     return LaunchDescription([
         plansys2_launch,
+        #delayed_problem_loader,
+        put_cube_container,
         move_action_node,
         align_action_node,
         align_container_node,

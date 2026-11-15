@@ -18,16 +18,18 @@ public:
   }
 protected:
   void do_work() override {
-    // PDDL: stack_cube_top ?w - workspace ?c - cube ?t_desk - tag
+    // PDDL: stack_cube_top ?w - workspace ?c_top - cube ?s2 - slot ?c_base - cube ?t_base - tag
+    std::string workspace = get_arguments()[0];
     std::string cube = get_arguments()[1];
+    std::string slot = get_arguments()[2];
 
     if (!command_sent_) {
       std_msgs::msg::String cmd_msg;
-      cmd_msg.data = "PLACE_TOP"; // Comando específico para o braço soltar no topo
+      cmd_msg.data = "PLACE_TOP_OFFSET_" + workspace + "_" + slot; 
       arm_cmd_pub_->publish(cmd_msg);
       command_sent_ = true;
       arm_finished_ = false;
-      send_feedback(0.0, "Manipulador descendo para soltar o cubo (" + cube + ")...");
+      send_feedback(0.0, "Manipulador buscando o topo " + cube + " no " + slot + " para empilhar em " + workspace + "...");
     }
     
     if (arm_finished_) {

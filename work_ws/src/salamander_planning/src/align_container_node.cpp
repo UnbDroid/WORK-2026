@@ -11,7 +11,7 @@ using namespace std::chrono_literals;
 class AlignContainerAction : public plansys2::ActionExecutorClient {
 public:
   AlignContainerAction()
-  : plansys2::ActionExecutorClient("align_container_node", 500ms)
+  : plansys2::ActionExecutorClient("align_container", 500ms)
   {
     target_pub_ = this->create_publisher<std_msgs::msg::String>("/vision_target", 10);
 
@@ -73,7 +73,7 @@ private:
 int main(int argc, char ** argv) {
   rclcpp::init(argc, argv);
   auto node = std::make_shared<AlignContainerAction>();
-  node->set_parameter(rclcpp::Parameter("action_name", "align-container"));
+  node->set_parameter(rclcpp::Parameter("action_name", "align_container"));
   node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
   rclcpp::spin(node->get_node_base_interface());
   rclcpp::shutdown();

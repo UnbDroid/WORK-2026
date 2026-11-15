@@ -40,11 +40,11 @@
     (cube-at cubo4 w3)
     (cube-at cubo5 w4)
     
-    (tag_cube cubo1 tag1)
-    (tag_cube cubo2 tag2)
-    (tag_cube cubo3 tag3)
-    (tag_cube cubo4 tag4)
-    (tag_cube cubo5 tag5)
+    (tag-cube cubo1 tag1)
+    (tag-cube cubo2 tag2)
+    (tag-cube cubo3 tag3)
+    (tag-cube cubo4 tag4)
+    (tag-cube cubo5 tag5)
     
     (free cubo1)
     (free cubo2)
@@ -56,20 +56,20 @@
     (empty-slot slot2)
     (empty-slot slot3)
 
-    (target cubo1 w3)
-    (target cubo2 w4)
-    (target cubo3 w1)
-    (target cubo4 w2)
-    (target cubo5 w2)
+    (target cubo1 w2)
+    (target cubo2 w3)
+    (target cubo3 w3)
+    (target cubo4 w4)
+    (target cubo5 w3)
   )
 
   (:goal
     (and 
-      (cube-at cubo1 w3)
-      (cube-at cubo2 w4)
-      (cube-at cubo3 w1)
-      (cube-at cubo4 w2)
-      (cube-at cubo5 w2)
+      (cube-at cubo1 w2)
+      (cube-at cubo2 w3)
+      (cube-at cubo3 w3)
+      (cube-at cubo4 w4)
+      (cube-at cubo5 w3)
 
       (robot-at finish)
     )

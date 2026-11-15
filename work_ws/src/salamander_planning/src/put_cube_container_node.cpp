@@ -11,7 +11,7 @@ using namespace std::chrono_literals;
 class PutCubeContainerAction : public plansys2::ActionExecutorClient {
 public:
   PutCubeContainerAction()
-  : plansys2::ActionExecutorClient("put_cube_container_node", 500ms)
+  : plansys2::ActionExecutorClient("put_cube_container", 500ms)
   {
     cmd_pub_ = this->create_publisher<std_msgs::msg::String>("/arm_command", 10);
     status_sub_ = this->create_subscription<std_msgs::msg::Bool>(
@@ -65,7 +65,7 @@ private:
 int main(int argc, char ** argv) {
   rclcpp::init(argc, argv);
   auto node = std::make_shared<PutCubeContainerAction>();
-  node->set_parameter(rclcpp::Parameter("action_name", "put-cube-container"));
+  node->set_parameter(rclcpp::Parameter("action_name", "put_cube_container"));
   node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
   rclcpp::spin(node->get_node_base_interface());
   rclcpp::shutdown();
