@@ -39,7 +39,7 @@ class VisionNode(Node):
         self.mode = "pick"
         self.container_color = None
         self.profiles = {
-            "pick":      dict(target_z=0.412, x_offset=0.10),
+            "pick":      dict(target_z=0.40, x_offset=0.10),
             "stack":     dict(target_z=0.412, x_offset=0.10),   # calibrar com a pilha
             "container": dict(target_z=0.24,  x_offset=0.09),    # calibrar com a caixa
         }

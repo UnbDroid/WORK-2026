@@ -3,69 +3,29 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.substitutions import LaunchConfiguration
-from launch.conditions import IfCondition, UnlessCondition
-from launch.actions import DeclareLaunchArgument
 from launch_ros.actions import Node
 
-import xacro
+
+# display.launch.py agora abre APENAS o RViz.
+# O robot_state_publisher e o joint_state_publisher foram para o odomLidar.launch.py,
+# que roda junto com o robô. Assim:
+#  - não existem dois robot_state_publisher publicando a mesma TF;
+#  - as juntas (rodas e manipulador) existem desde o início, mesmo sem abrir o RViz;
+#  - dá para rodar este launch no notebook (RViz fora do PC do robô = menos CPU no robô).
 
 
 def generate_launch_description():
-
     share_dir = get_package_share_directory('salamander_bot')
-
-    xacro_file = os.path.join(share_dir, 'description', 'robot.urdf.xacro')
-    robot_description_config = xacro.process_file(xacro_file)
-    robot_urdf = robot_description_config.toxml()
-
     rviz_config_file = os.path.join(share_dir, 'config', 'caldo.rviz')
-
-    gui_arg = DeclareLaunchArgument(
-        name='gui',
-        default_value='True'
-    )
-
-    show_gui = LaunchConfiguration('gui')
-
-    robot_state_publisher_node = Node(
-        package='robot_state_publisher',
-        executable='robot_state_publisher',
-        name='robot_state_publisher',
-        parameters=[
-            {'robot_description': robot_urdf,
-             'use_sim_time': LaunchConfiguration('use_sim_time', default='false')
-            }
-        ]
-    )
-
-    # Joint State Publisher : serve para publicar os estados das juntas do robô, como ângulos e posições. Ele é útil para simulações e visualizações em RViz.
-    joint_state_publisher_node = Node( 
-        condition=UnlessCondition(show_gui),
-        package='joint_state_publisher',
-        executable='joint_state_publisher',
-        name='joint_state_publisher'
-    )
-
-    joint_state_publisher_gui_node = Node(
-        condition=IfCondition(show_gui),
-        package='joint_state_publisher_gui',
-        executable='joint_state_publisher_gui',
-        name='joint_state_publisher_gui'
-    )
 
     rviz_node = Node(
         package='rviz2',
         executable='rviz2',
         name='rviz2',
         arguments=['-d', rviz_config_file],
-        output='screen'
+        output='screen',
     )
 
     return LaunchDescription([
-        gui_arg,
-        robot_state_publisher_node,
-        joint_state_publisher_node,
-        joint_state_publisher_gui_node,
-        rviz_node
+        rviz_node,
     ])

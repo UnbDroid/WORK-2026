@@ -30,15 +30,15 @@ def generate_launch_description():
     )
 
     # atraso de 6 segundos para garantir que o PlanSys2 esteja online
-    delayed_problem_loader = TimerAction(
-        period=4.0,
-        actions=[
-            ExecuteProcess(
-                cmd=['bash', '-c', f'echo "quit" | ros2 run plansys2_terminal plansys2_terminal --ros-args -p problem_file:={problem_file}'],
-                output='screen'
-            )
-        ]
-    )
+    #delayed_problem_loader = TimerAction(
+    #    period=4.0,
+    #    actions=[
+    #        ExecuteProcess(
+    #            cmd=['bash', '-c', f'echo "quit" | ros2 run plansys2_terminal plansys2_terminal --ros-args -p problem_file:={problem_file}'],
+    #            output='screen'
+    #        )
+    #    ]
+    #)
 
     move_action_node = Node(
         package='salamander_planning',
@@ -129,7 +129,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         plansys2_launch,
-        delayed_problem_loader,
+       #delayed_problem_loader,
         put_cube_container,
         move_action_node,
         align_action_node,

@@ -15,16 +15,29 @@ def generate_launch_description():
     rf2o_share = get_package_share_directory('rf2o_laser_odometry')
 
     robot_description_file = os.path.join(salamander_share, 'description', 'robot.urdf.xacro')
-    
+
     robot_description_config = xacro.process_file(robot_description_file)
     robot_description = {'robot_description': robot_description_config.toxml()}
 
     config_dir = os.path.join(get_package_share_directory('salamander_bot'), 'config', 'robot_body_filter.yaml')
 
     robot_state_publisher = Node(
-        package='robot_state_publisher',    
+        package='robot_state_publisher',
         executable='robot_state_publisher',
-        name='state_publisher',
+        name='robot_state_publisher',  # ALTERADO: mesmo nome padrão usado antes no display.launch.py
+        output='screen',
+        parameters=[robot_description],
+    )
+
+    # ADICIONADO: publica /joint_states (rodas e manipulador) desde o início.
+    # Antes isso só existia quando o display.launch.py era aberto.
+    # Se no futuro o driver do braço publicar os ângulos reais, NÃO rode dois publicadores:
+    # use o parâmetro 'source_list' apontando para o tópico do driver, por exemplo:
+    #   parameters=[robot_description, {'source_list': ['/arm/joint_states']}]
+    joint_state_publisher = Node(
+        package='joint_state_publisher',
+        executable='joint_state_publisher',
+        name='joint_state_publisher',
         output='screen',
         parameters=[robot_description],
     )
@@ -35,7 +48,7 @@ def generate_launch_description():
         ),
         launch_arguments={
             'frame_id': 'rplidar_a1m8_1',
-            'serial_port': '/dev/ttyUSB2', # Agora o lidar está configurado para usar a porta USB1
+            'serial_port': '/dev/ttyUSB2',
         }.items()
     )
 
@@ -58,7 +71,6 @@ def generate_launch_description():
                 PythonLaunchDescriptionSource(
                     os.path.join(rf2o_share, 'launch', 'rf2o_laser_odometry.launch.py')
                 ),
-                # ADICIONADO: Passando os frames exatos do robô para o rf2o
                 launch_arguments={
                     'laser_frame_id': 'rplidar_a1m8_1',
                     'base_frame_id': 'base_link',
@@ -69,8 +81,9 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
+        robot_state_publisher,
+        joint_state_publisher,  # ADICIONADO
         lidar,
         laser_filter_node,
-        robot_state_publisher,
         rf2o,
     ])
