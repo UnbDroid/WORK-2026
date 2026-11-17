@@ -50,51 +50,37 @@ class ChallengeCoordinator(Node):
                     "(align_tag w1 tag1)",
                     "(get_cube_table w1 cubo1 tag1)",
                     "(put_cube_slot cubo1 slot1 w1)",
-                    "(align_tag w1 tag2)",
-                    "(get_cube_table w1 cubo2 tag2)",
-                    "(put_cube_slot cubo2 slot2 w1)",
-                    "(align_tag w1 tag3)",
-                    "(get_cube_table w1 cubo3 tag3)",
-                    "(put_cube_slot cubo3 slot3 w1)",
                     "(reset_arm w1)",
-                    "(move w1 w2)"
+                    "(move w1 w2)",
+                    "(zero_position w2)",
+                    "(align_tag w2 tag2)",
+                    "(get_cube_table w2 cubo2 tag2)",
+                    "(put_cube_slot cubo2 slot2 w2)",
+                    "(reset_arm w2)",
+                    "(move w2 w3)"
                 ],
                 # --- FATIA 2: Guardar nos containers (w2 e w3) e mover para w4 ---
                 [
-                    "(zero_position w2)",
-                    "(align_container w2 cubo2 container-red)",
-                    "(reset_arm w2)",
-                    "(get_cube_slot cubo2 slot2 w2)",
-                    "(put_cube_container w2 cubo2 container-red)",
-                    "(move w2 w3)",
                     "(zero_position w3)",
                     "(align_container w3 cubo1 container-blue)",
                     "(reset_arm w3)",
                     "(get_cube_slot cubo1 slot1 w3)",
                     "(put_cube_container w3 cubo1 container-blue)",
-                    "(move w3 w4)"
+                    "(move w3 w4)",
+                    "(get_cube_slot cubo2 slot2 w4)",
+                    "(put_cube_table w4 cubo2)",
+                    "(zero_position w4)",
+                    "(align_tag w4 tag3)",
+                    "(get_cube_table w4 cubo3 tag3)",
+                    "(put_cube_slot cubo3 slot1 w4)"
                 ],
                 # --- FATIA 3: Pegar cubo4 e cubo5 em w4, empilhar em w5 e finalizar ---
                 [
-                    "(get_cube_slot cubo3 slot3 w4)",
-                    "(put_cube_table w4 cubo3)",
-                    "(zero_position w4)",
-                    "(align_tag w4 tag4)",
-                    "(get_cube_table w4 cubo4 tag4)",
-                    "(put_cube_slot cubo4 slot2 w4)",
-                    "(align_tag w4 tag5)",
-                    "(get_cube_table w4 cubo5 tag5)",
-                    "(put_cube_slot cubo5 slot1 w4)",
                     "(reset_arm w4)",
                     "(move w4 w5)",
-                    "(zero_position w5)",
-                    "(align_tag w5 tag106)",
-                    "(stack_cube_base w5 cubo4 slot2 tag106 cubo5)",
-                    "(zero_position w5)",
-                    "(align_tag w5 tag4)",
-                    "(stack_cube_top w5 cubo5 slot1 cubo4 tag4)",
-                    "(move w5 w6)",
-                    "(move w6 finish)"
+                    "(get_cube_slot cubo3 slot1 w5)",
+                    "(put_cube_table w5 cubo3)",
+                    "(move w5 finish)"
                 ]
             ]
         }

@@ -6,7 +6,6 @@
     cube
     tag
     slot
-    table-slot
     container
   )
 
@@ -36,9 +35,7 @@
     (target-container ?c - cube ?k - container)
     (cube-in ?c - cube ?k - container)
 
-    (tslot-at ?l - table-slot ?w - workspace)
-    (table-slot-free ?l - table-slot)
-    (cube-in-tslot ?c - cube ?l - table-slot)
+    (precision-slot ?t - tag ?w - workspace)
     (target-slot ?c - cube ?s - slot)
     (stacking-area ?w - workspace)
 
@@ -193,37 +190,21 @@
     )
   )
 
-  (:action put-cube-shelf
-    :parameters (?w - workspace ?c - cube)
-    :precondition (and (robot-at ?w) (holding ?c) (vision-ready))
+  (:action put_cube_precision
+    :parameters (?w - workspace ?c - cube ?t-hole - tag)
+    :precondition (and
+      (robot-at ?w)
+      (aligned-tag ?t-hole ?w)
+      (precision-slot ?t-hole ?w)
+      (vision-ready)
+    )
     :effect (and
-      (not (holding ?c))
       (arm-empty)
       (cube-at ?c ?w)
+      (not (aligned-tag ?t-hole ?w))
+      (base-free)
       (not (vision-ready))
       (arm-folded)
-    )
-  )
-
-    
-(:action put-cube-precision
-  :parameters (?w - workspace ?c - cube ?l - table-slot)
-  :precondition (and
-    (robot-at ?w)
-    (holding ?c)
-    (tslot-at ?l ?w)
-    (table-slot-free ?l)
-    (vision-ready))
-  :effect (and
-    (not (holding ?c))
-    (arm-empty)
-    (cube-at ?c ?w)
-    (cube-in-tslot ?c ?l)
-    (not (table-slot-free ?l))
-    (not (aligned-tag ?t-hole ?w))
-    (base-free)
-    (not (vision-ready))
-    (arm-folded)
     )
   )
 
@@ -251,28 +232,6 @@
       (not (at-slot ?c_base ?s1))
     )
   )
-
-
-(:action get-cube-precision
-  :parameters (?w - workspace ?c - cube ?t - tag ?l - table-slot)
-  :precondition (and
-    (robot-at ?w)
-    (arm-empty)
-    (aligned-tag ?t ?w)
-    (cube-tag ?c ?t)
-    (cube-in-tslot ?c ?l)
-    (vision-ready))
-  :effect (and
-    (not (arm-empty))
-    (holding ?c)
-    (not (cube-at ?c ?w))
-    (not (cube-in-tslot ?c ?l))
-    (table-slot-free ?l)
-    (not (aligned-tag ?t ?w))
-    (base-free)
-    (not (vision-ready))
-    (arm-folded))
-)
 
   (:action stack_cube_top
     :parameters (?w - workspace ?c_top - cube ?s2 - slot ?c_base - cube ?t_base - tag)

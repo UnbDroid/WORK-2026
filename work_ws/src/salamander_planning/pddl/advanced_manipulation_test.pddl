@@ -17,12 +17,12 @@
     (vision-ready) 
     (base-free)
 
-    (cube-tag cubo1 tag1) 
-    (cube-tag cubo2 tag2) 
-    (cube-tag cubo3 tag3)
-    (cube-tag cubo4 tag4) 
-    (cube-tag cubo5 tag5) 
-    (cube-tag cubo6 tag6)
+    (tag-cube cubo1 tag1) 
+    (tag-cube cubo2 tag2) 
+    (tag-cube cubo3 tag3)
+    (tag-cube cubo4 tag4) 
+    (tag-cube cubo5 tag5) 
+    (tag-cube cubo6 tag6)
 
     (tslot-at slot101 w1) 
     (tslot-at slot102 w1) 

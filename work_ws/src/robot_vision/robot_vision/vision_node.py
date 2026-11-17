@@ -287,8 +287,8 @@ class VisionNode(Node):
                     self.get_logger().info("Alvo perdido durante alinhamento. Retomando busca para a direita...", throttle_duration_sec=1.0)
     
 
-        cv2.imshow("Deteccao de Cubos - UnbDroid", display_frame)
-        cv2.waitKey(1)
+        #cv2.imshow("Deteccao de Cubos - UnbDroid", display_frame)
+        #cv2.waitKey(1)
         return
 
     def handle_container(self, frame, display_frame, agora):
