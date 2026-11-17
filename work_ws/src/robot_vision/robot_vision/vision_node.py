@@ -30,18 +30,21 @@ class VisionNode(Node):
         # PONTE COM O ACTION_NODE
         self.vision_active = False 
         self.current_target_id = -1
+        self.current_target_color = None
         self.create_subscription(String, "/vision_target", self.target_callback, 10)
         self.status_pub = self.create_publisher(Bool, "/vision_status", 10)
 
         self.last_seen = None
         self.lost_timeout = 2.0
+        self.direction = -1
 
         self.mode = "pick"
         self.container_color = None
         self.profiles = {
             "pick":      dict(target_z=0.412, x_offset=0.10),
             "stack":     dict(target_z=0.412, x_offset=0.10),   # calibrar com a pilha
-            "container": dict(target_z=0.24,  x_offset=0.09),    # calibrar com a caixa
+            "container": dict(target_z=0.235,  x_offset=0.09),    # calibrar com a caixa
+
         }
 
         #self.search_cube_enabled = False
@@ -56,6 +59,7 @@ class VisionNode(Node):
         #self.precision_table_enabled = False
         #self.create_subscription(Bool, "precision_table_enabled", self.precision_table_enabled_callback, 10)
         #self.precision_coord_pub = self.create.publisher(PointStamped, 'table_tag_coordinates', 10)
+        self.precision_table = []
 
         self.tag_type = "Unknown"
 
@@ -89,9 +93,8 @@ class VisionNode(Node):
         self.red_lower2 = np.array([170, self.red_lower[1], self.red_lower[2]], np.uint8)
         self.red_upper2 = np.array([179, self.red_upper[1], self.red_upper[2]], np.uint8)
 
-        self.blue_lower = np.array([90, 117, 29], np.uint8)
-        self.blue_upper = np.array([130, 255, 184], np.uint8)
-
+        self.blue_lower = np.array([102, 133, 88], np.uint8)
+        self.blue_upper = np.array([146, 253, 157], np.uint8)
 
         if not self.cap.isOpened():
             self.get_logger().error(f"Não foi possível abrir a câmera no índice {self.indice_camera}!")
@@ -101,31 +104,6 @@ class VisionNode(Node):
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
         self.timer = self.create_timer(0.033, self.process_frame_callback)
-
-    '''def target_callback(self, msg):
-        tag_str = msg.data.replace("tag", "") 
-        try:
-            self.current_target_id = int(tag_str)
-            self.vision_active = True
-            self.cube_aligned = False
-            self.last_seen = self.get_clock().now().nanoseconds / 1e9
-
-            tempo_ocioso = self.last_seen - self.last_vision_usage
-
-            # Se já gastamos tempo buscando antes, precisamos voltar primeiro
-            if self.time_spent_searching > 0.1 and tempo_ocioso < 80.0:
-                
-                self.state = "RETURNING"
-                self.return_start_time = self.last_seen
-                self.get_logger().info(f'Visão ACORDADA! Retornando por {self.time_spent_searching:.2f}s antes de buscar a Tag {self.current_target_id}')
-                self.last_vision_usage = 0
-            else:
-                self.state = "SEARCHING"
-                self.search_start_time = self.last_seen
-                self.get_logger().info(f'Visão ACORDADA! Iniciando busca direta pela Tag {self.current_target_id}')
-                
-        except ValueError:
-            self.get_logger().error(f"Falha ao extrair ID da tag enviada: {msg.data}")'''
 
     def target_callback(self, msg):
         data = msg.data
@@ -151,9 +129,11 @@ class VisionNode(Node):
 
         # pick / stack: mesma lógica de tag que você já tinha
         try:
-            self.current_target_id = int(target.replace("tag", ""))
+            id, cor= target.split("-", 1)
+            self.current_target_id = int(id.replace("tag", ""))
+            self.current_target_color = cor
         except ValueError:
-            self.get_logger().error(f"Falha ao extrair ID da tag: {data}")
+            self.get_logger().error(f"Falha ao extrair ID da tag e cor: {target}")
             return
 
         tempo_ocioso = self.last_seen - self.last_vision_usage
@@ -218,7 +198,54 @@ class VisionNode(Node):
         display_frame = frame.copy()
 
         if self.mode == "container":
-            self.handle_container(frame, display_frame, agora)
+            container = self.color_detection(display_frame, cor=self.container_color)
+
+            if container is not None:
+                x, y, w, h, cx, cy = container
+                if self.prev_c is not None \
+                        and abs(cx - self.prev_c[0]) < 25 and abs(cy - self.prev_c[1]) < 25:
+                    self.hits += 1
+                else:
+                    self.hits = 1
+                self.prev_c = (cx, cy)
+            else:
+                self.hits, self.prev_c = 0, None
+
+            confirmado = container is not None and self.hits >= 3
+
+            # --- alinhamento: só com detecção confirmada ---
+            if confirmado:
+                xyz = self.container_pixels_to_xyz(w, h, cx, cy)
+                if xyz is None:
+                    return
+                x_m, y_m, z_m = xyz
+
+                msg = PointStamped()
+                msg.header.stamp = self.get_clock().now().to_msg()
+                msg.header.frame_id = 'webcam_link'
+                msg.point.x, msg.point.y, msg.point.z = float(x_m), float(y_m), float(z_m)
+                self.container_coord_pub.publish(msg)
+
+                if self.state == "SEARCHING":
+                    self.state = "ALIGNING"
+                    self.time_spent_searching += agora - self.search_start_time
+                self.last_seen = agora
+
+                self.alignment(-1, x_m, y_m, z_m, **self.profiles["container"])
+
+            # --- viu algo, mas ainda não confirmou: para e espera ---
+            elif container is not None and self.state == "SEARCHING":
+                self.cmd_vel_pub.publish(Twist())
+
+            # --- nada visto ---
+            elif self.state == "SEARCHING":
+                cmd.linear.y = 0.07 * self.direction
+                self.cmd_vel_pub.publish(cmd)
+
+            elif self.state == "ALIGNING" and (agora - self.last_seen) > self.lost_timeout:
+                self.state = "SEARCHING"
+                self.search_start_time = agora
+
         else:
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             detections = [] if self.cube_aligned else self.detector.detect(gray)
@@ -273,7 +300,7 @@ class VisionNode(Node):
     
             elif self.state == "SEARCHING":
                 # Não achou a tag ainda, continua indo para a direita
-                cmd.linear.y = 0.07
+                cmd.linear.y = 0.07 * self.direction
                 self.cmd_vel_pub.publish(cmd)
                 self.get_logger().info("Buscando tag para a direita...", throttle_duration_sec=1.0)
                 
@@ -291,57 +318,6 @@ class VisionNode(Node):
         cv2.waitKey(1)
         return
 
-    def handle_container(self, frame, display_frame, agora):
-        cmd = Twist()
-        container = self.color_detection(display_frame, cor=self.container_color)
-
-        if container is not None:
-            x, y, w, h, cx, cy = container
-            if self.prev_c is not None \
-                    and abs(cx - self.prev_c[0]) < 25 and abs(cy - self.prev_c[1]) < 25:
-                self.hits += 1
-            else:
-                self.hits = 1
-            self.prev_c = (cx, cy)
-        else:
-            self.hits, self.prev_c = 0, None
-
-        confirmado = container is not None and self.hits >= 3
-
-        # --- alinhamento: só com detecção confirmada ---
-        if confirmado:
-            xyz = self.container_pixels_to_xyz(w, h, cx, cy)
-            if xyz is None:
-                return
-            x_m, y_m, z_m = xyz
-
-            msg = PointStamped()
-            msg.header.stamp = self.get_clock().now().to_msg()
-            msg.header.frame_id = 'webcam_link'
-            msg.point.x, msg.point.y, msg.point.z = float(x_m), float(y_m), float(z_m)
-            self.container_coord_pub.publish(msg)
-
-            if self.state == "SEARCHING":
-                self.state = "ALIGNING"
-                self.time_spent_searching += agora - self.search_start_time
-            self.last_seen = agora
-
-            self.alignment(-1, x_m, y_m, z_m, **self.profiles["container"])
-
-        # --- viu algo, mas ainda não confirmou: para e espera ---
-        elif container is not None and self.state == "SEARCHING":
-            self.cmd_vel_pub.publish(Twist())
-
-        # --- nada visto ---
-        elif self.state == "SEARCHING":
-            cmd.linear.y = 0.07
-            self.cmd_vel_pub.publish(cmd)
-
-        elif self.state == "ALIGNING" and (agora - self.last_seen) > self.lost_timeout:
-            self.state = "SEARCHING"
-            self.search_start_time = agora
-
-
     def container_pixels_to_xyz(self, w_px, h_px, cx_px, cy_px):
         lado_px = max(w_px, h_px)
         if lado_px < 1:
@@ -355,6 +331,9 @@ class VisionNode(Node):
 
     def precision_table(self, display_frame, x, y, w, h):
         roi = display_frame[y:y+h, x:x+w] # checar valores
+
+        if len(self.precision_table) < 6:
+            self.precision_table.append(alvo)
 
         if self.color_detection(roi) is not None:
             self.get_logger().info("Cubo detectado!")
@@ -381,8 +360,14 @@ class VisionNode(Node):
             mask = blue_mask
         else:
             return None
-        
-        if cv2.countNonZero(mask) < 1000:
+
+        if self.mode == "pick":
+            num = 10
+        else:
+            num = 1000
+
+        if cv2.countNonZero(mask) < num:
+            self.get_logger().info(f'Mask {cor} menor que {num}.', throttle_duration_sec=1.0)
             return None
 
         # Reduz ruído
@@ -393,10 +378,11 @@ class VisionNode(Node):
 
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-        # Filtra contornos pequenos
-        contours = [c for c in contours if cv2.contourArea(c) > 1000]
+       
+        contours = [c for c in contours if cv2.contourArea(c) > num]
 
         if len(contours) == 0:
+            self.get_logger().info(f'Contours == 0', throttle_duration_sec=1.0)
             return None
 
         # Seleciona o maior contorno
@@ -410,7 +396,6 @@ class VisionNode(Node):
         centro = (cx, cy)
 
         cv2.imshow("Mascara Container", mask)
-        self.render_container_preview(roi, (x, y, w, h), cor, centro)
 
         return x, y, w, h, cx, cy
 
@@ -435,7 +420,8 @@ class VisionNode(Node):
         aligned_z = abs(erro_z) <= tol_z
         #aligned_yaw = abs(erro_yaw) <= tol_yaw
 
-        if aligned_x and aligned_z: 
+        if aligned_x and aligned_z:
+
             self.cube_aligned = True
 
             cmd.linear.x = 0.0
@@ -453,6 +439,8 @@ class VisionNode(Node):
             self.state = "IDLE"
 
             self.last_vision_usage = self.get_clock().now().nanoseconds / 1e9
+
+            self.get_logger().info(f"PAROU: x={x:.3f} z={z:.3f} erro_x={erro_x:.3f} erro_z={erro_z:.3f}")
             
             return True
 

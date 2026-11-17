@@ -2,48 +2,58 @@
   (:domain salamander-domain)
 
   (:objects
-    start w1 w2 w3 w4 w5 w6 finish - workspace
-    cubo1 cubo2 cubo3 cubo4 cubo5 cubo6 - cube
-    tag1 tag2 tag3 tag4 tag5 tag6 - tag
-    tag_desk_w5 - tag
+    start w1 w2 w3 finish - workspace
+    cubo1 cubo2 cubo3 - cube
+
+    tag1-red tag2-blue - tag
     slot1 slot2 slot3 slot_fantasma - slot
     container-blue - container
   )
-  
+
   (:init
-    (robot-at w1)
+    (robot-at start)
+    (connected start w1) (connected w1 start)
+    (connected start w2) (connected w2 start)
+    (connected start w3) (connected w3 start)
+
+    (connected w1 w2) (connected w2 w1)
+    (connected w1 w3) (connected w3 w1)
+    (connected w1 finish) (connected finish w1)
+
+    (connected w2 w3) (connected w3 w2)
+    (connected w2 finish) (connected finish w2)
+
+    (connected w3 finish) (connected finish w3)
+
     (arm-empty)
     (vision-ready)
     (base-free)
 
+
+    (cube-at cubo1 w1)
+    (cube-at cubo2 w1)
+    (cube-at cubo3 w3)
+    (free cubo1)
+    (free cubo2)
+
+    (tag-cube cubo1 tag1-red)
+    (tag-cube cubo2 tag2-blue)
+
+    (empty-slot slot1)
     (empty-slot slot2)
     (empty-slot slot3)
-    (at-slot cubo1 slot1)
     
-    (tag-cube cubo1 tag1)
-
-    (container-at container-blue w1)
+    (container-at container-blue w2)
 
     (target-container cubo1 container-blue)
     (target-container cubo2 container-blue)
-
-    (stacking-area w5)
-    (tag_desk w5 tag_desk_w5)
-
-    (target cubo1 w3)
-    (target cubo2 w2)
-    (target cubo3 w4)
-    (target cubo4 w5)
-    (target cubo5 w5)
-    (target cubo6 w6)
   )
 
   (:goal (and
     (cube-in cubo1 container-blue)
     (cube-in cubo2 container-blue)
-    (cube-at cubo3 w4)
-    (cube_stacked cubo5 cubo4 w5)
-    (cube-at cubo6 w6)
+    
+    (cube-at cubo3 w2)
     (robot-at finish)
     )
   )

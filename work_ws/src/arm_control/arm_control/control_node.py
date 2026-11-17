@@ -189,6 +189,30 @@ class ControlNode(Node):
             time.sleep(4.0)
 
         elif command.startswith("put_cube_container"):
+
+            parts = command.split("_")
+            slot = parts[3]
+            pre_slot_name = f'pre_{slot}'
+            get_slot_name = f'get_{slot}'
+
+
+            self.get_logger().info("Pegando cubo no slot")
+
+            self.publish_gripper(True)
+            time.sleep(2.0)
+            self.publish_target_coordinates('pre_initial')
+            time.sleep(4.0)
+            self.publish_target_coordinates(pre_slot_name)
+            time.sleep(4.0)
+            self.publish_target_coordinates(get_slot_name)
+            time.sleep(4.0)
+            self.publish_gripper(False)
+            time.sleep(4.0)
+            self.publish_target_coordinates(pre_slot_name)
+            time.sleep(4.0)
+            self.publish_target_coordinates('pre_initial')
+            time.sleep(3.0)
+
             self.get_logger().info("Soltando cubo no contêiner")
 
             self.publish_target_coordinates('pre_drop_container')
@@ -203,6 +227,18 @@ class ControlNode(Node):
             time.sleep(3.0)
             self.publish_target_coordinates('initial')
             time.sleep(4.0)
+
+            self.get_logger().info("Dando ré de 10cm...")
+            cmd = Twist()
+            cmd.linear.x = -0.10
+            start_time = time.time()
+            duration = 2.0  # 1.0s a 0.20 m/s = 0.20m (20cm)
+
+            while (time.time() - start_time) < duration:
+                self.cmd_vel_pub.publish(cmd)
+                time.sleep(0.1) 
+            cmd.linear.x = 0.0
+            self.cmd_vel_pub.publish(cmd)
 
         elif command.startswith("get_slot"):
             base_slot = command.split("get_")[1]

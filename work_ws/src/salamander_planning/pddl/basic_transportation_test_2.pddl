@@ -4,7 +4,7 @@
   (:objects
     start w1 w2 w3 w4 finish - workspace
     cubo1 cubo2 cubo3 cubo4 cubo5 - cube
-    tag1 tag2 tag3 tag4 tag5 - tag
+    tag1-red tag2-blue tag3-red tag4-blue tag5-red - tag
     slot1 slot2 slot3 - slot
   )
 
@@ -40,11 +40,11 @@
     (cube-at cubo4 w3)
     (cube-at cubo5 w4)
     
-    (tag-cube cubo1 tag1)
-    (tag-cube cubo2 tag2)
-    (tag-cube cubo3 tag3)
-    (tag-cube cubo4 tag4)
-    (tag-cube cubo5 tag5)
+    (tag-cube cubo1 tag1-red)
+    (tag-cube cubo2 tag2-blue)
+    (tag-cube cubo3 tag3-red)
+    (tag-cube cubo4 tag4-blue)
+    (tag-cube cubo5 tag5-red)
     
     (free cubo1)
     (free cubo2)

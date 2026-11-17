@@ -25,15 +25,16 @@ protected:
   void do_work() override {
     // PDDL: put-cube-container ?w ?c ?k  ->  [0]=w, [1]=c, [2]=k
     const std::string container = get_arguments()[2];
+    const std::string slot = get_arguments()[3];
 
     if (!command_sent_) {
       std_msgs::msg::String cmd_msg;
-      cmd_msg.data = "put_cube_container_" + container;
+      cmd_msg.data = "put_cube_container_" + slot + "_" + container;
       cmd_pub_->publish(cmd_msg);
       command_sent_ = true;
       arm_finished_ = false;
       start_time_ = this->now();
-      send_feedback(0.0, "Soltando cubo em " + container + "...");
+      send_feedback(0.0, "Pegando cubo em " + slot + "... Soltando cubo em " + container + "...");
       return;
     }
 
@@ -59,7 +60,7 @@ private:
   rclcpp::Time start_time_;
   bool command_sent_ = false;
   bool arm_finished_ = false;
-  double timeout_s_ = 30.0;
+  double timeout_s_ = 80.0;
 };
 
 int main(int argc, char ** argv) {
