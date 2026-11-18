@@ -127,10 +127,18 @@ def generate_launch_description():
         name='put_cube_container_node',
     )
 
+    put_cube_shelf = Node(
+    package='salamander_planning',
+    executable='put_cube_shelf_node',
+    name='put_cube_shelf_node',
+    output='screen',
+)
+
     return LaunchDescription([
         plansys2_launch,
        #delayed_problem_loader,
         put_cube_container,
+        put_cube_shelf,
         move_action_node,
         align_action_node,
         align_container_node,

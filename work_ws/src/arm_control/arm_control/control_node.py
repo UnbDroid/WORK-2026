@@ -25,7 +25,7 @@ class ControlNode(Node):
 
         # NOVO: quais workspaces são prateleiras (parte de baixo = mesa de 10 cm, com a parte de cima por cima).
         # Pode ser trocado no YAML/launch sem recompilar: shelf_workspaces: ["w6"]
-        self.declare_parameter('shelf_workspaces', ['w6'])
+        self.declare_parameter('shelf_workspaces', ['w1'])
         self.shelf_workspaces = set(self.get_parameter('shelf_workspaces').value)
 
         self.targets = {
@@ -61,7 +61,7 @@ class ControlNode(Node):
             'pre_drop_cube_shelf_2': [0.3003,  0.00, 0.5228],
             'pre_drop_cube_shelf_3': [0.3003, -0.15, 0.5228],
             'drop_cube_shelf_1': [0.3003, 0.15, 0.4228],
-            'drop_cube_shelf_2': [0.3003, 0.00, 0.4228],
+            'drop_cube_shelf_2': [0.3003, 0.00, 0.3228],
             'drop_cube_shelf_3': [0.3003, -0.15, 0.4228],
             'pre_drop_container': [0.3324, 0.00, 0.3228],
             'drop_container': [0.3324, 0.00, 0.1027],
@@ -80,8 +80,8 @@ class ControlNode(Node):
             # O braço NÃO pode subir enquanto estiver embaixo da prateleira superior.
             # AJUSTAR na prateleira real (o regulamento permite variação de até 5 cm).
             'pre_get_shelf_low': [0.3324, 0.0, 0.1497],   # 8 cm acima do cubo, ainda abaixo da prateleira superior
-            'get_shelf_low':     [0.3324, 0.0, 0.0697],   # igual ao get_cube_10
-            'lift_shelf_low':    [0.3324, 0.0, 0.1097],   # sobe só 4 cm (tira o cubo da mesa sem bater em cima)
+            'get_shelf_low':     [0.3324, 0.0, 0.0097],   # igual ao get_cube_10
+            'lift_shelf_low':    [0.3324, 0.0, 0.1397],   # sobe só 4 cm (tira o cubo da mesa sem bater em cima)
         }
         
         self.height_map = {'w1': '10', 'w2': '5', 'w3': '15', 'w4': '10', 'w5': '5', 'w6': '15'}
@@ -128,8 +128,6 @@ class ControlNode(Node):
             workspace = command.split("_")[-1]
             self.get_logger().info(f"Pegando cubo na parte INFERIOR da prateleira {workspace}")
             self.publish_gripper(True)
-            time.sleep(3.0)
-            self.publish_target_coordinates('pre_get_shelf_low')
             time.sleep(4.0)
             self.publish_target_coordinates('get_shelf_low')
             time.sleep(4.0)
@@ -139,11 +137,11 @@ class ControlNode(Node):
             time.sleep(3.0)
 
             self.get_logger().info("Recuando 25 cm para sair de baixo da prateleira...")
-            self.drive_x(-0.25)
+            self.drive_x(-0.15)
             self.publish_target_coordinates('pre_initial')      # agora pode recolher o braço
             time.sleep(4.0)
             self.get_logger().info("Voltando 25 cm para a posição alinhada...")
-            self.drive_x(+0.25)                                  # volta para put_cube_shelf alcançar a parte superior
+            self.drive_x(+0.19)                                  # volta para put_cube_shelf alcançar a parte superior
 
         elif command.startswith("get_cube_table"):
             workspace = command.split("_")[-1]
@@ -218,11 +216,12 @@ class ControlNode(Node):
         elif command.startswith("put_cube_shelf"):
             # ALTERADO: contador próprio da prateleira (antes dividia com as mesas)
             self.shelf_counter += 1
-            if self.shelf_counter > 3:
+            if self.shelf_counter > 1:
+                self.drive_y(0.10)
                 self.shelf_counter = 1
 
-            target_name = f'drop_cube_shelf_{self.shelf_counter}'
-            pre_target_name = f'pre_drop_cube_shelf_{self.shelf_counter}'
+            target_name = f'drop_cube_shelf_2'
+            pre_target_name = f'pre_drop_cube_shelf_2'
             
             # ALTERADO: chega POR CIMA (pre_drop) e desce, em vez de entrar na horizontal
             # pela posição 'shelf' — a prateleira superior é inclinada e tem um lábio na frente.

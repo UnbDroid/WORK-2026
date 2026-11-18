@@ -55,6 +55,9 @@ ament_target_dependencies(stack_cube_base_node rclcpp plansys2_executor std_msgs
 add_executable(stack_cube_top_node src/stack_cube_top.cpp)
 ament_target_dependencies(stack_cube_top_node rclcpp plansys2_executor std_msgs)
 
+add_executable(put_cube_shelf_node src/put_cube_shelf_node.cpp)
+ament_target_dependencies(put_cube_shelf_node rclcpp plansys2_executor std_msgs)
+
 install(TARGETS
   move_action_node
   align_action_node
@@ -68,6 +71,7 @@ install(TARGETS
   zero_position_node
   stack_cube_base_node
   stack_cube_top_node
+  put_cube_shelf_node
   DESTINATION lib/${PROJECT_NAME}
 )
 
