@@ -46,6 +46,10 @@
     (tag-cube ?c - cube ?t - tag)        
     (cube-stacked-top ?c_top - cube ?c_base - cube ?w - workspace) 
     (cube-stacked-base ?c_top - cube ?c_base - cube ?w - workspace) 
+
+    ; prateleira
+    (shelf ?w - workspace)    
+    (on-top-shelf ?c - cube ?w - workspace)
   )
 
   (:action move
@@ -158,12 +162,11 @@
 
   (:action put_cube_shelf
     :parameters (?w - workspace ?c - cube)
-    :precondition (and (robot-at ?w) (holding ?c) (vision-ready) (base-free))
+    :precondition (and (robot-at ?w) (shelf ?w) (holding ?c) (base-free))
     :effect (and
       (not (holding ?c))
       (arm-empty)
-      (cube-at ?c ?w)
-      (free ?c)
+      (on-top-shelf ?c ?w)
       (not (vision-ready))
       (arm-folded)
     )

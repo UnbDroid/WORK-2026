@@ -25,8 +25,8 @@ amcl:
     pf_err: 0.05 # Erro permitido para considerar uma amostra como válida. Valores menores podem aumentar a precisão, mas também podem levar a uma convergência mais lenta.
     pf_z: 0.99 # Percentual de amostras que devem estar dentro do erro permitido para considerar a localização como confiável.
     robot_model_type: "nav2_amcl::OmniMotionModel" #alterado
-    update_min_a: 0.2 ## Atualiza a localização a cada 0.2 radianos de giro
-    update_min_d: 0.25 ## Atualiza a localização a cada 0.25 metros andados
+    update_min_a: 0.1 ## Atualiza a localização a cada 0.2 radianos de giro
+    update_min_d: 0.1 ## Atualiza a localização a cada 0.25 metros andados
 
     # Fatores probabilísticos de acerto do laser
     z_hit: 0.5
@@ -48,11 +48,11 @@ amcl:
     resample_interval: 1
     scan_topic: /scan_filtered
     set_initial_pose: True
-    initial_pose:
-      x: -0.0038048
-      y: 0.00604248
-      z: 0.0
-      yaw: 0.0
+    #initial_pose:
+    #  x: -0.0038048
+    #  y: 0.00604248
+    #  z: 0.0
+    #  yaw: 0.0
 
 #Executa a árvore de comportamento para navegação e recuperação
 bt_navigator:
@@ -197,7 +197,7 @@ controller_server:
         critical_cost: 300.0
         consider_footprint: false # Considera o footprint do robô ao avaliar colisões (default = false)
         collision_cost: 1000000.0
-        near_goal_distance: 1.0
+        near_goal_distance: 0.7
         trajectory_point_step: 2
 
       #plugin que avalia o alinhamento da trajetória planejada com o caminho desejado, penalizando trajetórias que se desviam do caminho. (importante)

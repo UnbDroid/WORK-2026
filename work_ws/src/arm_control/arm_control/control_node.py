@@ -20,37 +20,43 @@ class ControlNode(Node):
         self.cmd_vel_pub = self.create_publisher(Twist, "/cmd_vel", 10)
         
         self.drop_counter = 0
+        self.shelf_counter = 0   # NOVO: contador separado para a prateleira
         self.sequence_running = False
+
+        # NOVO: quais workspaces são prateleiras (parte de baixo = mesa de 10 cm, com a parte de cima por cima).
+        # Pode ser trocado no YAML/launch sem recompilar: shelf_workspaces: ["w6"]
+        self.declare_parameter('shelf_workspaces', ['w6'])
+        self.shelf_workspaces = set(self.get_parameter('shelf_workspaces').value)
 
         self.targets = {
             'initial': [-0.291334, 0.0, 0.2075],
             'pre_initial': [-0.291334, 0.0, 0.32207],
             'zero': [0.378666, 0.00, 0.2075],
-            'get_cube_15':  [0.348748, 0.0, 0.085718],
-            'get_cube_10':  [0.3324, 0.0, 0.0697],
-            'get_cube_5': [0.307641, 0.0, 0.021291],
+            'get_cube_15':  [0.348748, 0.0, 0.07],
+            'get_cube_10':  [0.3324, 0.0, 0.0097],
+            'get_cube_5': [0.307641, 0.0, -0.04],
             'teste_cube':  [0.3324, 0.00, 0.0497],
             'pre_slot1': [-0.370988,  0.060215, 0.32207],
             'pre_slot2': [-0.373852, -0.042785, 0.32207],
             'pre_slot3': [-0.356977, -0.143785, 0.32207],
-            'put_slot1': [-0.370988, 0.060215, 0.164674],
-            'put_slot2': [-0.373852, -0.042785, 0.164674],
-            'put_slot3': [-0.356977, -0.143785, 0.16074],
-            'get_slot1': [-0.370988, 0.060215, 0.1527],
-            'get_slot2': [-0.373852, -0.042785, 0.1527],
-            'get_slot3': [-0.356977, -0.143785, 0.15274],
+            'put_slot1': [-0.370988, 0.060215, 0.140674],
+            'put_slot2': [-0.373852, -0.042785, 0.140674],
+            'put_slot3': [-0.356977, -0.143785, 0.140674],
+            'get_slot1': [-0.370988, 0.060215, 0.136674],
+            'get_slot2': [-0.373852, -0.042785, 0.136674],
+            'get_slot3': [-0.356977, -0.143785, 0.134674],
             'pre_drop_cube_1': [0.3324,  0.15, 0.3228],
             'pre_drop_cube_2': [0.3324,  0.00, 0.3228],
             'pre_drop_cube_3': [0.3324, -0.15, 0.3228],
-            'drop_cube_15_1': [0.398370, 0.15, 0.100718],
-            'drop_cube_15_2': [0.398370, 0.0, 0.082018],
-            'drop_cube_15_3': [0.398370, -0.15, 0.067718],
-            'drop_cube_10_1': [0.3324, 0.15, 0.0747],
-            'drop_cube_10_2': [0.3324, 0.0, 0.0777],
-            'drop_cube_10_3': [0.3324, -0.15, 0.0617],
-            'drop_cube_5_1': [0.307641, 0.15, 0.021291],
-            'drop_cube_5_2': [0.307641, 0.0, 0.031291],
-            'drop_cube_5_3': [0.307641, -0.15, 0.021291],
+            'drop_cube_15_1': [0.398370, 0.15, 0.06],
+            'drop_cube_15_2': [0.398370, 0.0, 0.06],
+            'drop_cube_15_3': [0.398370, -0.15, 0.06],
+            'drop_cube_10_1': [0.3324, 0.15, 0.0147],
+            'drop_cube_10_2': [0.3324, 0.0, 0.0277],
+            'drop_cube_10_3': [0.3324, -0.15, 0.0147],
+            'drop_cube_5_1': [0.307641, 0.15, -0.01],
+            'drop_cube_5_2': [0.307641, 0.0, 0.01],
+            'drop_cube_5_3': [0.307641, -0.15, 0.01],
             'pre_drop_cube_shelf_1': [0.3003,  0.15, 0.5228],
             'pre_drop_cube_shelf_2': [0.3003,  0.00, 0.5228],
             'pre_drop_cube_shelf_3': [0.3003, -0.15, 0.5228],
@@ -63,12 +69,19 @@ class ControlNode(Node):
             'pre_stack_10': [0.3324, 0.00, 0.3228],
             'pre_stack_5':  [0.307641, 0.00, 0.3228],
             'stack_base_15': [0.398370, 0.00, 0.082018],
-            'stack_base_10': [0.3324, 0.00, 0.0777],
+            'stack_base_10': [0.3324, 0.00, 0.0277],
             'stack_base_5':  [0.307641, 0.00, 0.031291],
             'stack_top_15': [0.398370, 0.00, 0.124018], 
             'stack_top_10': [0.3324, 0.00, 0.1197],     
             'stack_top_5':  [0.307641, 0.00, 0.073291], 
-            'shelf': [0.3003, 0.00, 0.4228]
+            'shelf': [0.3003, 0.00, 0.4228],
+
+            # NOVO: pegar na parte INFERIOR da prateleira (mesa de 10 cm, mas com a parte superior por cima).
+            # O braço NÃO pode subir enquanto estiver embaixo da prateleira superior.
+            # AJUSTAR na prateleira real (o regulamento permite variação de até 5 cm).
+            'pre_get_shelf_low': [0.3324, 0.0, 0.1497],   # 8 cm acima do cubo, ainda abaixo da prateleira superior
+            'get_shelf_low':     [0.3324, 0.0, 0.0697],   # igual ao get_cube_10
+            'lift_shelf_low':    [0.3324, 0.0, 0.1097],   # sobe só 4 cm (tira o cubo da mesa sem bater em cima)
         }
         
         self.height_map = {'w1': '10', 'w2': '5', 'w3': '15', 'w4': '10', 'w5': '5', 'w6': '15'}
@@ -79,6 +92,18 @@ class ControlNode(Node):
         msg = Point()
         msg.x, msg.y, msg.z = float(coords[0]), float(coords[1]), float(coords[2])
         self.arm_coord_pub.publish(msg)
+
+    def drive_x(self, distance, speed=0.10):
+        """NOVO: anda em linha reta (distance > 0 = frente, < 0 = ré) em malha aberta."""
+        cmd = Twist()
+        cmd.linear.x = speed if distance > 0 else -speed
+        duration = abs(distance) / speed
+        start_time = time.time()
+        while (time.time() - start_time) < duration:
+            self.cmd_vel_pub.publish(cmd)
+            time.sleep(0.1)
+        cmd.linear.x = 0.0
+        self.cmd_vel_pub.publish(cmd)
 
     def publish_gripper(self, open_gripper: bool):
         msg = Bool()
@@ -97,7 +122,30 @@ class ControlNode(Node):
     def execute_sequence(self, command):
         self.get_logger().info(f"Iniciando coreografia: {command}")
         
-        if command.startswith("get_cube_table"):
+        if command.startswith("get_cube_table") and command.split("_")[-1] in self.shelf_workspaces:
+            # NOVO: pegar na parte INFERIOR da prateleira.
+            # Mesma ação do PDDL (get_cube_table), mas movimento diferente para não bater na parte superior.
+            workspace = command.split("_")[-1]
+            self.get_logger().info(f"Pegando cubo na parte INFERIOR da prateleira {workspace}")
+            self.publish_gripper(True)
+            time.sleep(3.0)
+            self.publish_target_coordinates('pre_get_shelf_low')
+            time.sleep(4.0)
+            self.publish_target_coordinates('get_shelf_low')
+            time.sleep(4.0)
+            self.publish_gripper(False)
+            time.sleep(3.0)
+            self.publish_target_coordinates('lift_shelf_low')   # sobe pouco: ainda embaixo da prateleira
+            time.sleep(3.0)
+
+            self.get_logger().info("Recuando 25 cm para sair de baixo da prateleira...")
+            self.drive_x(-0.25)
+            self.publish_target_coordinates('pre_initial')      # agora pode recolher o braço
+            time.sleep(4.0)
+            self.get_logger().info("Voltando 25 cm para a posição alinhada...")
+            self.drive_x(+0.25)                                  # volta para put_cube_shelf alcançar a parte superior
+
+        elif command.startswith("get_cube_table"):
             workspace = command.split("_")[-1]
             h = self.height_map.get(workspace, '10')
             target_name = f'get_cube_{h}'
@@ -168,14 +216,17 @@ class ControlNode(Node):
             time.sleep(2.0)
 
         elif command.startswith("put_cube_shelf"):
-            self.drop_counter += 1
-            if self.drop_counter > 3:
-                self.drop_counter = 1
+            # ALTERADO: contador próprio da prateleira (antes dividia com as mesas)
+            self.shelf_counter += 1
+            if self.shelf_counter > 3:
+                self.shelf_counter = 1
 
-            target_name = f'drop_cube_shelf_{self.drop_counter}'
-            pre_target_name = f'pre_drop_cube_shelf_{self.drop_counter}'
+            target_name = f'drop_cube_shelf_{self.shelf_counter}'
+            pre_target_name = f'pre_drop_cube_shelf_{self.shelf_counter}'
             
-            self.publish_target_coordinates('shelf') 
+            # ALTERADO: chega POR CIMA (pre_drop) e desce, em vez de entrar na horizontal
+            # pela posição 'shelf' — a prateleira superior é inclinada e tem um lábio na frente.
+            self.publish_target_coordinates(pre_target_name)
             time.sleep(4.0)
             self.publish_target_coordinates(target_name)
             time.sleep(4.0)
