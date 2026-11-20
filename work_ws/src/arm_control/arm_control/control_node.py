@@ -7,6 +7,7 @@ from rclpy.node import Node
 from geometry_msgs.msg import Point
 from std_msgs.msg import Bool, String
 from geometry_msgs.msg import Twist
+from std_msgs.msg import Int32
 
 class ControlNode(Node):
 
@@ -18,6 +19,9 @@ class ControlNode(Node):
         self.status_pub = self.create_publisher(Bool, "/arm_status", 10)
         self.create_subscription(String, "/arm_command", self.command_callback, 10)
         self.cmd_vel_pub = self.create_publisher(Twist, "/cmd_vel", 10)
+
+        self.create_subscription(String, "/precision_info", self.precision_callback, 10)
+        self.precision_status_pub = self.create_publisher(Bool, "/precision_status", 10)
         
         self.drop_counter = 0
         self.sequence_running = False
@@ -72,7 +76,16 @@ class ControlNode(Node):
         }
         
         self.height_map = {'w1': '10', 'w2': '5', 'w3': '15', 'w4': '10', 'w5': '5', 'w6': '15'}
+        
         self.get_logger().info("Control Node do Braço aguardando comandos do PlanSys2...")
+
+    def precision_callback(self, msg):
+        if self.sequence_running:
+            self.get_logger().warn(f"Ignorando '{msg.data}': braço ocupado")
+            return
+        self.sequence_running = True
+        threading.Thread(target=self.run_precision, args=(msg.data,), daemon=True).start()
+
 
     def publish_target_coordinates(self, target_name):
         coords = self.targets[target_name]
@@ -331,6 +344,7 @@ class ControlNode(Node):
             self.publish_target_coordinates('initial')
             time.sleep(4.0)
 
+
         elif command == "reset_arm":
             #time.sleep(20.0)
             self.publish_target_coordinates('pre_initial')
@@ -357,6 +371,94 @@ class ControlNode(Node):
         self.status_pub.publish(status_msg)
         self.sequence_running = False
         self.get_logger().info(f"Coreografia {command} finalizada com sucesso.")
+
+        
+    def run_precision(self, info):
+        ok = True
+        
+        try:
+            fase, slot = info.split("-")[0:2]
+            if fase == "get":
+                self.get_precision(slot)
+            elif fase == "put":
+                self.put_precision(slot)
+            else:
+                raise ValueError(f"fase desconhecida: {fase}")
+        except Exception as e:
+            self.get_logger().error(f"Erro na precisão: {e}")
+            ok = False
+        finally:
+            self.sequence_running = False   # libera antes de avisar
+
+        status = Bool()
+        status.data = ok
+        self.precision_status_pub.publish(status)
+
+    def get_precision(self, slot):
+        """mesa (10cm) -> slot"""
+        h = 10
+        target_name = f'get_cube_{h}'
+        
+        self.get_logger().info(f"Pegando cubo na mesa de altura: {h}cm)")
+        self.publish_gripper(True) 
+        time.sleep(4.0)
+        self.publish_target_coordinates(target_name)
+        time.sleep(4.0)
+        self.publish_gripper(False) 
+        time.sleep(3.0)
+        self.publish_target_coordinates('shelf')
+        time.sleep(4.0)
+        self.publish_target_coordinates('pre_initial') 
+        time.sleep(4.0)
+
+        pre_slot_name = "pre_" + slot # Monta 'pre_slot1'
+        put_slot_name = "put_" + slot
+        
+        self.publish_target_coordinates(pre_slot_name) 
+        time.sleep(4.0)
+        self.publish_target_coordinates(put_slot_name)
+        time.sleep(4.0)
+        self.publish_gripper(True) 
+        time.sleep(3.0)
+        self.publish_target_coordinates(pre_slot_name) 
+        time.sleep(3.0)
+        self.publish_target_coordinates('pre_initial') 
+        time.sleep(4.0)
+        self.publish_target_coordinates('zero') 
+        time.sleep(2.0)
+
+    def put_precision(self, slot):
+        h = 10
+        pre_slot = "pre_" + slot
+
+        self.publish_gripper(True)
+        time.sleep(2.0)
+        self.publish_target_coordinates(pre_slot)
+        time.sleep(4.0)
+        self.publish_target_coordinates("get_" + slot)
+        time.sleep(4.0)
+        self.publish_gripper(False)
+        time.sleep(4.0)
+        self.publish_target_coordinates(pre_slot)
+        time.sleep(4.0)
+        self.publish_target_coordinates('pre_initial')
+        time.sleep(3.0)
+
+        target_name = f'drop_cube_{h}_2'
+        pre_target_name = f'pre_drop_cube_2'
+        
+        self.publish_target_coordinates('shelf') 
+        time.sleep(4.0)
+        self.publish_target_coordinates(target_name)
+        time.sleep(4.0)
+        self.publish_gripper(True)
+        time.sleep(3.0)
+        self.publish_target_coordinates(pre_target_name)
+        time.sleep(4.0)
+        self.publish_target_coordinates('pre_initial')
+        time.sleep(3.0)
+        self.publish_target_coordinates('initial')
+
 
 def main(args=None):
     rclpy.init(args=args)

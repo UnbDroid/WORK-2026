@@ -34,38 +34,45 @@ class VisionNode(Node):
         self.create_subscription(String, "/vision_target", self.target_callback, 10)
         self.status_pub = self.create_publisher(Bool, "/vision_status", 10)
 
+        self.create_subscription(Bool, "/precision_status", self.precision_status_callback, 10)
+
+        self.slot_tags = [101, 102, 103, 104, 105, 106]
+        self.slot_toggle = 1
+        self.arm_result = None
+        self.cycle_start = None
+        self.last_id = None
+        self.primeiro_do_ciclo = True
+        
+
         self.last_seen = None
         self.lost_timeout = 2.0
-        self.direction = -1
+        self.direction = 1
 
         self.mode = "pick"
         self.container_color = None
         self.profiles = {
-            "pick":      dict(target_z=0.412, x_offset=0.10),
-            "stack":     dict(target_z=0.412, x_offset=0.10),   # calibrar com a pilha
-            "container": dict(target_z=0.235,  x_offset=0.09),    # calibrar com a caixa
+            "pick":      dict(target_z=0.40, x_offset=0.10),
+            "stack":     dict(target_z=0.412, x_offset=0.10),
+            "container": dict(target_z=0.232,  x_offset=0.09),
+            "precisao": dict(target_z=0.40, x_offset=0.10)
 
         }
 
-        #self.search_cube_enabled = False
-
-        self.container_detection_enabled = False
-        self.container_color = "blue"
-        #self.create_subscription(String, "container_target", self.container_target_callback, 10)
-        #self.create_subscription(Bool, "search_cube_enabled", self.search_cube_enabled_callback, 10)
+        
         self.container_coord_pub = self.create_publisher(PointStamped, 'container_coordinates', 10)
+        self.info_pub = self.create_publisher(String, "/precision_info", 10)
+        self.current_fase = None
+        self.current_slot = None
 
-
-        #self.precision_table_enabled = False
-        #self.create_subscription(Bool, "precision_table_enabled", self.precision_table_enabled_callback, 10)
-        #self.precision_coord_pub = self.create.publisher(PointStamped, 'table_tag_coordinates', 10)
-        self.precision_table = []
-
-        self.tag_type = "Unknown"
+        self.realocable = []
+        self.counter = 0
+        self.tag_save = False
 
         self.get_logger().info("Publishers 'cube_coordinates' e 'cube_data' inicializados!")
 
         self.cube_aligned = False
+        self.aligned_pub = self.create_publisher(Bool, "/cube_aligned", 10)
+        
         
         # Estados possíveis: "IDLE", "RETURNING", "SEARCHING", "ALIGNING"
         self.state = "IDLE" 
@@ -105,6 +112,10 @@ class VisionNode(Node):
 
         self.timer = self.create_timer(0.033, self.process_frame_callback)
 
+    def precision_status_callback(self, msg):
+        if self.state == "WAIT_ARM":
+            self.arm_result = msg.data
+
     def target_callback(self, msg):
         data = msg.data
         mode, target = data.split(":", 1) if ":" in data else ("pick", data)
@@ -122,19 +133,38 @@ class VisionNode(Node):
 
         if mode == "container":
             self.container_color = target.replace("container-", "")
-            self.state = "SEARCHING"
-            self.search_start_time = self.last_seen
+            if abs(self.time_spent_searching) > 0.1:
+                self.state = "RETURNING"
+                self.return_start_time = self.last_seen
+            else:
+                self.state = "SEARCHING"
+                self.search_start_time = self.last_seen
             self.get_logger().info(f"Modo CONTAINER: cor {self.container_color}")
             return
 
-        # pick / stack: mesma lógica de tag que você já tinha
-        try:
-            id, cor= target.split("-", 1)
-            self.current_target_id = int(id.replace("tag", ""))
-            self.current_target_color = cor
-        except ValueError:
-            self.get_logger().error(f"Falha ao extrair ID da tag e cor: {target}")
+        elif mode == "precisao":
+            self.current_target_id = -1
+            if len(self.realocable) >= 3:
+                self.avancar_alvo_precisao()
+                self.state = "RETURNING"
+                self.return_start_time = self.last_seen
+        
+            else:
+                self.tag_save = True
+                self.state = "SEARCHING"
+                self.search_start_time = self.last_seen
+
+            self.get_logger().info(f"Modo {mode.upper()}")
             return
+
+        if not self.mode == "precisao":
+            try:
+                id, cor= target.split("-", 1)
+                self.current_target_id = int(id.replace("tag", ""))
+                self.current_target_color = cor
+            except ValueError:
+                self.get_logger().error(f"Falha ao extrair ID da tag e cor: {target}")
+                return
 
         tempo_ocioso = self.last_seen - self.last_vision_usage
         if self.time_spent_searching > 0.1 and tempo_ocioso < 80.0:
@@ -158,6 +188,10 @@ class VisionNode(Node):
         # --- MÁQUINA DE ESTADOS: RETORNO À ORIGEM ---
         if self.state == "RETURNING":
             tempo_retornando = agora - self.return_start_time
+            if tempo_retornando < 0:
+                self.cmd_vel_pub.publish(Twist())   # parado durante a pausa
+                self.cap.grab()
+                return
             if tempo_retornando < self.time_spent_searching:
                 cmd.linear.y = -0.07 # Volta para a esquerda (negativo)
                 self.cmd_vel_pub.publish(cmd)
@@ -183,13 +217,47 @@ class VisionNode(Node):
                 self.cap.grab() # Limpa o buffer
                 return
             else:
-                # Fim da espera, inicia a nova busca
+                # A espera também é usada depois de catalogar os alvos de precisão.
                 self.state = "SEARCHING"
                 self.search_start_time = agora
                 self.get_logger().info(f"Espera concluída. Iniciando busca pela Tag {self.current_target_id}.")
                 # Não damos return aqui para ele fluir direto para a leitura do frame logo abaixo
 
         # Daqui pra frente, estamos em SEARCHING ou ALIGNING
+
+        elif self.state == "WAIT_ARM":
+            self.cap.grab()
+            if self.arm_result is None:
+                return
+            ok, self.arm_result = self.arm_result, None
+
+            if ok and self.current_fase == "get" and not self.primeiro_do_ciclo:
+                self.current_fase = "put"
+                self.arm_result = None
+                slot_cheio = 2 if self.current_slot == 1 else 1
+                self.info_pub.publish(String(data=f"put-slot{slot_cheio}"))
+                return
+
+            # ainda tem cubo pra organizar
+            if ok and self.avancar_alvo_precisao():
+                self.slot_toggle = 2 if self.slot_toggle == 1 else 1
+                self.cube_aligned = False
+                self.hits = 0
+                self.last_seen = agora
+                self.state = "RETURNING"
+                self.return_start_time = agora
+                return
+
+            # counter == 5 e o put terminou (ou o braço falhou): fim da ação
+            self.status_pub.publish(Bool(data=ok))
+            self.vision_active = False
+            self.state = "IDLE"
+            self.current_fase = None
+            self.counter = 0
+            self.slot_toggle = 1
+            self.realocable = []
+            return
+
         ret, frame = self.cap.read()
         if not ret or frame is None:
             self.cap.grab()
@@ -213,7 +281,6 @@ class VisionNode(Node):
 
             confirmado = container is not None and self.hits >= 3
 
-            # --- alinhamento: só com detecção confirmada ---
             if confirmado:
                 xyz = self.container_pixels_to_xyz(w, h, cx, cy)
                 if xyz is None:
@@ -259,7 +326,47 @@ class VisionNode(Node):
             array_msg = CubeArray()
             array_msg.header.stamp = self.get_clock().now().to_msg()
             array_msg.header.frame_id = "webcam_link"
+            aligned_msg = Bool()
+
+            if self.mode == "precisao":
+                if self.tag_save:
+                    for d in detections:
+                        tag_id = d.tag_id
+
+                        if tag_id not in self.realocable and tag_id < 100:
+                            self.realocable.insert(0, tag_id)
+
+                    if len(self.realocable) >= 3:
+                        self.tag_save = False
+                        if self.state == "SEARCHING":
+                            if not self.avancar_alvo_precisao():
+                                self.get_logger().error("Não há cubos fora de ordem para reorganizar.")
+                                self.vision_active = False
+                                self.state = "IDLE"
+                                self.status_pub.publish(Bool(data=False))
+                                return
+                            self.time_spent_searching = agora - self.search_start_time
+                            self.state = "RETURNING"
+                            self.return_start_time = agora + 2.0
+                            self.get_logger().info(
+                                f"Catálogo concluído: {self.realocable}. "
+                                f"Aguardando {self.wait_time}s antes de iniciar a reorganização."
+                            )
+                    else:
+                        cmd.linear.y = 0.07
+                        self.cmd_vel_pub.publish(cmd)
+                    return
     
+                '''# proximo vai ser o indice q ele deve ficar
+                #next alvo da pra ficar sempre a mesma coisa, mas como eu vou atualizar alvo? alignment?
+                else:
+                    if self.current_fase == "get":
+                        self.current_fase = "put"
+                        msg = String()
+                        msg.data = f"{self.current_fase}-slot{self.current_slot}"
+                        self.info_pub.publish(msg)'''
+
+            
             alvo = next((det for det in detections if det.tag_id == self.current_target_id), None)
     
             if alvo is not None:
@@ -293,9 +400,42 @@ class VisionNode(Node):
                 cube_msg.waypoint = "default"  
                 cube_msg.color = "cor"  
                 array_msg.cubes.append(cube_msg)
-        
-                self.render_preview(display_frame, alvo, tag_id, x_m, y_m, z_m)
+                x1 = int(min(alvo.corners[:, 0]))
+                x2 = int(max(alvo.corners[:, 0]))
+                y1 = int(min(alvo.corners[:, 1]))
+                y2 = int(max(alvo.corners[:, 1]))
+
+                frame_height, frame_width = frame.shape[:2]
+                roi_side = max(x2 - x1, y2 - y1)   # ajuste conforme o tamanho do cubo na imagem
+                gap = 5                            # px abaixo da tag
+
+                cx_tag = (x1 + x2) // 2
+                roi_left = max(0, cx_tag - roi_side // 2)
+                roi_right = min(frame_width, roi_left + roi_side)
+                roi_top = min(frame_height, y2 + gap)
+                roi_bottom = min(frame_height, roi_top + roi_side)
+
+                if roi_right <= roi_left or roi_bottom <= roi_top:
+                    return
+
+                roi = display_frame[roi_top:roi_bottom, roi_left:roi_right]
+
+                cv2.rectangle(display_frame, (roi_left, roi_top), (roi_right, roi_bottom), (255, 0, 255), 2)
+                self.get_logger().info(f"ROI=({roi_left},{roi_top})-({roi_right},{roi_bottom}) lado={roi_side}px cor={self.current_target_color}", throttle_duration_sec=0.5)
+
+                if self.mode != "precisao" and self.color_detection(roi, self.current_target_color) is None:
+                    self.state = "SEARCHING"
+                    cmd.linear.y = 0.07 * self.direction
+                    self.cmd_vel_pub.publish(cmd)
+                    self.get_logger().info("Buscando tag para a direita...", throttle_duration_sec=1.0)
+                    
+                    return
+                
+                self.get_logger().info("Cubo detectado!")
+                self.get_logger().info("Alinhando com o cubo de cor correta")
                 self.alignment(tag_id, x_m, y_m, z_m, **self.profiles[self.mode])
+                aligned_msg.data = self.cube_aligned
+                self.aligned_pub.publish(aligned_msg)
         
     
             elif self.state == "SEARCHING":
@@ -329,20 +469,37 @@ class VisionNode(Node):
         return x, y, z
 
 
-    def precision_table(self, display_frame, x, y, w, h):
-        roi = display_frame[y:y+h, x:x+w] # checar valores
+    def avancar_alvo_precisao(self):
+        if self.counter == 0:
+            self.ordenada = sorted(self.realocable)
+            self.cycle_start = None
 
-        if len(self.precision_table) < 6:
-            self.precision_table.append(alvo)
-
-        if self.color_detection(roi) is not None:
-            self.get_logger().info("Cubo detectado!")
-            self.get_logger().info("Alinhando com o cubo. Depois tem q pegar")
-            
-            return True
+        # novo ciclo: primeira chamada ou put final feito
+        if self.cycle_start is None or self.current_target_id == self.last_id:
+            fora = [i for i, t in enumerate(self.realocable) if self.ordenada[i] != t] # conferir quais não estão organizados
+            if not fora:
+                return False
+            self.cycle_start = fora[-1]
+            self.last_id = self.slot_tags[self.cycle_start]
+            self.current_target_id = self.realocable[self.cycle_start]
+            self.primeiro_do_ciclo = True
         else:
-            self.get_logger().info("Cubo não detectado na mesa de precisão.")
-            return False
+            self.primeiro_do_ciclo = False
+            dest = self.ordenada.index(self.current_target_id)
+            if dest == self.cycle_start:
+                self.realocable[dest] = self.current_target_id
+                self.current_target_id = self.last_id
+            else:
+                prox = self.realocable[dest]
+                self.realocable[dest] = self.current_target_id
+                self.current_target_id = prox
+
+        self.counter += 1
+        self.get_logger().info(
+            f"[avancar] counter={self.counter} alvo={self.current_target_id} "
+            f"last_id={self.last_id} mesa={self.realocable} ordenada={self.ordenada}"
+        )
+        return True
 
 
     def color_detection(self, roi, cor="None"): # ROI menor quando for detectar cor de cubo (TODO: testar valores)
@@ -408,7 +565,10 @@ class VisionNode(Node):
         k_x = 0.42
         k_z = 0.3 
         #k_yaw = 0.3       
-        max_speed = self.max_speed   
+        max_speed = self.max_speed
+
+        if tag_id > 100:
+            target_z = 0.45 # testar isso aq 
 
         erro_x = -x + x_offset
         erro_z = z - target_z
@@ -421,7 +581,6 @@ class VisionNode(Node):
         #aligned_yaw = abs(erro_yaw) <= tol_yaw
 
         if aligned_x and aligned_z:
-
             self.cube_aligned = True
 
             cmd.linear.x = 0.0
@@ -430,18 +589,32 @@ class VisionNode(Node):
             self.cmd_vel_pub.publish(cmd)
 
             self.get_logger().info(f"Tag ID {tag_id} ALINHADA! Robô parado.")
-            
-            status_msg = Bool()
-            status_msg.data = True
-            self.status_pub.publish(status_msg)
-            
-            self.vision_active = False 
-            self.state = "IDLE"
-
             self.last_vision_usage = self.get_clock().now().nanoseconds / 1e9
 
+            if self.mode == "precisao":
+                self.current_fase = "get"
+                self.current_slot = self.slot_toggle
+                self.arm_result = None
+                self.state = "WAIT_ARM"
+                if self.current_target_id == self.last_id:
+                    self.current_fase = "put"
+                    slot_cheio = 2 if self.current_slot == 1 else 1    # guarda o último cubo
+                    self.info_pub.publish(String(data=f"{self.current_fase}-slot{slot_cheio}"))
+                else:
+                    self.current_fase = "get"
+                    self.info_pub.publish(String(data=f"{self.current_fase}-slot{self.current_slot}"))
+
+
+                self.get_logger().info(f'Alinhou a precisão: x={x:.3f} z={z:.3f} erro_x={erro_x:.3f} erro_z={erro_z:.3f}')
+
+            else:
+                self.vision_active = False
+                self.state = "IDLE"
+                status_msg = Bool()
+                status_msg.data = True
+                self.status_pub.publish(status_msg)
+
             self.get_logger().info(f"PAROU: x={x:.3f} z={z:.3f} erro_x={erro_x:.3f} erro_z={erro_z:.3f}")
-            
             return True
 
         if not aligned_x:

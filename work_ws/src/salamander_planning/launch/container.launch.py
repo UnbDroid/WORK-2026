@@ -73,10 +73,10 @@ def generate_launch_description():
         name='put_cube_container_node',
     )
 
-    get_cube_precision = Node(
+    align_tag_precision = Node(
         package='salamander_planning',
-        executable='get_cube_precision_node',
-        name='get_cube_precision_node',
+        executable='align_tag_precision_node',
+        name='align_tag_precision_node',
     )
 
     put_cube_precision = Node(
@@ -115,10 +115,11 @@ def generate_launch_description():
         align_action_node,
         vision_node,
         arm_control,
-        align_container,
+        #align_container,
+        align_tag_precision,
         get_cube_slot,
         get_cube_table,
-        put_cube_container,
+        #put_cube_container,
         put_cube_slot,
         reset,
         zero_position

@@ -37,6 +37,10 @@ ament_target_dependencies(put_cube_table_node rclcpp plansys2_executor std_msgs)
 add_executable(align_container_node src/align_container_node.cpp)
 ament_target_dependencies(align_container_node rclcpp plansys2_executor std_msgs lifecycle_msgs)
 
+
+add_executable(align_tag_precision_node src/align_tag_precision_node.cpp)
+ament_target_dependencies(align_tag_precision_node rclcpp plansys2_executor std_msgs lifecycle_msgs)
+
 add_executable(get_cube_slot_node src/get_cube_slot_node.cpp)
 ament_target_dependencies(get_cube_slot_node rclcpp plansys2_executor std_msgs)
 
@@ -63,6 +67,7 @@ install(TARGETS
   reset_arm_node
   put_cube_table_node
   align_container_node
+  align_tag_precision_node
   put_cube_container_node
   get_cube_slot_node
   zero_position_node

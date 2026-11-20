@@ -41,6 +41,7 @@
     (cube-in-tslot ?c - cube ?l - table-slot)
     (target-slot ?c - cube ?s - slot)
     (aligned-precision ?t - tag ?w - workspace)
+    (precision-started)
     (stacking-area ?w - workspace)
 
     (base-free)
@@ -278,17 +279,15 @@
   )
 
   (:action align_tag_precision
-    :parameters (?w - workspace ?t - tag ?c - cube ?l - table-slot)
+    :parameters (?w - workspace)
     :precondition (and 
       (robot-at ?w) 
       (arm-empty) 
       (vision-ready) 
-      (base-free)
-      (tag-cube ?c ?t) 
-      (cube-in-tslot ?c ?l))
-    :effect (and 
-      (aligned-precision ?t ?w) 
+      (base-free))
+    :effect (and
       (not (base-free))
+      (precision-started)
     )
   )
 
