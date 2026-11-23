@@ -457,7 +457,7 @@ class ControlNode(Node):
         time.sleep(4.0)
         self.publish_target_coordinates('pre_initial')
         time.sleep(3.0)
-        self.publish_target_coordinates('initial')
+        self.publish_target_coordinates('zero')
 
 
 def main(args=None):
