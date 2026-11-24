@@ -19,6 +19,9 @@ geometry_msgs__msg__Point point_msg;
 rcl_subscription_t gripper_subscriber;
 std_msgs__msg__Bool gripper_state_msg; 
 
+rcl_subscription_t detection_led_sub;
+std_msgs__msg__Bool detection_led_msg;
+
 rclc_executor_t executor;
 rclc_support_t support;
 rcl_allocator_t allocator;
@@ -48,9 +51,20 @@ void gripper_callback(const void *msgin) {
     const std_msgs__msg__Bool *msg_state = (const std_msgs__msg__Bool *) msgin; 
 
     if (msg_state->data) {
-        robot_arm.drive_gripper(GRIPPER_OPEN_ANGLE);
+      robot_arm.drive_gripper(GRIPPER_OPEN_ANGLE);
     } else {
-        robot_arm.drive_gripper(GRIPPER_CLOSE_ANGLE);
+      robot_arm.drive_gripper(GRIPPER_CLOSE_ANGLE);
+    }
+}
+
+void detection_led_callback(const void * msgin)
+{
+    const std_msgs__msg__Bool *msg_indicator = (const std_msgs__msg__Bool *) msgin;
+
+    if (msg_indicator->data) {
+      digitalWrite(DETECTION_LED_PIN, HIGH);
+    } else {
+      digitalWrite(DETECTION_LED_PIN, LOW);
     }
 }
 
@@ -83,8 +97,15 @@ void setup() {
     "gripper_command"
   ));
 
+  RCCHECK(rclc_subscription_init_default(
+    &detection_led_sub,
+    &node,
+    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Bool),
+    "detection_led"
+  ));
+
   // Initialize an executor that will manage the execution of all the ROS2 entities (publishers, subscribers, services, timers).
-  RCCHECK(rclc_executor_init(&executor, &support.context, 2, &allocator));
+  RCCHECK(rclc_executor_init(&executor, &support.context, 3, &allocator));
   
   RCCHECK(rclc_executor_add_subscription(
     &executor,
@@ -102,6 +123,14 @@ void setup() {
     ON_NEW_DATA
   ));
 
+  RCCHECK(rclc_executor_add_subscription(
+      &executor,
+      &detection_led_sub,
+      &detection_led_msg,
+      &detection_led_callback,
+      ON_NEW_DATA
+  ));
+
   pinMode(MS1_M1_PIN, OUTPUT);
   pinMode(MS2_M1_PIN, OUTPUT);
   pinMode(MS3_M1_PIN, OUTPUT);
@@ -110,6 +139,8 @@ void setup() {
   pinMode(MS2_M2_PIN, OUTPUT);
   pinMode(MS3_M2_PIN, OUTPUT);
 
+  pinMode(DETECTION_LED_PIN, OUTPUT);
+
   digitalWrite(MS1_M1_PIN, HIGH);
   digitalWrite(MS2_M1_PIN, HIGH);
   digitalWrite(MS3_M1_PIN, HIGH);
@@ -117,6 +148,8 @@ void setup() {
   digitalWrite(MS1_M2_PIN, HIGH);
   digitalWrite(MS2_M2_PIN, HIGH);
   digitalWrite(MS3_M2_PIN, HIGH);
+
+  digitalWrite(DETECTION_LED_PIN, LOW);
 
   engine.init();
 

@@ -72,6 +72,31 @@ def generate_launch_description():
         executable='put_cube_container_node',
         name='put_cube_container_node',
     )
+
+    align_tag_precision = Node(
+        package='salamander_planning',
+        executable='align_tag_precision_node',
+        name='align_tag_precision_node',
+    )
+
+    put_cube_precision = Node(
+        package='salamander_planning',
+        executable='put_cube_precision_node',
+        name='put_cube_precision_node',
+    )
+
+    put_cube_slot = Node (
+        package='salamander_planning',
+        executable='put_cube_slot_node',
+        name='put_cube_slot_node',
+    )
+
+    get_cube_table = Node (
+        package='salamander_planning',
+        executable='get_cube_table_node',
+        name='get_cube_table_node',
+    )
+
     reset = Node(
         package='salamander_planning',
         executable='reset_arm_node',
@@ -86,13 +111,16 @@ def generate_launch_description():
 
     return LaunchDescription([
         plansys2_launch,
-        move_action_node,
+        #move_action_node,
         align_action_node,
         vision_node,
         arm_control,
-        align_container,
+        #align_container,
+        align_tag_precision,
         get_cube_slot,
-        put_cube_container,
+        get_cube_table,
+        #put_cube_container,
+        put_cube_slot,
         reset,
         zero_position
         #publish_arm_target

@@ -28,3 +28,5 @@ constexpr double GRIPPER_CLOSE_ANGLE  = (7 * PI) / 12;
 #define MS3_M2_PIN 17
 
 #define GRIPPER_PIN 13
+
+#define DETECTION_LED_PIN 15

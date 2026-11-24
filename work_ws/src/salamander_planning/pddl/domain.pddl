@@ -6,7 +6,9 @@
     cube
     tag
     slot
+    table-slot
     container
+    color
   )
 
   (:predicates
@@ -35,8 +37,12 @@
     (target-container ?c - cube ?k - container)
     (cube-in ?c - cube ?k - container)
 
-    (precision-slot ?t - tag ?w - workspace)
+    (tslot-at ?l - table-slot ?w - workspace)
+    (table-slot-free ?l - table-slot)
+    (cube-in-tslot ?c - cube ?l - table-slot)
     (target-slot ?c - cube ?s - slot)
+    (aligned-precision ?t - tag ?w - workspace)
+    (precision-started)
     (stacking-area ?w - workspace)
 
     (base-free)
@@ -47,9 +53,10 @@
     (cube-stacked-top ?c_top - cube ?c_base - cube ?w - workspace) 
     (cube-stacked-base ?c_top - cube ?c_base - cube ?w - workspace) 
 
-    ; prateleira
     (shelf ?w - workspace)    
     (on-top-shelf ?c - cube ?w - workspace)
+
+    (cube-color ?c - cube ?col - color)
   )
 
   (:action move
@@ -173,18 +180,19 @@
   )
 
   (:action put_cube_container
-    :parameters (?w - workspace ?c - cube ?k - container)
+    :parameters (?w - workspace ?c - cube ?k - container ?s - slot)
     :precondition (and
       (robot-at ?w)
-      (holding ?c)
+      (arm-empty)
+      (at-slot ?c ?s)
       (container-at ?k ?w)
       (container-aligned ?k)
       (target-container ?c ?k)
       (vision-ready)
     )
     :effect (and
-      (not (holding ?c))
-      (arm-empty)
+      (not (at-slot ?c ?s))
+      (empty-slot ?s)
       (cube-in ?c ?k)
       (not (container-aligned ?k))
       (base-free)
@@ -193,23 +201,27 @@
     )
   )
 
-  (:action put_cube_precision
-    :parameters (?w - workspace ?c - cube ?t-hole - tag)
+  (:action put-cube-precision
+    :parameters (?w - workspace ?c - cube ?t - tag ?l - table-slot)
     :precondition (and
       (robot-at ?w)
-      (aligned-tag ?t-hole ?w)
-      (precision-slot ?t-hole ?w)
-      (vision-ready)
-    )
+      (holding ?c)
+      (tslot-at ?l ?w)
+      (table-slot-free ?l)
+      (vision-ready))
     :effect (and
+      (not (holding ?c))
       (arm-empty)
       (cube-at ?c ?w)
-      (not (aligned-tag ?t-hole ?w))
+      (cube-in-tslot ?c ?l)
+      (not (table-slot-free ?l))
+      (not (aligned-tag ?t ?w))
       (base-free)
       (not (vision-ready))
       (arm-folded)
     )
   )
+
 
   (:action stack_cube_base
     :parameters (?w - workspace ?c_base - cube ?s1 - slot ?t_desk - tag ?c_top - cube)
@@ -258,6 +270,42 @@
       (not (at-slot ?c_top ?s2))
     )
   )
+
+  (:action get-cube-precision
+    :parameters (?w - workspace ?c - cube ?t - tag ?l - table-slot)
+    :precondition (and
+      (robot-at ?w)
+      (arm-empty)
+      (aligned-precision ?t ?w)
+      (tag-cube ?c ?t)
+      (cube-in-tslot ?c ?l)
+      (vision-ready))
+    :effect (and
+      (not (arm-empty))
+      (holding ?c)
+      (not (cube-at ?c ?w))
+      (not (cube-in-tslot ?c ?l))
+      (table-slot-free ?l)
+      (not (aligned-precision ?t ?w))
+      (base-free)
+      (not (vision-ready))
+      (arm-folded)
+    )
+  )
+
+  (:action align_tag_precision
+    :parameters (?w - workspace)
+    :precondition (and 
+      (robot-at ?w) 
+      (arm-empty) 
+      (vision-ready) 
+      (base-free))
+    :effect (and
+      (not (base-free))
+      (precision-started)
+    )
+  )
+
 
   (:action get_cube_table
     :parameters (?w - workspace ?c - cube ?t - tag)
