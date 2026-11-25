@@ -42,18 +42,19 @@ void MotorDC::lerEncoder() {
 
 void MotorDC::mover_rpm(float rpm) {
     this->rpm_alvo = rpm;
-    int pwm_controlado = (int) round(this->updatePI(this->rpm_alvo));
 
-    // Tratamento de Direção.
-    this->direction = (rpm_alvo < 0);
+    double output = this->updatePI(this->rpm_alvo);
 
-    pwm_controlado = abs(pwm_controlado);
-    if (pwm_controlado > MAX_PWM) pwm_controlado = MAX_PWM;
+    int pwm_controlado = (int)round(fabs(output));
 
-    if (pwm_controlado > 0 && direction == false) {
+    pwm_controlado = constrain(pwm_controlado, 0, MAX_PWM);
+
+    bool direction = (output < 0);
+
+    if (pwm_controlado > 0 && !direction) {
         digitalWrite(this->in1, HIGH);
         digitalWrite(this->in2, LOW);
-    } else if (pwm_controlado > 0 && direction == true) {
+    } else if (pwm_controlado > 0 && direction) {
         digitalWrite(this->in1, LOW);
         digitalWrite(this->in2, HIGH);
     } else {
