@@ -4,13 +4,13 @@
     
     # [X, Y, Yaw_em_radianos]
     start_coords: [-0.0038048, 0.00604248, 0.0]
-    w1_coords: [2.62, -0.58, 0.0]        
-    w2_coords: [2.52, 0.65, 0.0]         # 90° para a direita (-PI/2), 0.83 -> 1.23 (pra frente); -0.91 -> -0.81 (pra esquerda)
-    w3_coords: [1.61, 1.17, 1.572]         # 180° (PI), -0.33 -> -0.10 (pra frente); -0.42 -> -0.32 (pra esquerda)
+    w1_coords: [0.22, -2.69, 3.142]
+    w2_coords: [0.17, -4.42, 3.142]         # 90° para a direita (-PI/2), 0.83 -> 1.23 (pra frente); -0.91 -> -0.81 (pra esquerda)
+    w3_coords: [2.52, -3.10, 0.0]         # 180° (PI), -0.33 -> -0.10 (pra frente); -0.42 -> -0.32 (pra esquerda)
     w4_coords: [0.86, 1.23, 3.142]         # 90° para a esquerda (PI/2), 0.83 -> 1.23 (pra frente); -0.91 -> -0.81 (pra esquerda)
-    w5_coords: [2.42, 2.08, 0.0]
-    w6_coords: [2.82, -0.27, -1.572]
-    w7_coords: [0.373, 1.8, 3.142]
+    w5_coords: [2.43, -1.46, 1.572]
+    w6_coords: [0.4, 2.8, 0.75] #2.02, -0.24, -1.572
+    w7_coords: [0.18, 1.80, 3.142] #0.18, 1.8, 3.142
     w8_coords: [0.0, 0.0, 0.0]
     w9_coords: [0.0, 0.0, 0.0]
     w10_coords: [0.0, 0.0, 0.0]
@@ -19,8 +19,8 @@
     w13_coords: [0.0, 0.0, 0.0]
     w14_coords: [0.0, 0.0, 0.0]
     w15_coords: [0.0, 0.0, 0.0]
-    finish_coords: [0.0, 0.0, 0.0]
-
+    finish_coords: [-0.41, -1.37, 0.0] #FINISH 1: -0.40 , -0.03 ; FINISH 2: -0.41 ; -1.36
+ 
 #start: o mesmo ou (-0.0038048, 0.00604248, 0) 
 #w1: (2.62, -0.38)
 #w2: (2.18, 0.85)

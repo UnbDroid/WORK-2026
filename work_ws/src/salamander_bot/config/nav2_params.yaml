@@ -127,18 +127,18 @@ controller_server:
       time_steps: 30 #TODO: testando valor menor orig=56
       model_dt: 0.1
       batch_size: 5000 #TODO: testando valor maior orig=1000
-      ax_max: 0.5
-      ax_min: -0.5
-      ay_max: 0.5
-      ay_min: -0.5
-      az_max: 0.7
-      vx_std: 0.2
-      vy_std: 0.2
-      wz_std: 0.3
-      vx_max: 0.4
-      vx_min: -0.4
-      vy_max: 0.4 #TODO: testar valores mais baixos pra ver se é por isso que anda torto
-      wz_max: 0.6
+      ax_max: 0.4
+      ax_min: -0.7
+      ay_max: 0.4
+      ay_min: -0.7
+      az_max: 0.4
+      vx_std: 0.25
+      vy_std: 0.25
+      wz_std: 0.4
+      vx_max: 0.3
+      vx_min: -0.3
+      vy_max: 0.3 #TODO: testar valores mais baixos pra ver se é por isso que anda torto
+      wz_max: 0.5
       iteration_count: 1
       prune_distance: 1.7
       transform_tolerance: 0.1
@@ -254,7 +254,7 @@ local_costmap:
 
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 4.5 #incentiva o robo a manter uma distância segura dos obstáculos.
+        cost_scaling_factor: 4.8 #incentiva o robo a manter uma distância segura dos obstáculos.
         inflation_radius: 0.28 #distancia em metros que o robo deve manter dos obstáculos.
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
@@ -436,9 +436,9 @@ velocity_smoother:
     stamp_smoothed_velocity_with_smoothing_time: False
     scale_velocities: False
     feedback: "OPEN_LOOP"
-    max_velocity: [0.4, 0.4, 0.8] #alterado: O segundo valor (Y) mudou de 0.0 para 0.3, permitindo movimentos laterais.
-    min_velocity: [-0.2, -0.2, -0.8] #alterado: O segundo valor (Y) mudou de 0.0 para -0.3, permitindo movimentos laterais para trás.
-    max_accel: [0.8, 0.8, 1.0] #alterado: O segundo valor (Y) mudou de 0.0 para 2.0, permitindo aceleração lateral.
+    max_velocity: [0.3, 0.3, 0.9] #alterado: O segundo valor (Y) mudou de 0.0 para 0.3, permitindo movimentos laterais.
+    min_velocity: [-0.3, -0.3, -0.8] #alterado: O segundo valor (Y) mudou de 0.0 para -0.3, permitindo movimentos laterais para trás.
+    max_accel: [0.4, 0.4, 0.7] #alterado: O segundo valor (Y) mudou de 0.0 para 2.0, permitindo aceleração lateral.
     max_decel: [-1.0, -1.0, -1.0] #alterado: O segundo valor (Y) mudou de 0.0 para -2.0, permitindo desaceleração lateral.
     odom_topic: "odom"
     odom_duration: 0.1

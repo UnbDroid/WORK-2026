@@ -7,6 +7,7 @@
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "plansys2_executor/ActionExecutorClient.hpp"
 #include "nav2_msgs/action/navigate_to_pose.hpp"
+#include "nav2_msgs/msg/speed_limit.hpp"   // NOVO: limite de velocidade perto do waypoint
 #include "tf2/LinearMath/Quaternion.h"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 
@@ -20,6 +21,15 @@ public:
   {
     // Cria o cliente de ação para navegação
     nav_client_ = rclcpp_action::create_client<nav2_msgs::action::NavigateToPose>(this, "navigate_to_pose");
+
+    // NOVO: desaceleração perto do waypoint (mesas).
+    // Quando faltar menos que 'slow_down_distance' metros de caminho, o robô passa a andar a
+    // 'slow_down_percentage' % da velocidade máxima (vale para frente, lado e giro).
+    speed_limit_pub_ = this->create_publisher<nav2_msgs::msg::SpeedLimit>("/speed_limit", 10);
+    this->declare_parameter<double>("slow_down_distance", 0.6);
+    this->declare_parameter<double>("slow_down_percentage", 35.0);
+    this->get_parameter("slow_down_distance", slow_down_distance_);
+    this->get_parameter("slow_down_percentage", slow_down_percentage_);
     
     // 1. Declara e lê a lista principal com os nomes dos pontos
     this->declare_parameter<std::vector<std::string>>("waypoints", std::vector<std::string>{});
@@ -65,10 +75,36 @@ protected:
       send_feedback(0.0, "Iniciando navegação para " + dest);
       
       auto send_goal_options = rclcpp_action::Client<nav2_msgs::action::NavigateToPose>::SendGoalOptions();
+
+      // NOVO: começa cada navegação SEM limite de velocidade
+      publish_speed_limit(0.0);
+      slowed_ = false;
+      armed_ = false;
+
+      // NOVO: acompanha a distância que falta e desacelera perto do destino
+      send_goal_options.feedback_callback = [this](
+        rclcpp_action::ClientGoalHandle<nav2_msgs::action::NavigateToPose>::SharedPtr,
+        const std::shared_ptr<const nav2_msgs::action::NavigateToPose::Feedback> feedback) {
+          const double restante = feedback->distance_remaining;
+          // No começo o Nav2 ainda não calculou o caminho e manda 0: só "arma" depois de
+          // ver uma distância maior que a zona de desaceleração.
+          if (!armed_) {
+            if (restante > slow_down_distance_) armed_ = true;
+            return;
+          }
+          if (!slowed_ && restante < slow_down_distance_) {
+            publish_speed_limit(slow_down_percentage_);
+            slowed_ = true;
+            RCLCPP_INFO(this->get_logger(), "   Perto do destino (%.2f m): velocidade limitada a %.0f%%",
+                        restante, slow_down_percentage_);
+          }
+        };
       
       // Capturamos [this, dest] para a função lambda lembrar qual era o destino
       send_goal_options.result_callback = [this, dest](const rclcpp_action::ClientGoalHandle<nav2_msgs::action::NavigateToPose>::WrappedResult & result) {
         goal_sent_ = false;
+        publish_speed_limit(0.0);   // NOVO: tira o limite ao terminar (sucesso ou falha)
+        slowed_ = false;
         if (result.code == rclcpp_action::ResultCode::SUCCEEDED) {
           // LOG: O robô chegou no alvo
           RCLCPP_INFO(this->get_logger(), "<< CHEGOU: PALIO alcançou o ponto %s com sucesso!", dest.c_str());
@@ -85,6 +121,23 @@ protected:
   }
 
 private:
+  // NOVO: publica o limite de velocidade. 0 = sem limite.
+  void publish_speed_limit(double percentage)
+  {
+    nav2_msgs::msg::SpeedLimit msg;
+    msg.header.stamp = this->now();
+    msg.header.frame_id = "map";
+    msg.percentage = true;
+    msg.speed_limit = percentage;
+    speed_limit_pub_->publish(msg);
+  }
+
+  rclcpp::Publisher<nav2_msgs::msg::SpeedLimit>::SharedPtr speed_limit_pub_;
+  double slow_down_distance_ = 0.6;
+  double slow_down_percentage_ = 40.0;
+  bool slowed_ = false;
+  bool armed_ = false;
+
   bool goal_sent_ = false;
   geometry_msgs::msg::PoseStamped create_pose(double x, double y, double yaw)
   {

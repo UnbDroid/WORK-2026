@@ -48,9 +48,9 @@ class ControlNode(Node):
             'put_slot1': [-0.370988, 0.060215, 0.177674],
             'put_slot2': [-0.373852, -0.042785, 0.177674],
             'put_slot3': [-0.356977, -0.143785, 0.177674],
-            'get_slot1': [-0.370988, 0.060215, 0.167674],
-            'get_slot2': [-0.373852, -0.042785, 0.167674],
-            'get_slot3': [-0.356977, -0.143785, 0.164674],
+            'get_slot1': [-0.370988, 0.060215, 0.135674],
+            'get_slot2': [-0.373852, -0.042785, 0.135674],
+            'get_slot3': [-0.356977, -0.143785, 0.133674],
             'pre_drop_cube_1': [0.3324,  0.15, 0.3228],
             'pre_drop_cube_2': [0.3324,  0.00, 0.3228],
             'pre_drop_cube_3': [0.3324, -0.15, 0.3228],
@@ -170,16 +170,16 @@ class ControlNode(Node):
             self.publish_gripper(False) 
             time.sleep(3.0)
             self.publish_target_coordinates('shelf')
-            time.sleep(4.0)
+            time.sleep(3.0)
             self.publish_target_coordinates('pre_initial') 
-            time.sleep(4.0)
+            time.sleep(3.0)
 
         elif command.startswith("put_slot"):
             base_slot = command.split("put_")[1] # Extrai 'slot1'
             pre_slot_name = "pre_" + base_slot # Monta 'pre_slot1'
             
             self.publish_target_coordinates(pre_slot_name) 
-            time.sleep(4.0)
+            time.sleep(3.0)
             self.publish_target_coordinates(command)
             time.sleep(4.0)
             self.publish_gripper(True) 
@@ -187,7 +187,7 @@ class ControlNode(Node):
             self.publish_target_coordinates(pre_slot_name) 
             time.sleep(3.0)
             self.publish_target_coordinates('pre_initial') 
-            time.sleep(4.0)
+            time.sleep(2.0)
             self.publish_target_coordinates('zero') 
             time.sleep(2.0)
 
@@ -215,15 +215,15 @@ class ControlNode(Node):
             pre_target_name = f'pre_drop_cube_{self.drop_counter}'
             
             self.publish_target_coordinates('shelf') 
-            time.sleep(4.0)
+            time.sleep(2.0)
             self.publish_target_coordinates(target_name)
-            time.sleep(4.0)
+            time.sleep(3.5)
             self.publish_gripper(True)
             time.sleep(3.0)
             self.publish_target_coordinates(pre_target_name)
-            time.sleep(4.0)
-            self.publish_target_coordinates('pre_initial')
             time.sleep(3.0)
+            self.publish_target_coordinates('pre_initial')
+            time.sleep(2.0)
             self.publish_target_coordinates('initial')
             time.sleep(2.0)
 
@@ -240,7 +240,7 @@ class ControlNode(Node):
             # ALTERADO: chega POR CIMA (pre_drop) e desce, em vez de entrar na horizontal
             # pela posição 'shelf' — a prateleira superior é inclinada e tem um lábio na frente.
             self.publish_target_coordinates(pre_target_name)
-            time.sleep(4.0)
+            time.sleep(3.0)
             self.publish_target_coordinates(target_name)
             time.sleep(4.0)
             self.publish_gripper(True)
@@ -275,15 +275,15 @@ class ControlNode(Node):
             self.publish_gripper(True) 
             time.sleep(2.0)
             self.publish_target_coordinates(pre_slot_name)
-            time.sleep(4.0)
+            time.sleep(3.0)
             self.publish_target_coordinates(command)
             time.sleep(4.0)
             self.publish_gripper(False) 
-            time.sleep(4.0)
-            self.publish_target_coordinates(pre_slot_name) 
-            time.sleep(4.0)
-            self.publish_target_coordinates('pre_initial')
             time.sleep(3.0)
+            self.publish_target_coordinates(pre_slot_name) 
+            time.sleep(3.0)
+            self.publish_target_coordinates('pre_initial')
+            time.sleep(2.0)
 
         # pega do slot e já coloca na mesa como base
         elif command.startswith("PLACE_BASE"):
@@ -363,10 +363,10 @@ class ControlNode(Node):
 
         elif command == "reset_arm":
             #time.sleep(20.0)
-            self.publish_target_coordinates('pre_initial')
-            time.sleep(3.0)
+            #self.publish_target_coordinates('pre_initial')
+            #time.sleep(3.0)
             self.publish_target_coordinates('initial')
-            time.sleep(3.0)
+            time.sleep(2.0)
             self.publish_gripper(True) 
             time.sleep(1.0)
 
