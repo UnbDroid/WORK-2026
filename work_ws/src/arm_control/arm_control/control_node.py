@@ -8,6 +8,8 @@ from geometry_msgs.msg import Point
 from std_msgs.msg import Bool, String
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Int32
+from std_srvs.srv import Trigger
+from rclpy.callback_groups import ReentrantCallbackGroup
 
 
 class ControlNode(Node):
@@ -24,6 +26,7 @@ class ControlNode(Node):
 
         self.create_subscription(String, "/precision_info", self.precision_callback, 10)
         self.precision_status_pub = self.create_publisher(Bool, "/precision_status", 10)
+        self.align_cli = self.create_client(Trigger, "align_to_table")
         
         self.drop_counter = 0
         self.shelf_counter = 0   # NOVO: contador separado para a prateleira
@@ -99,6 +102,17 @@ class ControlNode(Node):
             return
         self.sequence_running = True
         threading.Thread(target=self.run_precision, args=(msg.data,), daemon=True).start()
+
+    def align(self):
+        if not self.align_cli.wait_for_service(timeout_sec=2.0):
+            self.get_logger().warn("Servico align_to_table indisponivel")
+            return False
+        fut = self.align_cli.call_async(Trigger.Request())
+        while not fut.done():
+            time.sleep(0.05)
+        res = fut.result()
+        self.get_logger().info(f"Alinhador: {res.message}")
+        return res.success
 
 
     def publish_target_coordinates(self, target_name):
@@ -206,6 +220,9 @@ class ControlNode(Node):
         elif command.startswith("put_cube_table"):
             workspace = command.split("_")[-1] # Extrai 'w1', 'w2' ou 'w3'
             h = self.height_map.get(workspace, '10') # Busca se é 5, 10 ou 15cm
+
+            if not self.align():
+                self.get_logger().warn("Alinhamento LiDAR falhou, seguindo com o waypoint")
 
             self.drop_counter += 1
             if self.drop_counter > 3:
