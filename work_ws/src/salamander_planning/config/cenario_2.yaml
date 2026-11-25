@@ -6,24 +6,24 @@
     start_coords: [0.00, 0.00, 0.00]
 
     w1_mid_coords: [0.18, -3.17, 3.142]
-    w1_dir_coords: [0.12, -2.69, 3.142]
+    w1_dir_coords: [0.22, -2.69, 3.142] #atualizado
 
-    w2_dir_coords: [0.17, -4.42, 3.142]
+    w2_dir_coords: [0.17, -4.42, 3.142] #atualizado
     w2_mid_coords: [0.08, -4.44, 3.142]
 
-    w3_mid_coords: [2.52, -3.10, 0.00]
-    w3_dir_coords: [2.43, -3.67, 0.00]
+    w3_mid_coords: [2.47, -3.10, 0.0] #atualizado
+    w3_dir_coords: [2.43, -3.67, 0.00] #chute
 
     w4_coords: [3.93, -3.97, 3.142]
 
-    w5_dir_coords: [3.50, -1.35, -1.572]
-    w5_mid_coords: [2.43, -1.40, -1.572]
+    w5_dir_coords: [2.83, -1.46, 1.572] #chute
+    w5_mid_coords: [2.43, -1.46, 1.572] #atualizado
 
-    w6_dir_coords: [2.07, -0.14, 1.571]
+    w6_dir_coords: [0.4, 2.8, 0.75] #atualizado
     w6_mid_coords: [2.82, -0.27, 1.571]
 
-    w7_dir_coords: [0.40, 0.56, 3.142]
-    w7_mid_coords: [0.37, 1.80, 3.142]
+    w7_dir_coords: [0.22, 1.80, 3.142] #chute
+    w7_mid_coords: [0.18, 1.80, 3.142] #atualizado
 
     w8_dir_coords: [0.39, 2.63, 3.142]
     w8_mid_coords: [0.39, 3.24, 3.142]
