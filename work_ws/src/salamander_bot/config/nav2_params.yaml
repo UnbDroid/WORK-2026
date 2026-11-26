@@ -47,12 +47,13 @@ amcl:
     recovery_alpha_slow: 0.0
     resample_interval: 1
     scan_topic: /scan_filtered
-    set_initial_pose: false
-    #initial_pose:
-    #  x: -0.0038048
-    #  y: 0.00604248
-    #  z: 0.0
-    #  yaw: 0.0
+    set_initial_pose: true
+    initial_pose:
+      x: 0.143
+      y: -1.803
+      z: -0.023
+      yaw: 0.0
+      #init 2 : 0.143 -1.803 -0.023
 
 #Executa a árvore de comportamento para navegação e recuperação
 bt_navigator:
@@ -127,10 +128,10 @@ controller_server:
       time_steps: 30 #TODO: testando valor menor orig=56
       model_dt: 0.1
       batch_size: 5000 #TODO: testando valor maior orig=1000
-      ax_max: 0.4
-      ax_min: -0.7
+      ax_max: 0.8
+      ax_min: -0.6
       ay_max: 0.4
-      ay_min: -0.7
+      ay_min: -0.8
       az_max: 0.4
       vx_std: 0.25
       vy_std: 0.25

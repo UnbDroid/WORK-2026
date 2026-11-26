@@ -8,9 +8,6 @@ from geometry_msgs.msg import Point
 from std_msgs.msg import Bool, String
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Int32
-from std_srvs.srv import Trigger
-from rclpy.callback_groups import ReentrantCallbackGroup
-
 
 class ControlNode(Node):
 
@@ -26,7 +23,6 @@ class ControlNode(Node):
 
         self.create_subscription(String, "/precision_info", self.precision_callback, 10)
         self.precision_status_pub = self.create_publisher(Bool, "/precision_status", 10)
-        self.align_cli = self.create_client(Trigger, "align_to_table")
         
         self.drop_counter = 0
         self.shelf_counter = 0   # NOVO: contador separado para a prateleira
@@ -51,9 +47,9 @@ class ControlNode(Node):
             'put_slot1': [-0.370988, 0.060215, 0.177674],
             'put_slot2': [-0.373852, -0.042785, 0.177674],
             'put_slot3': [-0.356977, -0.143785, 0.177674],
-            'get_slot1': [-0.370988, 0.060215, 0.135674],
-            'get_slot2': [-0.373852, -0.042785, 0.135674],
-            'get_slot3': [-0.356977, -0.143785, 0.133674],
+            'get_slot1': [-0.370988, 0.060215, 0.145674],
+            'get_slot2': [-0.373852, -0.042785, 0.145674],
+            'get_slot3': [-0.356977, -0.143785, 0.143674],
             'pre_drop_cube_1': [0.3324,  0.15, 0.3228],
             'pre_drop_cube_2': [0.3324,  0.00, 0.3228],
             'pre_drop_cube_3': [0.3324, -0.15, 0.3228],
@@ -102,18 +98,6 @@ class ControlNode(Node):
             return
         self.sequence_running = True
         threading.Thread(target=self.run_precision, args=(msg.data,), daemon=True).start()
-
-    def align(self):
-        if not self.align_cli.wait_for_service(timeout_sec=2.0):
-            self.get_logger().warn("Servico align_to_table indisponivel")
-            return False
-        fut = self.align_cli.call_async(Trigger.Request())
-        while not fut.done():
-            time.sleep(0.05)
-        res = fut.result()
-        self.get_logger().info(f"Alinhador: {res.message}")
-        return res.success
-
 
     def publish_target_coordinates(self, target_name):
         coords = self.targets[target_name]
@@ -221,9 +205,6 @@ class ControlNode(Node):
             workspace = command.split("_")[-1] # Extrai 'w1', 'w2' ou 'w3'
             h = self.height_map.get(workspace, '10') # Busca se é 5, 10 ou 15cm
 
-            if not self.align():
-                self.get_logger().warn("Alinhamento LiDAR falhou, seguindo com o waypoint")
-
             self.drop_counter += 1
             if self.drop_counter > 3:
                 self.drop_counter = 1
@@ -231,8 +212,8 @@ class ControlNode(Node):
             target_name = f'drop_cube_{h}_{self.drop_counter}'
             pre_target_name = f'pre_drop_cube_{self.drop_counter}'
             
-            self.publish_target_coordinates('shelf') 
-            time.sleep(2.0)
+            self.publish_target_coordinates(pre_target_name) 
+            time.sleep(4.0)
             self.publish_target_coordinates(target_name)
             time.sleep(3.5)
             self.publish_gripper(True)

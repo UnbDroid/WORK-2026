@@ -15,12 +15,6 @@ find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(lifecycle_msgs REQUIRED)
-find_package(std_srvs REQUIRED)
-find_package(sensor_msgs REQUIRED)
-find_package(geometry_msgs REQUIRED)
-
-add_executable(table_aligner_node src/table_aligner_node.cpp)
-ament_target_dependencies(table_aligner_node rclcpp std_srvs sensor_msgs geometry_msgs)
 
 # Declara o nó C++ e vincula as bibliotecas necessárias
 add_executable(move_action_node src/move_action_node.cpp)
@@ -68,7 +62,6 @@ add_executable(align_tag_precision_node src/align_tag_precision_node.cpp)
 ament_target_dependencies(align_tag_precision_node rclcpp plansys2_executor std_msgs lifecycle_msgs)
 
 install(TARGETS
-  table_aligner_node
   move_action_node
   align_action_node
   get_cube_table_node
