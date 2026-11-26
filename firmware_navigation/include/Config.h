@@ -15,20 +15,20 @@
 #define DISTANCE_BETWEEN_WHEELS_Y   0.14875   // Distance Between Wheels and Center of Robot (Y Axes) in Meters.
 
 
-#define M1_ENA          GPIO_NUM_26           // ENA Pin Connected to Motor Driver.
-#define M1_ENB          GPIO_NUM_27           // ENB Pin Connected to Motor Driver.
-#define M1_PWM          GPIO_NUM_13           // Enable Pin for PWM Control.
-#define M1_ENC_A        GPIO_NUM_16           // Encoder A (Yellow Wire).
-#define M1_ENC_B        GPIO_NUM_17           // Encoder B Pin (White Wire).
+#define M1_ENA          GPIO_NUM_32           // ENA Pin Connected to Motor Driver.
+#define M1_ENB          GPIO_NUM_33           // ENB Pin Connected to Motor Driver.
+#define M1_PWM          GPIO_NUM_25           // Enable Pin for PWM Control.
+#define M1_ENC_A        GPIO_NUM_34           // Encoder A (Yellow Wire).
+#define M1_ENC_B        GPIO_NUM_35           // Encoder B Pin (White Wire).
 #define M1_CANAL_PWM    LEDC_CHANNEL_0
 #define M1_KP           0.7
 #define M1_KI           1.0
 
-#define M3_ENA          GPIO_NUM_33
-#define M3_ENB          GPIO_NUM_32
-#define M3_PWM          GPIO_NUM_25
-#define M3_ENC_A        GPIO_NUM_34
-#define M3_ENC_B        GPIO_NUM_35         
+#define M3_ENA          GPIO_NUM_26
+#define M3_ENB          GPIO_NUM_27
+#define M3_PWM          GPIO_NUM_13
+#define M3_ENC_A        GPIO_NUM_16
+#define M3_ENC_B        GPIO_NUM_17         
 #define M3_CANAL_PWM    LEDC_CHANNEL_1
 #define M3_KP           0.7
 #define M3_KI           1.0

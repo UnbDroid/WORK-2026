@@ -34,7 +34,9 @@ void Manipulator::init(FastAccelStepper* base, FastAccelStepper* arm, Servo* gri
     if (stepper_base) {
         stepper_base->setDirectionPin(DIR_M1_PIN);
         stepper_base->setEnablePin(ENABLE_M1_PIN);
-        stepper_base->setAutoEnable(true);
+        stepper_base->setAutoEnable(false);
+
+        stepper_base->enableOutputs();
 
         stepper_base->setSpeedInHz(1.0 * BASE_STEPS_PER_RAD);
         stepper_base->setAcceleration(0.4 * BASE_STEPS_PER_RAD);
