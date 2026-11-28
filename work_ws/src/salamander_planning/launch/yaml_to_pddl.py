@@ -1,11 +1,9 @@
-"""Traduz um arquivo de equipe (.yaml) do @Work Commander para um problem .pddl
-do `salamander-domain` (types: workspace, cube, tag, slot, container)."""
 import argparse
-import itertools
 import os
 import sys
-
+import itertools
 import yaml
+from graphlib import TopologicalSorter, CycleError
 
 # NOMES
 
@@ -15,16 +13,14 @@ LOC_FINISH = 'finish'
 # Waypoints da arena: w1..w9 mesas comuns (WS_n), w10..w13 prateleiras (SH_1..SH_4),
 # w14..w15 mesas de precisao (PP, PP_2). Cada prateleira tem UM waypoint (BOTTOM e TOP
 # compartilham o workspace).
-N_WS = 9
+N_WS = 10
 N_SH = 4
-SH_BASE = 9           # SH_n -> w{SH_BASE + n}
-PP_BASE = 13          # PP -> w14, PP_2 -> w15
+SH_BASE = 10          # SH_n -> w{SH_BASE + n}
+PP_BASE = 14
 SLOTS_ROBO = ['slot1', 'slot2', 'slot3']
 COR_PT = {'BLUE': 'azul', 'RED': 'vermelho'}
 COR_ID_VISAO = {'BLUE': '-2', 'RED': '-1'}
 
-# O exemplo de problema comeca com (vision-ready) e sem (arm-folded).
-# Se o robo realmente comeca dobrado, ponha False.
 INICIO_VISION_READY = True
 
 
@@ -62,8 +58,6 @@ def nome_pp(area):            # 'PP' -> 'w14', 'PP_2' -> 'w15'
 def nome_container(cor, loc):
     return f'container_{COR_PT[cor]}_{loc}{COR_ID_VISAO[cor]}'
 
-
-# CONFERENCIA DO ARQUIVO (invariantes do contrato)
 
 class ErroContrato(Exception):
     pass
@@ -265,13 +259,38 @@ def traduzir(doc, com_finish=True):
         avisos.append(f'PP: cubos {internos} ficam so com a rotina de precisao (fora do PDDL); '
                       'o goal da PP e\' apenas (precision-started).')
 
+        # ordem de visita: origem de cubo antes do destino (ordenacao topologica)
+    movimentos = {(loc_de(inicio[o]), ws_destino(o)) for o in ativos if not parado(o)}
+    movimentos = {(a, b) for a, b in movimentos if a != b}
+    base = sorted((w for w in workspaces if w not in (LOC_START, LOC_FINISH)),
+                  key=lambda w: int(w[1:]))
+    ts = TopologicalSorter({w: set() for w in base})
+    for a, b in movimentos:
+        ts.add(b, a)              # b so depois de a
+    try:
+        trabalho = list(ts.static_order())
+        ciclo = False
+    except CycleError:
+        trabalho, ciclo = base, True
+        avisos.append('ha cubos indo e voltando entre workspaces (ciclo): nao existe ordem unica, '
+                      'liberando conexoes nos dois sentidos entre os workspaces de trabalho.')
+
     # init
     init = [f'(robot-at {LOC_START})', '(arm-empty)', '(base-free)']
     init.append('(vision-ready)' if INICIO_VISION_READY else '(arm-folded)')
     init.append('')
-    for a, b in itertools.permutations(workspaces, 2):
-        if a != LOC_FINISH:
-            init.append(f'(connected {a} {b})')
+    if trabalho:
+        init.append(f'(connected {LOC_START} {trabalho[0]})')
+        if ciclo:
+            for a, b in itertools.permutations(trabalho, 2):
+                init.append(f'(connected {a} {b})')
+        else:
+            for i, a in enumerate(trabalho):
+                for b in trabalho[i + 1:]:
+                    init.append(f'(connected {a} {b})')
+        init.append(f'(connected {trabalho[-1]} {LOC_FINISH})')
+    else:
+        init.append(f'(connected {LOC_START} {LOC_FINISH})')
     init.append('')
     if ativos:
         init += [f'(empty-slot {s})' for s in SLOTS_ROBO] + ['']

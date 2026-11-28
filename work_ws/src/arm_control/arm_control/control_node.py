@@ -41,13 +41,13 @@ class ControlNode(Node):
             'get_cube_10':  [0.3324, 0.0, 0.0097],
             'get_cube_5': [0.307641, 0.0, -0.04],
             'teste_cube':  [0.3324, 0.00, 0.0497],
-            'pre_slot1': [-0.370988,  0.060215, 0.32207],
+            'pre_slot1': [-0.370988,  0.058215, 0.32207],
             'pre_slot2': [-0.373852, -0.042785, 0.32207],
             'pre_slot3': [-0.356977, -0.143785, 0.32207],
-            'put_slot1': [-0.370988, 0.060215, 0.177674],
+            'put_slot1': [-0.370988, 0.058215, 0.177674],
             'put_slot2': [-0.373852, -0.042785, 0.177674],
             'put_slot3': [-0.356977, -0.143785, 0.177674],
-            'get_slot1': [-0.370988, 0.060215, 0.145674],
+            'get_slot1': [-0.370988, 0.058215, 0.145674],
             'get_slot2': [-0.373852, -0.042785, 0.145674],
             'get_slot3': [-0.356977, -0.143785, 0.143674],
             'pre_drop_cube_1': [0.3324,  0.0, 0.3228],
@@ -419,6 +419,7 @@ class ControlNode(Node):
         time.sleep(4.0)
         self.publish_gripper(False) 
         time.sleep(3.0)
+        self.drive_x(-0.01)
         self.publish_target_coordinates('shelf')
         time.sleep(4.0)
         self.publish_target_coordinates('pre_initial') 
@@ -446,6 +447,8 @@ class ControlNode(Node):
 
         self.publish_gripper(True)
         time.sleep(2.0)
+        self.publish_target_coordinates('shelf') 
+        time.sleep(4.0)
         self.publish_target_coordinates(pre_slot)
         time.sleep(4.0)
         self.publish_target_coordinates("get_" + slot)
@@ -457,20 +460,25 @@ class ControlNode(Node):
         self.publish_target_coordinates('pre_initial')
         time.sleep(3.0)
 
-        target_name = f'drop_cube_{h}_2'
-        pre_target_name = f'pre_drop_cube_2'
+        target_name = f'drop_cube_{h}_1'
+        pre_target_name = f'pre_drop_cube_1'
         
         self.publish_target_coordinates('shelf') 
         time.sleep(4.0)
         self.publish_target_coordinates(target_name)
         time.sleep(4.0)
+        self.drive_x(-0.01)
+        time.sleep(1.0)
         self.publish_gripper(True)
         time.sleep(3.0)
         self.publish_target_coordinates(pre_target_name)
         time.sleep(4.0)
         self.publish_target_coordinates('pre_initial')
         time.sleep(3.0)
-        self.publish_target_coordinates('initial')
+        self.publish_target_coordinates('zero')
+        time.sleep(2.0)
+        self.drive_x(-0.1)
+
 
 def main(args=None):
     rclpy.init(args=args)

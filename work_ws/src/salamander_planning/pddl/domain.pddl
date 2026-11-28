@@ -57,6 +57,7 @@
     (on-top-shelf ?c - cube ?w - workspace)
 
     (cube-color ?c - cube ?col - color)
+    (precision-area ?w - workspace)
   )
 
   (:action move
@@ -295,14 +296,16 @@
 
   (:action align_tag_precision
     :parameters (?w - workspace)
-    :precondition (and 
-      (robot-at ?w) 
-      (arm-empty) 
-      (vision-ready) 
+    :precondition (and
+      (robot-at ?w)
+      (precision-area ?w)
+      (arm-empty)
+      (vision-ready)
       (base-free))
     :effect (and
-      (not (base-free))
       (precision-started)
+      (not (vision-ready))
+      (arm-folded)
     )
   )
 

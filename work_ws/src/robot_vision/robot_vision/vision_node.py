@@ -7,6 +7,8 @@ from rclpy.node import Node
 import apriltag
 import numpy as np
 
+from rclpy.qos import qos_profile_sensor_data
+from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import PointStamped, Twist
 from std_msgs.msg import MultiArrayLayout
 from std_msgs.msg import Bool, String
@@ -39,7 +41,10 @@ class VisionNode(Node):
 
         self.create_subscription(Bool, "/precision_status", self.precision_status_callback, 10)
 
-        self.slot_tags = [101, 102, 103, 104, 105, 106]
+        self.slot_tags = [101, 102, 103, 104, 105, 106, 107]
+        self.n_posicoes = len(self.slot_tags)
+        self.pos_vazia_final = self.n_posicoes - 1   # índice da 107
+        self.end_pos = None                          # posição onde termina o ciclo atual
         self.slot_toggle = 1
         self.arm_result = None
         self.cycle_start = None
@@ -54,7 +59,7 @@ class VisionNode(Node):
         self.mode = "pick"
         self.container_color = None
         self.profiles = {
-            "pick":      dict(target_z=0.402, x_offset=0.10),
+            "pick":      dict(target_z=0.40, x_offset=0.10),
             "stack":     dict(target_z=0.403, x_offset=0.10),
             "container": dict(target_z=0.232,  x_offset=0.09),
             "precisao": dict(target_z=0.40, x_offset=0.10)
@@ -86,7 +91,62 @@ class VisionNode(Node):
         self.wait_start = None
         self.last_vision_usage = 0.0
 
+        # Odometria lateral estimada a partir dos cmd_vel publicados (m, + = direita).
+        # Soma busca E alinhamento, então o retorno volta exatamente pro início.
+        self.desloc_y = 0.0
+        self.last_vy = 0.0
+        self.last_cmd_t = None
+        self.margem_retorno = 0.0   # m extra para a esquerda no retorno (ajuste se ainda faltar)
+        self.tol_retorno = 0.005    # m
+
         self.max_speed = 0.07     # m/s
+
+        # --- CORREÇÃO DE YAW PELO LIDAR (mantém o robô paralelo à borda da mesa) ---
+        # Por padrão a posição/rotação do lidar vem do TF (URDF: base_link -> rplidar_a1m8_1),
+        # o mesmo que o rf2o usa. Então NÃO precisa de offset nem de "invertido" na mão.
+        # Só se o TF não existir ele usa lidar_offset_deg / lidar_invertido.
+        self.declare_parameter("usar_lidar", True)
+        self.declare_parameter("scan_topic", "/scan_filtered")  # já sem o corpo do robô
+        self.declare_parameter("usar_tf", True)
+        self.declare_parameter("base_frame", "base_link")
+        self.declare_parameter("lidar_offset_deg", 0.0)   # reserva, só sem TF
+        self.declare_parameter("lidar_invertido", False)  # reserva, só sem TF
+        self.declare_parameter("setor_deg", 20.0)         # usa os pontos entre -setor e +setor na frente
+        self.declare_parameter("dist_min", 0.10)          # m (a partir do lidar), ignora o próprio robô
+        self.declare_parameter("dist_max", 1.5)           # m, ignora pontos mais longe que isso
+        self.declare_parameter("min_pontos", 15)
+        self.declare_parameter("yaw_max_deg", 25.0)       # leitura acima disso é descartada (segurança)
+        self.declare_parameter("k_yaw", 0.8)              # (rad/s) por rad de erro
+        self.declare_parameter("max_wz", 0.3)             # rad/s
+        self.declare_parameter("tol_yaw_deg", 2.0)        # tolerância para considerar alinhado
+        self.declare_parameter("zona_morta_deg", 0.5)     # abaixo disso não corrige (evita tremedeira)
+        self.declare_parameter("sinal_yaw", 1.0)          # troque para -1.0 se ele girar para o lado errado
+        p = lambda n: self.get_parameter(n).value
+        self.usar_lidar = bool(p("usar_lidar"))
+        self.usar_tf = bool(p("usar_tf"))
+        self.base_frame = str(p("base_frame"))
+        self.lidar_offset = np.radians(float(p("lidar_offset_deg")))
+        self.lidar_invertido = bool(p("lidar_invertido"))
+        self.setor = np.radians(float(p("setor_deg")))
+        self.dist_min = float(p("dist_min"))
+        self.dist_max = float(p("dist_max"))
+        self.min_pontos = int(p("min_pontos"))
+        self.yaw_max = np.radians(float(p("yaw_max_deg")))
+        self.k_yaw = float(p("k_yaw"))
+        self.max_wz = float(p("max_wz"))
+        self.tol_yaw = np.radians(float(p("tol_yaw_deg")))
+        self.zona_morta = np.radians(float(p("zona_morta_deg")))
+        self.sinal_yaw = float(p("sinal_yaw"))
+        self.yaw_mesa = None        # rad, 0 = paralelo à mesa; None = sem leitura confiável
+        self.yaw_stamp = 0.0
+        self.tf_lidar = None        # (R 3x3, t 3) base_frame <- frame do lidar
+        if self.usar_lidar:
+            if self.usar_tf:
+                from tf2_ros import Buffer, TransformListener
+                self.tf_buffer = Buffer()
+                self.tf_listener = TransformListener(self.tf_buffer, self)
+            self.create_subscription(LaserScan, p("scan_topic"), self.scan_callback,
+                                     qos_profile_sensor_data)
 
         self.indice_camera = 2 # Índice na raspberry pi (diferente no notebook)
         self.cap = cv2.VideoCapture(self.indice_camera, cv2.CAP_V4L2)
@@ -115,6 +175,65 @@ class VisionNode(Node):
 
         self.timer = self.create_timer(0.033, self.process_frame_callback)
 
+    # ---------------- LIDAR ----------------
+    def scan_callback(self, msg):
+        if self.usar_tf and self.tf_lidar is None:
+            self.tf_lidar = buscar_tf_lidar(self.tf_buffer, self.base_frame, msg.header.frame_id)
+            if self.tf_lidar is None:
+                self.get_logger().warn(
+                    f"Sem TF {self.base_frame} <- {msg.header.frame_id}; usando lidar_offset_deg/lidar_invertido.",
+                    throttle_duration_sec=5.0)
+            else:
+                off, inv = resumo_tf(self.tf_lidar[0])
+                self.get_logger().info(f"TF do lidar carregado: equivale a offset={off:.1f}° invertido={inv}")
+        yaw = estimar_yaw_mesa(msg, self.setor, self.dist_min, self.dist_max, self.min_pontos,
+                               tf_lidar=self.tf_lidar, offset=self.lidar_offset,
+                               invertido=self.lidar_invertido)
+        if yaw is not None and abs(yaw) > self.yaw_max:
+            self.get_logger().warn(f"Lidar: yaw {np.degrees(yaw):.1f}° acima do limite, descartado.",
+                                   throttle_duration_sec=2.0)
+            yaw = None
+        self.yaw_mesa = yaw
+        self.yaw_stamp = self.get_clock().now().nanoseconds / 1e9
+        if self.yaw_mesa is None:
+            self.get_logger().warn("Lidar: borda da mesa não encontrada no setor da frente.",
+                                   throttle_duration_sec=2.0)
+
+    def yaw_atual(self):
+        """Yaw em relação à mesa, ou None se não tiver leitura recente/confiável."""
+        if not self.usar_lidar or self.yaw_mesa is None:
+            return None
+        if self.get_clock().now().nanoseconds / 1e9 - self.yaw_stamp > 0.5:
+            return None
+        return self.yaw_mesa
+
+    def correcao_yaw(self):
+        yaw = self.yaw_atual()
+        if yaw is None or abs(yaw) < self.zona_morta:
+            return 0.0
+        return float(np.clip(-self.sinal_yaw * self.k_yaw * yaw, -self.max_wz, self.max_wz))
+
+    def publicar_cmd(self, cmd, corrigir_yaw=True):
+        """Publica cmd_vel e integra o deslocamento lateral (vy fica valendo até o próximo comando).
+
+        corrigir_yaw=True soma a correção do lidar no angular.z. Use False no ÚLTIMO comando
+        antes de a visão largar o robô (senão a base pode ficar girando com o último comando).
+        """
+        if corrigir_yaw and cmd.angular.z == 0.0:
+            cmd.angular.z = self.correcao_yaw()
+        agora = self.get_clock().now().nanoseconds / 1e9
+        if self.last_cmd_t is not None:
+            self.desloc_y += self.last_vy * (agora - self.last_cmd_t)
+        self.last_cmd_t = agora
+        self.last_vy = cmd.linear.y
+        self.cmd_vel_pub.publish(cmd)
+
+    def zerar_origem(self):
+        """Marca a posição atual como início da mesa."""
+        self.publicar_cmd(Twist())
+        self.desloc_y = 0.0
+        self.time_spent_searching = 0.0
+
     def precision_status_callback(self, msg):
         if self.state == "WAIT_ARM":
             self.arm_result = msg.data
@@ -137,10 +256,11 @@ class VisionNode(Node):
 
         if mode == "container":
             self.container_color = target.replace("container-", "")
-            if abs(self.time_spent_searching) > 0.1:
+            if self.desloc_y > 0.01:
                 self.state = "RETURNING"
                 self.return_start_time = self.last_seen
             else:
+                self.zerar_origem()
                 self.state = "SEARCHING"
                 self.search_start_time = self.last_seen
             self.get_logger().info(f"Modo CONTAINER: cor {self.container_color}")
@@ -148,13 +268,14 @@ class VisionNode(Node):
 
         elif mode == "precisao":
             self.current_target_id = -1
-            if len(self.realocable) >= 3:
+            if self.catalogo_completo():
                 self.avancar_alvo_precisao()
                 self.state = "RETURNING"
                 self.return_start_time = self.last_seen
         
             else:
                 self.tag_save = True
+                self.zerar_origem()   # catálogo começa no início da mesa
                 self.state = "SEARCHING"
                 self.search_start_time = self.last_seen
 
@@ -162,9 +283,6 @@ class VisionNode(Node):
             return
 
         if not self.mode == "precisao":
-            # ALTERADO: a cor agora é OPCIONAL.
-            #   "tag1-blue" -> tag 1, confere a cor azul embaixo da tag
-            #   "tag1"      -> tag 1, sem conferir cor (basic manipulation test, empilhamento...)
             try:
                 if "-" in target:
                     id, cor = target.split("-", 1)
@@ -181,11 +299,12 @@ class VisionNode(Node):
                 return
 
         tempo_ocioso = self.last_seen - self.last_vision_usage
-        if self.time_spent_searching > 0.1 and tempo_ocioso < 80.0:
+        if self.desloc_y > 0.01 and tempo_ocioso < 80.0:
             self.state = "RETURNING"
             self.return_start_time = self.last_seen
             self.last_vision_usage = 0
         else:
+            self.zerar_origem()
             self.state = "SEARCHING"
             self.search_start_time = self.last_seen
         self.get_logger().info(f"Modo {mode.upper()}: tag {self.current_target_id}")
@@ -203,21 +322,20 @@ class VisionNode(Node):
         if self.state == "RETURNING":
             tempo_retornando = agora - self.return_start_time
             if tempo_retornando < 0:
-                self.cmd_vel_pub.publish(Twist())   # parado durante a pausa
+                self.publicar_cmd(Twist())   # parado durante a pausa
                 self.cap.grab()
                 return
-            if tempo_retornando < self.time_spent_searching:
+            # Volta pela distância lateral acumulada (busca + alinhamento), não só pelo tempo de busca
+            if self.desloc_y > -self.margem_retorno + self.tol_retorno:
                 cmd.linear.y = -0.07 # Volta para a esquerda (negativo)
-                self.cmd_vel_pub.publish(cmd)
-                self.get_logger().info(f"Retornando à base... {tempo_retornando:.1f}/{self.time_spent_searching:.1f}s", throttle_duration_sec=0.5)
+                self.publicar_cmd(cmd)
+                self.get_logger().info(f"Retornando à base... faltam {self.desloc_y + self.margem_retorno:.3f} m", throttle_duration_sec=0.5)
                 self.cap.grab() # Limpa o buffer
                 return
             else:
                 # Chegou na base! Entra no estado de ESPERA
-                cmd.linear.y = 0.0
-                self.cmd_vel_pub.publish(cmd)
-                self.time_spent_searching = 0.0
-                
+                self.zerar_origem()
+
                 self.state = "WAITING"
                 self.wait_start = agora
                 self.get_logger().info(f"Retorno concluído. Aguardando {self.wait_time}s para estabilizar...")
@@ -227,7 +345,7 @@ class VisionNode(Node):
         elif self.state == "WAITING":
             if agora - self.wait_start < self.wait_time:
                 cmd.linear.y = 0.0
-                self.cmd_vel_pub.publish(cmd)
+                self.publicar_cmd(cmd)
                 self.cap.grab() # Limpa o buffer
                 return
             else:
@@ -270,6 +388,8 @@ class VisionNode(Node):
             self.counter = 0
             self.slot_toggle = 1
             self.realocable = []
+            self.cycle_start = None
+            self.end_pos = None
             return
 
         ret, frame = self.cap.read()
@@ -317,12 +437,12 @@ class VisionNode(Node):
 
             # --- viu algo, mas ainda não confirmou: para e espera ---
             elif container is not None and self.state == "SEARCHING":
-                self.cmd_vel_pub.publish(Twist())
+                self.publicar_cmd(Twist())
 
             # --- nada visto ---
             elif self.state == "SEARCHING":
                 cmd.linear.y = 0.07 * self.direction
-                self.cmd_vel_pub.publish(cmd)
+                self.publicar_cmd(cmd)
 
             elif self.state == "ALIGNING" and (agora - self.last_seen) > self.lost_timeout:
                 self.set_detection_led(False)
@@ -348,15 +468,29 @@ class VisionNode(Node):
                 if self.tag_save:
                     for d in detections:
                         tag_id = d.tag_id
+                        if tag_id in self.realocable:
+                            continue
 
-                        if tag_id not in self.realocable and tag_id < 100:
+                        if tag_id < 100:
                             self.realocable.insert(0, tag_id)
+                        elif tag_id in self.slot_tags and self.indice_nula() is None:
+                            # Tag nula: posição vazia. Entra no catálogo como uma posição.
+                            self.realocable.insert(0, tag_id)
+                            self.get_logger().info(f"Tag nula {tag_id} catalogada.")
 
-                    if len(self.realocable) >= 3:
+                    if self.catalogo_completo():
                         self.tag_save = False
+                        nula = self.indice_nula()
+                        if self.slot_tags[nula] != self.realocable[nula]:
+                            self.get_logger().warn(
+                                f"Tag nula {self.realocable[nula]} apareceu no índice {nula} do catálogo, "
+                                f"mas sua posição fixa seria {self.slot_tags.index(self.realocable[nula])}. "
+                                f"Catálogo: {self.realocable}"
+                            )
                         if self.state == "SEARCHING":
                             if not self.avancar_alvo_precisao():
                                 self.get_logger().error("Não há cubos fora de ordem para reorganizar.")
+                                self.publicar_cmd(Twist(), corrigir_yaw=False)   # para de andar/girar
                                 self.vision_active = False
                                 self.state = "IDLE"
                                 self.status_pub.publish(Bool(data=False))
@@ -370,7 +504,7 @@ class VisionNode(Node):
                             )
                     else:
                         cmd.linear.y = 0.07
-                        self.cmd_vel_pub.publish(cmd)
+                        self.publicar_cmd(cmd)
                     return
     
                 '''# proximo vai ser o indice q ele deve ficar
@@ -445,7 +579,7 @@ class VisionNode(Node):
                         and self.color_detection(roi, self.current_target_color) is None):
                     self.state = "SEARCHING"
                     cmd.linear.y = 0.07 * self.direction
-                    self.cmd_vel_pub.publish(cmd)
+                    self.publicar_cmd(cmd)
                     self.get_logger().info("Buscando tag para a direita...", throttle_duration_sec=1.0)
                     
                     return
@@ -460,7 +594,7 @@ class VisionNode(Node):
             elif self.state == "SEARCHING":
                 # Não achou a tag ainda, continua indo para a direita
                 cmd.linear.y = 0.07 * self.direction
-                self.cmd_vel_pub.publish(cmd)
+                self.publicar_cmd(cmd)
                 self.get_logger().info("Buscando tag para a direita...", throttle_duration_sec=1.0)
                 
             elif self.state == "ALIGNING":
@@ -489,9 +623,18 @@ class VisionNode(Node):
         return x, y, z
 
 
+    def indice_nula(self):
+        """Índice, no catálogo, da posição vazia (tag > 100). None se não houver."""
+        return next((i for i, t in enumerate(self.realocable) if t > 100), None)
+
+    def catalogo_completo(self):
+        return len(self.realocable) >= self.n_posicoes and self.indice_nula() is not None
+
     def avancar_alvo_precisao(self):
         if self.counter == 0:
-            self.ordenada = sorted(self.realocable)
+            
+            cubos = sorted(t for t in self.realocable if t < 100)
+            self.ordenada = cubos + [self.slot_tags[self.pos_vazia_final]]
             self.cycle_start = None
 
         # novo ciclo: primeira chamada ou put final feito
@@ -499,15 +642,29 @@ class VisionNode(Node):
             fora = [i for i, t in enumerate(self.realocable) if self.ordenada[i] != t] # conferir quais não estão organizados
             if not fora:
                 return False
-            self.cycle_start = fora[-1]
-            self.last_id = self.slot_tags[self.cycle_start]
+
+            vazia = self.indice_nula()
+            if vazia != self.pos_vazia_final:
+                # Ciclo da vaga: começa pelo cubo que está na 107 e termina
+                # colocando o último cubo da cadeia na posição vazia atual.
+                self.cycle_start = self.pos_vazia_final
+                self.end_pos = vazia
+            else:
+                # Vaga já está na 107: ciclo normal, termina na posição de onde saiu o 1º cubo.
+                self.cycle_start = fora[-1]
+                self.end_pos = self.cycle_start
+
+            self.last_id = self.slot_tags[self.end_pos]
             self.current_target_id = self.realocable[self.cycle_start]
             self.primeiro_do_ciclo = True
         else:
             self.primeiro_do_ciclo = False
             dest = self.ordenada.index(self.current_target_id)
-            if dest == self.cycle_start:
+            if dest == self.end_pos:
                 self.realocable[dest] = self.current_target_id
+                if self.cycle_start != self.end_pos:
+                    # o cubo de partida saiu da 107: agora ela é a vaga
+                    self.realocable[self.cycle_start] = self.slot_tags[self.cycle_start]
                 self.current_target_id = self.last_id
             else:
                 prox = self.realocable[dest]
@@ -587,8 +744,9 @@ class VisionNode(Node):
         #k_yaw = 0.3       
         max_speed = self.max_speed
 
-        if tag_id > 100:
-            target_z = 0.45 # testar isso aq 
+        if tag_id >= 100:
+            self.get_logger().info("alterando z para 60")
+            target_z = 0.45 # testar isso aq
 
         erro_x = -x + x_offset
         erro_z = z - target_z
@@ -598,15 +756,20 @@ class VisionNode(Node):
 
         aligned_x = abs(erro_x) <= tol_x
         aligned_z = abs(erro_z) <= tol_z
-        #aligned_yaw = abs(erro_yaw) <= tol_yaw
+        yaw = self.yaw_atual()
+        # Sem leitura do lidar não trava o alinhamento (só avisa)
+        aligned_yaw = yaw is None or abs(yaw) <= self.tol_yaw
+        if yaw is None and self.usar_lidar:
+            self.get_logger().warn("Alinhando sem yaw do lidar.", throttle_duration_sec=2.0)
 
-        if aligned_x and aligned_z:
+        if aligned_x and aligned_z and aligned_yaw:
             self.cube_aligned = True
 
             cmd.linear.x = 0.0
             cmd.linear.y = 0.0
+            cmd.angular.z = 0.0
 
-            self.cmd_vel_pub.publish(cmd)
+            self.publicar_cmd(cmd, corrigir_yaw=False)   # parada final: sem giro
 
             self.get_logger().info(f"Tag ID {tag_id} ALINHADA! Robô parado.")
             self.last_vision_usage = self.get_clock().now().nanoseconds / 1e9
@@ -643,8 +806,10 @@ class VisionNode(Node):
         if not aligned_z:
             cmd.linear.x = float(np.clip(k_z * erro_z, -max_speed, max_speed))
 
-        self.get_logger().info(f"Alinhando Tag {tag_id} -> CmdVel: vx={cmd.linear.x:.2f}, vy={cmd.linear.y:.2f}", throttle_duration_sec=0.2)
-        self.cmd_vel_pub.publish(cmd)
+        self.publicar_cmd(cmd)
+        yaw_txt = "--" if yaw is None else f"{np.degrees(yaw):.1f}°"
+        self.get_logger().info(f"Alinhando Tag {tag_id} -> CmdVel: vx={cmd.linear.x:.2f}, vy={cmd.linear.y:.2f}, "
+                               f"wz={cmd.angular.z:.2f} | yaw={yaw_txt}", throttle_duration_sec=0.2)
 
 
     def render_preview(self, image, detection, tag_id, x, y, z):
@@ -696,6 +861,92 @@ class VisionNode(Node):
             self.cap.release()
         cv2.destroyAllWindows()
 
+
+
+def quat_para_R(q):
+    x, y, z, w = q.x, q.y, q.z, q.w
+    return np.array([
+        [1 - 2 * (y * y + z * z), 2 * (x * y - z * w), 2 * (x * z + y * w)],
+        [2 * (x * y + z * w), 1 - 2 * (x * x + z * z), 2 * (y * z - x * w)],
+        [2 * (x * z - y * w), 2 * (y * z + x * w), 1 - 2 * (x * x + y * y)],
+    ])
+
+
+def buscar_tf_lidar(tf_buffer, base_frame, laser_frame):
+    """(R, t) que leva pontos do frame do lidar para o base_frame, ou None."""
+    import rclpy.time
+    try:
+        tr = tf_buffer.lookup_transform(base_frame, laser_frame, rclpy.time.Time())
+    except Exception:
+        return None
+    t = tr.transform.translation
+    return quat_para_R(tr.transform.rotation), np.array([t.x, t.y, t.z])
+
+
+def resumo_tf(R):
+    """Traduz o TF para o par (offset em graus, invertido) usado no modo manual."""
+    inv = R[2, 2] < 0                       # eixo z do lidar apontando para baixo
+    psi = np.degrees(np.arctan2(R[1, 0], R[0, 0]))
+    return (-psi if inv else psi), bool(inv)
+
+
+def pontos_no_robo(msg, dist_min, dist_max, tf_lidar=None, offset=0.0, invertido=False):
+    """Pontos válidos do scan em x/y do robô (x para a frente, y para a esquerda)."""
+    r = np.asarray(msg.ranges, dtype=float)
+    cru = msg.angle_min + np.arange(len(r)) * msg.angle_increment
+    v = np.isfinite(r) & (r > max(msg.range_min, dist_min)) & (r < min(msg.range_max, dist_max))
+    r, cru = r[v], cru[v]
+    if tf_lidar is not None:
+        R, t = tf_lidar
+        p = np.stack([r * np.cos(cru), r * np.sin(cru), np.zeros_like(r)])
+        q = R @ p + t[:, None]
+        x, y = q[0], q[1]
+    else:
+        ang = cru + offset
+        if invertido:
+            ang = -ang
+        x, y = r * np.cos(ang), r * np.sin(ang)
+    return x, y
+
+
+def estimar_yaw_mesa(msg, setor, dist_min, dist_max, min_pontos, tf_lidar=None, offset=0.0, invertido=False):
+    """Ajusta uma reta nos pontos do lidar à frente do robô e devolve o ângulo dela.
+
+    Convenção ROS: x para a frente, y para a esquerda, ângulo positivo = anti-horário.
+    Retorna o yaw do robô em relação à borda (rad, + = robô girado no sentido anti-horário),
+    ou None se não houver pontos suficientes formando uma reta.
+    """
+    x, y = pontos_no_robo(msg, dist_min, dist_max, tf_lidar, offset, invertido)
+    m = (x > 0) & (np.abs(np.arctan2(y, x)) < setor)
+    if m.sum() < min_pontos:
+        return None
+    x, y = x[m], y[m]
+    bom = reta_ransac(x, y)
+    if bom is None or bom.sum() < min_pontos:
+        return None
+    # borda da mesa: x = a*y + b  (sem singularidade quando o robô está de frente)
+    a, b = np.polyfit(y[bom], x[bom], 1)
+    return float(np.arctan(a))
+
+
+def reta_ransac(x, y, tol=0.015, iteracoes=150):
+    """Acha a reta com mais pontos (a borda), ignorando cubo, pernas e ruído.
+    Devolve a máscara dos pontos que estão na reta."""
+    n = len(x)
+    if n < 2:
+        return None
+    rng = np.random.default_rng(0)
+    i = rng.integers(0, n, iteracoes)
+    j = rng.integers(0, n, iteracoes)
+    ok = np.abs(y[i] - y[j]) > 0.02            # pares bem separados
+    i, j = i[ok], j[ok]
+    if len(i) == 0:
+        return None
+    a = (x[i] - x[j]) / (y[i] - y[j])
+    b = x[i] - a * y[i]
+    dist = np.abs(x[None, :] - (a[:, None] * y[None, :] + b[:, None])) / np.sqrt(1 + a[:, None] ** 2)
+    inl = dist < tol
+    return inl[int(np.argmax(inl.sum(axis=1)))]
 
 
 def main(args=None):

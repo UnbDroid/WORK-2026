@@ -14,7 +14,7 @@ def generate_launch_description():
     )
 
     problem_file = os.path.join(
-        salamander_share, 'pddl', 'advanced_transportation_test_1.pddl'
+        salamander_share, 'pddl', 'problem-btt2.pddl'
     )
 
     plansys2_launch = IncludeLaunchDescription(
@@ -132,16 +132,38 @@ def generate_launch_description():
     executable='put_cube_shelf_node',
     name='put_cube_shelf_node',
     output='screen',
-)
+    )
+
+    align_container = Node(
+        package='salamander_planning',
+        executable='align_container_node',
+        name='align_container_node',
+        output='screen',
+    )
+
+    put_cube_container = Node(
+        package='salamander_planning',
+        executable='put_cube_container_node',
+        name='put_cube_container_node',
+        output='screen',
+    )
+
+    align_tag_precision = Node(
+        package='salamander_planning',
+        executable='align_tag_precision_node',
+        name='align_tag_precision_node',
+        output='screen',
+    )
+
 
     return LaunchDescription([
         plansys2_launch,
        #delayed_problem_loader,
+        align_container,
         put_cube_container,
         put_cube_shelf,
         move_action_node,
         align_action_node,
-        align_container_node,
         stack_cube_base,
         stack_cube_top,
         vision_node,
@@ -151,5 +173,6 @@ def generate_launch_description():
         put_cube_table,
         put_cube_slot,
         reset,
+        align_tag_precision,
         zero_position
     ])

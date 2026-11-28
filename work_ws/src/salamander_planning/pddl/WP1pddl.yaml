@@ -1,21 +1,181 @@
 waypoints:
-  waypoint0:
+  waypoint0:   # start: [0.07, -2.89, 3.142]  (yaw em radianos)
     pose:
-      - 0.86865568161010742
-      - -0.37001657485961914
+      - 0.07
+      - -2.89
       - 0
-    orientation:
-      - 0.9999482690031084
+    orientation:   # [w, x, y, z] = yaw convertido para o formato do Nav2
+      - -0.00020367320369517786
       - 0
       - 0
-      - -0.010171495351573644
-  waypoint1:
+      - 0.99999997925861284
+  waypoint1:   # w1: [0.076, -4.654, 3.142]  (yaw em radianos)
     pose:
-      - 1.7268218994140625
-      - 0.24548532068729401
+      - 0.076
+      - -4.654
       - 0
-    orientation:
-      - 0.0077742151279725303
+    orientation:   # [w, x, y, z] = yaw convertido para o formato do Nav2
+      - -0.00020367320369517786
       - 0
       - 0
-      - -0.99996978033295791
+      - 0.99999997925861284
+  waypoint2:   # w2: [0.05, -4.703, 3.142]  (yaw em radianos)
+    pose:
+      - 0.05
+      - -4.703
+      - 0
+    orientation:   # [w, x, y, z] = yaw convertido para o formato do Nav2
+      - -0.00020367320369517786
+      - 0
+      - 0
+      - 0.99999997925861284
+  waypoint3:   # w3: [2.381, -3.429, 0.0]  (yaw em radianos)
+    pose:
+      - 2.381
+      - -3.429
+      - 0
+    orientation:   # [w, x, y, z] = yaw convertido para o formato do Nav2
+      - 1
+      - 0
+      - 0
+      - 0
+  waypoint4:   # w4: [4.08, -3.394, 3.142]  (yaw em radianos)
+    pose:
+      - 4.08
+      - -3.394
+      - 0
+    orientation:   # [w, x, y, z] = yaw convertido para o formato do Nav2
+      - -0.00020367320369517786
+      - 0
+      - 0
+      - 0.99999997925861284
+  waypoint5:   # w5: [2.857, -1.563, 1.576]  (yaw em radianos)
+    pose:
+      - 2.857
+      - -1.563
+      - 0
+    orientation:   # [w, x, y, z] = yaw convertido para o formato do Nav2
+      - 0.70526461355977166
+      - 0
+      - 0
+      - 0.70894416201869237
+  waypoint6:   # w6: [2.479, -0.274, -1.576]  (yaw em radianos)
+    pose:
+      - 2.479
+      - -0.274
+      - 0
+    orientation:   # [w, x, y, z] = yaw convertido para o formato do Nav2
+      - 0.70526461355977166
+      - 0
+      - 0
+      - -0.70894416201869237
+  waypoint7:   # w7: [0.307, 2.019, 3.142]  (yaw em radianos)
+    pose:
+      - 0.307
+      - 2.019
+      - 0
+    orientation:   # [w, x, y, z] = yaw convertido para o formato do Nav2
+      - -0.00020367320369517786
+      - 0
+      - 0
+      - 0.99999997925861284
+  waypoint8:   # w8: [0.407, 3.603, 3.142]  (yaw em radianos)
+    pose:
+      - 0.407
+      - 3.603
+      - 0
+    orientation:   # [w, x, y, z] = yaw convertido para o formato do Nav2
+      - -0.00020367320369517786
+      - 0
+      - 0
+      - 0.99999997925861284
+  waypoint9:   # w9: [4.037, 1.563, 3.142]  (yaw em radianos)
+    pose:
+      - 4.037
+      - 1.563
+      - 0
+    orientation:   # [w, x, y, z] = yaw convertido para o formato do Nav2
+      - -0.00020367320369517786
+      - 0
+      - 0
+      - 0.99999997925861284
+  waypoint10:   # w10: [2.83, -5.49, 0.0]  (yaw em radianos)
+    pose:
+      - 2.83
+      - -5.49
+      - 0
+    orientation:   # [w, x, y, z] = yaw convertido para o formato do Nav2
+      - 1
+      - 0
+      - 0
+      - 0
+  waypoint11:   # w11: [-2.2927, 2.282, -0.756]  (yaw em radianos)
+    pose:
+      - -2.2927
+      - 2.282
+      - 0
+    orientation:   # [w, x, y, z] = yaw convertido para o formato do Nav2
+      - 0.92940461869212365
+      - 0
+      - 0
+      - -0.36906239953935738
+  waypoint12:   # w12: [-0.1, -0.7, 0.0]  (yaw em radianos)
+    pose:
+      - -0.1
+      - -0.7
+      - 0
+    orientation:   # [w, x, y, z] = yaw convertido para o formato do Nav2
+      - 1
+      - 0
+      - 0
+      - 0
+  waypoint13:   # w13: [6.27, 3.12, 0.756]  (yaw em radianos)
+    pose:
+      - 6.27
+      - 3.12
+      - 0
+    orientation:   # [w, x, y, z] = yaw convertido para o formato do Nav2
+      - 0.92940461869212365
+      - 0
+      - 0
+      - 0.36906239953935738
+  waypoint14:   # w14: [6.1, 3.17, 0.0]  (yaw em radianos)
+    pose:
+      - 6.1
+      - 3.17
+      - 0
+    orientation:   # [w, x, y, z] = yaw convertido para o formato do Nav2
+      - 1
+      - 0
+      - 0
+      - 0
+  waypoint15:   # w15: [5.44, -2.21, 0.0]  (yaw em radianos)
+    pose:
+      - 5.44
+      - -2.21
+      - 0
+    orientation:   # [w, x, y, z] = yaw convertido para o formato do Nav2
+      - 1
+      - 0
+      - 0
+      - 0
+  waypoint16:   # w16: [5.5, 1.28, 0.0]  (yaw em radianos)
+    pose:
+      - 5.5
+      - 1.28
+      - 0
+    orientation:   # [w, x, y, z] = yaw convertido para o formato do Nav2
+      - 1
+      - 0
+      - 0
+      - 0
+  waypoint17:   # finish: [0.0, -2.7, 0.0]  (yaw em radianos)
+    pose:
+      - 0.0
+      - -2.7
+      - 0
+    orientation:   # [w, x, y, z] = yaw convertido para o formato do Nav2
+      - 1
+      - 0
+      - 0
+      - 0
