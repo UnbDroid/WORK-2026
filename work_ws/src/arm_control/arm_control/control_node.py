@@ -37,6 +37,7 @@ class ControlNode(Node):
             'initial': [-0.291334, 0.0, 0.2575],
             'pre_initial': [-0.291334, 0.0, 0.32207],
             'zero': [0.378666, 0.00, 0.2075],
+            'zero_shelf': [0.378666, 0.00, 0.1200],
             'get_cube_15':  [0.348748, 0.0, 0.07],
             'get_cube_10':  [0.3324, 0.0, 0.0097],
             'get_cube_5': [0.307641, 0.0, -0.04],
@@ -115,6 +116,18 @@ class ControlNode(Node):
             self.cmd_vel_pub.publish(cmd)
             time.sleep(0.1)
         cmd.linear.x = 0.0
+        self.cmd_vel_pub.publish(cmd)
+
+    def drive_y(self, distance, speed=0.07):
+        """NOVO: anda de lado (distance > 0 = esquerda, < 0 = direita) em malha aberta."""
+        cmd = Twist()
+        cmd.linear.y = speed if distance > 0 else -speed
+        duration = abs(distance) / speed
+        start_time = time.time()
+        while (time.time() - start_time) < duration:
+            self.cmd_vel_pub.publish(cmd)
+            time.sleep(0.1)
+        cmd.linear.y = 0.0
         self.cmd_vel_pub.publish(cmd)
 
     def publish_gripper(self, open_gripper: bool):
@@ -251,6 +264,35 @@ class ControlNode(Node):
             time.sleep(4.0)
 
         elif command.startswith("put_cube_container"):
+            # ALTERADO: MACRO-AÇÃO "pegar no slot + soltar no contêiner".
+            # Comando: "put_cube_container_slotN" (ex.: put_cube_container_slot2).
+            # Começa com o braço na zero_position (de onde a visão alinhou com o contêiner).
+            # Sem o slot no fim ("put_cube_container"), só solta: comportamento antigo.
+            slot = command.split("_")[-1]
+            if slot.startswith("slot"):
+                if f'get_{slot}' not in self.targets:
+                    self.get_logger().error(f"Slot desconhecido no comando: {command}")
+                    self.sequence_running = False
+                    return
+                pre_slot_name = f'pre_{slot}'
+                get_slot_name = f'get_{slot}'
+                self.get_logger().info(f"Pegando cubo do {slot} para soltar no contêiner")
+
+                self.publish_gripper(True)
+                time.sleep(2.0)
+                self.publish_target_coordinates('pre_initial')      # sai da zero_position recolhendo
+                time.sleep(3.0)
+                self.publish_target_coordinates(pre_slot_name)
+                time.sleep(3.0)
+                self.publish_target_coordinates(get_slot_name)
+                time.sleep(4.0)
+                self.publish_gripper(False)
+                time.sleep(3.0)
+                self.publish_target_coordinates(pre_slot_name)
+                time.sleep(3.0)
+                self.publish_target_coordinates('pre_initial')
+                time.sleep(3.0)
+
             self.get_logger().info("Soltando cubo no contêiner")
 
             self.publish_target_coordinates('pre_drop_container')
@@ -264,6 +306,7 @@ class ControlNode(Node):
             self.publish_target_coordinates('pre_initial')
             time.sleep(3.0)
             self.publish_target_coordinates('initial')
+            self.drive_x(-0.15)
             time.sleep(4.0)
 
         elif command.startswith("get_slot"):
@@ -368,11 +411,16 @@ class ControlNode(Node):
             self.publish_gripper(True) 
             time.sleep(1.0)
 
-        elif command == "zero_position":
+        # ALTERADO: aceita "zero_position" (antigo) e "zero_position_wX" (novo, com o workspace).
+        # Na prateleira, a posição de varredura é mais baixa ('zero_shelf').
+        elif command.startswith("zero_position"):
+            workspace = command[len("zero_position_"):] if command.startswith("zero_position_") else ""
+            alvo = 'zero_shelf' if workspace in self.shelf_workspaces else 'zero'
+            self.get_logger().info(f"Posição de varredura '{alvo}' (workspace: {workspace or '?'})")
             time.sleep(1.0)
             self.publish_target_coordinates('pre_initial')
             time.sleep(4.0)
-            self.publish_target_coordinates('zero')
+            self.publish_target_coordinates(alvo)
             time.sleep(4.0)
 
         else:

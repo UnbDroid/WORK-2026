@@ -129,16 +129,16 @@ controller_server:
       model_dt: 0.1
       batch_size: 5000 #TODO: testando valor maior orig=1000
       ax_max: 0.8
-      ax_min: -0.6
+      ax_min: -0.8
       ay_max: 0.4
-      ay_min: -0.8
+      ay_min: -0.9
       az_max: 0.4
       vx_std: 0.25
       vy_std: 0.25
       wz_std: 0.4
-      vx_max: 0.25
-      vx_min: -0.25
-      vy_max: 0.25 #TODO: testar valores mais baixos pra ver se é por isso que anda torto
+      vx_max: 0.17
+      vx_min: -0.17
+      vy_max: 0.17 #TODO: testar valores mais baixos pra ver se é por isso que anda torto
       wz_max: 0.5
       iteration_count: 1
       prune_distance: 1.7
@@ -193,12 +193,12 @@ controller_server:
       CostCritic:
         enabled: true
         cost_power: 1
-        cost_weight: 4.5
+        cost_weight: 5.7
         near_collision_cost: 253
         critical_cost: 300.0
         consider_footprint: false # Considera o footprint do robô ao avaliar colisões (default = false)
         collision_cost: 1000000.0
-        near_goal_distance: 0.9
+        near_goal_distance: 0.7
         trajectory_point_step: 2
 
       #plugin que avalia o alinhamento da trajetória planejada com o caminho desejado, penalizando trajetórias que se desviam do caminho. (importante)
@@ -256,7 +256,7 @@ local_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 5.5 #incentiva o robo a manter uma distância segura dos obstáculos.
-        inflation_radius: 0.3 #distancia em metros que o robo deve manter dos obstáculos.
+        inflation_radius: 0.32 #distancia em metros que o robo deve manter dos obstáculos.
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True 
@@ -319,7 +319,7 @@ global_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 4.5
-        inflation_radius: 0.28
+        inflation_radius: 0.30
       always_send_full_costmap: True
 
 # The yaml_filename does not need to be specified since it going to be set by defaults in launch.
@@ -466,7 +466,7 @@ collision_monitor:
       type: "polygon"
       action_type: "approach"
       footprint_topic: "/local_costmap/published_footprint"
-      time_before_collision: 1.3 #de 1.2 pra 1.0
+      time_before_collision: 0.8 #de 1.2 pra 1.0
       simulation_time_step: 0.1
       min_points: 6
       visualize: False

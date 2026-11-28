@@ -7,6 +7,9 @@
 
 using namespace std::chrono_literals;
 
+// zero_position: coloca o braço na posição de varredura.
+// ALTERADO: agora manda o workspace junto ("zero_position_w12"), para o control_node
+// usar uma posição mais baixa quando o workspace for uma prateleira.
 class ZeroPositionAction : public plansys2::ActionExecutorClient {
 public:
   ZeroPositionAction() : plansys2::ActionExecutorClient("zero_position", 500ms) {
@@ -18,18 +21,21 @@ public:
   }
 protected:
   void do_work() override {
+    // PDDL: (zero_position ?w - workspace) -> argumento [0] é o workspace
+    std::string workspace = get_arguments()[0];
+
     if (!command_sent_) {
       std_msgs::msg::String cmd_msg;
-      // Envia o comando exato que o seu control_node.py está esperando
-      cmd_msg.data = "zero_position"; 
+      cmd_msg.data = "zero_position_" + workspace;
+      arm_finished_ = false;
       cmd_pub_->publish(cmd_msg);
       command_sent_ = true;
-      arm_finished_ = false;
-      send_feedback(0.0, "Movendo braço para zero_position (Câmera Ativa)...");
+      send_feedback(0.0, "Braço indo para a posição de varredura em " + workspace + "...");
     }
+
     if (arm_finished_) {
       command_sent_ = false;
-      finish(true, 1.0, "Braço em zero_position. Pronto para a visão!");
+      finish(true, 1.0, "Braço na posição de varredura em " + workspace + ".");
     }
   }
 private:

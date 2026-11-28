@@ -23,17 +23,22 @@ public:
 
 protected:
   void do_work() override {
-    // PDDL: put-cube-container ?w ?c ?k  ->  [0]=w, [1]=c, [2]=k
+    // PDDL: put_cube_container ?w ?c ?k ?s  ->  [0]=w, [1]=c, [2]=k, [3]=s
     const std::string container = get_arguments()[2];
+    const std::string slot = get_arguments()[3];
 
     if (!command_sent_) {
       std_msgs::msg::String cmd_msg;
-      cmd_msg.data = "put_cube_container_" + container;
+      // ALTERADO: o control_node lê o slot no FIM do comando (split("_")[-1]).
+      // Antes ia "put_cube_container_slot1_container-blue" -> ele lia "container-blue",
+      // não achava slot e fazia só a parte de soltar.
+      cmd_msg.data = "put_cube_container_" + slot;          // "put_cube_container_slot1"
       cmd_pub_->publish(cmd_msg);
+      RCLCPP_INFO(this->get_logger(), "Enviado ao braço: %s", cmd_msg.data.c_str());
       command_sent_ = true;
       arm_finished_ = false;
       start_time_ = this->now();
-      send_feedback(0.0, "Soltando cubo em " + container + "...");
+      send_feedback(0.0, "Pegando cubo em " + slot + " e soltando em " + container + "...");
       return;
     }
 
@@ -59,7 +64,8 @@ private:
   rclcpp::Time start_time_;
   bool command_sent_ = false;
   bool arm_finished_ = false;
-  double timeout_s_ = 30.0;
+  // ALTERADO: a macro (pegar no slot + soltar) leva ~45 s de sleeps; 50 s ficava no limite
+  double timeout_s_ = 90.0;
 };
 
 int main(int argc, char ** argv) {

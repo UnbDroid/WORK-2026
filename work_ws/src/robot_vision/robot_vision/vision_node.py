@@ -60,7 +60,7 @@ class VisionNode(Node):
         self.container_color = None
         self.profiles = {
             "pick":      dict(target_z=0.40, x_offset=0.10),
-            "stack":     dict(target_z=0.403, x_offset=0.10),
+            "stack":     dict(target_z=0.45, x_offset=0.10),
             "container": dict(target_z=0.232,  x_offset=0.09),
             "precisao": dict(target_z=0.40, x_offset=0.10)
 
@@ -158,13 +158,17 @@ class VisionNode(Node):
         self.hits = 0
         self.prev_c = None
 
-        self.red_lower = np.array([136, 87, 111], np.uint8)
-        self.red_upper = np.array([180, 255, 255], np.uint8)
+
+        self.red_lower  = np.array([0, 36, 40], np.uint8)
+        self.red_upper  = np.array([13, 255, 116], np.uint8)
+
+
         self.red_lower2 = np.array([170, self.red_lower[1], self.red_lower[2]], np.uint8)
         self.red_upper2 = np.array([179, self.red_upper[1], self.red_upper[2]], np.uint8)
 
-        self.blue_lower = np.array([102, 133, 88], np.uint8)
-        self.blue_upper = np.array([146, 253, 157], np.uint8)
+        self.blue_lower = np.array([90, 67, 21], np.uint8)
+        self.blue_upper = np.array([130, 255, 255], np.uint8)
+
 
         if not self.cap.isOpened():
             self.get_logger().error(f"Não foi possível abrir a câmera no índice {self.indice_camera}!")
@@ -744,7 +748,7 @@ class VisionNode(Node):
         #k_yaw = 0.3       
         max_speed = self.max_speed
 
-        if tag_id >= 100:
+        if 100 <= tag_id < 200:
             self.get_logger().info("alterando z para 60")
             target_z = 0.45 # testar isso aq
 
@@ -763,6 +767,8 @@ class VisionNode(Node):
             self.get_logger().warn("Alinhando sem yaw do lidar.", throttle_duration_sec=2.0)
 
         if aligned_x and aligned_z and aligned_yaw:
+            if self.mode == 'stack':
+                self.get_logger().info(f"stack {target_z}")
             self.cube_aligned = True
 
             cmd.linear.x = 0.0

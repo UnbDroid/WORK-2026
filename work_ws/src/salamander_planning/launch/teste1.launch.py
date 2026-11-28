@@ -2,7 +2,8 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, TimerAction, ExecuteProcess
+from launch.actions import IncludeLaunchDescription, TimerAction, ExecuteProcess, DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 
@@ -13,9 +14,13 @@ def generate_launch_description():
         salamander_share, 'config', 'cenario_2.yaml'
     )
 
-    problem_file = os.path.join(
-        salamander_share, 'pddl', 'problem-btt2.pddl'
-    )
+    # Problema gerado pelo yaml_to_pddl.py. Passe o caminho do src/ para não precisar de colcon build:
+    #ros2 launch salamander_planning teste1.launch.py problem_file:=<caminho>/problem-prova.pddl
+    problem_file = LaunchConfiguration('problem_file')
+    declare_problem = DeclareLaunchArgument(
+        'problem_file',
+        default_value=os.path.join(salamander_share, 'pddl', 'problem-prova.pddl'),
+        description='Arquivo de problema PDDL gerado pelo yaml_to_pddl.py')
 
     plansys2_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -51,13 +56,6 @@ def generate_launch_description():
         package='salamander_planning',
         executable='align_action_node',
         name='align_action_node',
-        parameters=[cenario_file],
-    )
-
-    align_container_node = Node(
-        package='salamander_planning',
-        executable='align_container_node',
-        name='align_container_node',
         parameters=[cenario_file],
     )
 
@@ -121,23 +119,18 @@ def generate_launch_description():
         name='zero_position_node',
     )
 
-    put_cube_container = Node(
-        package='salamander_planning',
-        executable='put_cube_container_node',
-        name='put_cube_container_node',
-    )
-
     put_cube_shelf = Node(
-    package='salamander_planning',
-    executable='put_cube_shelf_node',
-    name='put_cube_shelf_node',
-    output='screen',
+        package='salamander_planning',
+        executable='put_cube_shelf_node',
+        name='put_cube_shelf_node',
+        output='screen',
     )
 
     align_container = Node(
         package='salamander_planning',
         executable='align_container_node',
         name='align_container_node',
+        parameters=[cenario_file],
         output='screen',
     )
 
@@ -157,6 +150,7 @@ def generate_launch_description():
 
 
     return LaunchDescription([
+        #declare_problem,
         plansys2_launch,
        #delayed_problem_loader,
         align_container,

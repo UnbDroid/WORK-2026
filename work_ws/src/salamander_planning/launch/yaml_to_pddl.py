@@ -19,7 +19,7 @@ SH_BASE = 10          # SH_n -> w{SH_BASE + n}
 PP_BASE = 14
 SLOTS_ROBO = ['slot1', 'slot2', 'slot3']
 COR_PT = {'BLUE': 'azul', 'RED': 'vermelho'}
-COR_ID_VISAO = {'BLUE': '-2', 'RED': '-1'}
+COR_EN = {'BLUE': 'blue', 'RED': 'red'}   # NOVO: a visão espera "container-blue" / "container-red"
 
 INICIO_VISION_READY = True
 
@@ -33,7 +33,9 @@ def nome_tag_cubo(tag):       # tag que identifica o cubo (tag-cube)
 
 
 def nome_tag_mesa(tag):       # tag de referencia da zona de empilhamento (tag-desk)
-    return f'ref{tag}'
+    # ALTERADO: era 'ref{tag}'. A visão lê o número com int(id.replace("tag", "")),
+    # então 'ref200' falhava; 'tag200' funciona igual às tags dos cubos.
+    return f'tag{tag}'
 
 
 def nome_ws(area):            # 'WS_4' -> 'w4'
@@ -56,7 +58,10 @@ def nome_pp(area):            # 'PP' -> 'w14', 'PP_2' -> 'w15'
 
 
 def nome_container(cor, loc):
-    return f'container_{COR_PT[cor]}_{loc}{COR_ID_VISAO[cor]}'
+    # ALTERADO: formato que a visão entende direto: "container-red", "container-blue".
+    # O align_container_node manda "container:container-red" e a visão tira o prefixo.
+    # (Nunca usar '-' seguido de número: derruba o executor do PlanSys2.)
+    return f'container-{COR_EN[cor]}'
 
 
 class ErroContrato(Exception):
@@ -226,11 +231,16 @@ def traduzir(doc, com_finish=True):
     containers = {}           # (cor, area) -> nome
     for c in doc.get('containers') or []:
         containers[(c['color'], c['at'])] = nome_container(c['color'], nome_ws(c['at']))
+    cores = [cor for (cor, _) in containers]
+    for cor in set(cores):
+        if cores.count(cor) > 1:
+            raise ErroContrato(f'dois containers {cor}: o nome "container-{COR_EN[cor]}" ficaria repetido. '
+                               'Precisa de um jeito de diferenciar (e a visão também).')
 
     # tags
     tags_cubo = {o: nome_tag_cubo(o) for o in ativos}
     tags_mesa = {area: nome_tag_mesa(info.get('reference_tag')) for area, info in stacking.items()}
-    todas_tags = list(tags_cubo.values()) + sorted(set(tags_mesa.values()))
+    todas_tags = list(dict.fromkeys(list(tags_cubo.values()) + sorted(set(tags_mesa.values()))))
 
     # destino (workspace) de cada cubo que precisa se mover
     def ws_destino(o):
@@ -279,16 +289,18 @@ def traduzir(doc, com_finish=True):
     init = [f'(robot-at {LOC_START})', '(arm-empty)', '(base-free)']
     init.append('(vision-ready)' if INICIO_VISION_READY else '(arm-folded)')
     init.append('')
+    # ALTERADO: conexões nos DOIS sentidos entre todos os workspaces de trabalho.
+    # Antes só existia "ida" (na ordem topológica). Com 3 slots no robô, isso deixava o
+    # problema SEM SOLUÇÃO sempre que o robô precisava levar mais de 3 cubos antes de
+    # poder entregar algum (ex.: ATT1: pegar 2 em w2 + 2 em w3 antes de chegar nos destinos).
+    # O start liga em todos, e todos ligam no finish.
     if trabalho:
-        init.append(f'(connected {LOC_START} {trabalho[0]})')
-        if ciclo:
-            for a, b in itertools.permutations(trabalho, 2):
-                init.append(f'(connected {a} {b})')
-        else:
-            for i, a in enumerate(trabalho):
-                for b in trabalho[i + 1:]:
-                    init.append(f'(connected {a} {b})')
-        init.append(f'(connected {trabalho[-1]} {LOC_FINISH})')
+        for w in trabalho:
+            init.append(f'(connected {LOC_START} {w})')
+        for a, b in itertools.permutations(trabalho, 2):
+            init.append(f'(connected {a} {b})')
+        for w in trabalho:
+            init.append(f'(connected {w} {LOC_FINISH})')
     else:
         init.append(f'(connected {LOC_START} {LOC_FINISH})')
     init.append('')

@@ -67,7 +67,7 @@ private:
   rclcpp::Time start_time_;
   bool command_sent_ = false;
   bool vision_finished_ = false;
-  double timeout_s_ = 20.0;
+  double timeout_s_ = 50.0;
 };
 
 int main(int argc, char ** argv) {
